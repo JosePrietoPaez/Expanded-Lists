@@ -43,6 +43,23 @@ namespace Listas
 		T this[int posicion] { get; set; }
 
 		/// <summary>
+		/// Pone <see cref="ILista{T}.InstanciaDeRespaldo"/> al final de la lista 
+		/// </summary>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <remarks>
+		/// Equivalente a 
+		/// <c>lista.PonerFin(lista.Longitud++)</c>
+		/// </remarks>
+		/// Necesita que <see cref="ILista{T}.InstanciaDeRespaldo"/> no sea nula si la lista no admite elementos nulos
+		/// <returns></returns>
+		static ILista<T> operator ++(ILista<T> lista) {
+			if (lista.InstanciaDeRespaldo is T) {
+				throw new InvalidOperationException("La instancia de respaldo del objeto es nula");
+			}
+			lista.Longitud++; return lista;
+		}
+
+		/// <summary>
 		/// Coloca <c>elemento</c> al principio de la lista
 		/// </summary>
 		/// <param name = "elemento">elemento que colocar</param>

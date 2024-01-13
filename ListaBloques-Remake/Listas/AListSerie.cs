@@ -26,8 +26,7 @@ namespace Listas
 					_serie.Clear();
 				else if (_serie.Count == 0)
 				{
-					if (_instancia is null) throw new InvalidOperationException("");
-					_serie.Add(_instancia);
+					Longitud++;
 				}
 			}
 		}
@@ -49,7 +48,10 @@ namespace Listas
 				{
 					while (value > siz)
 					{
-						_serie.Add(_instancia);
+						if (CompatibleEnLista(_instancia)) throw new InvalidOperationException("");
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+						_serie.Add(_instancia); //Ignorar el warning
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
 						siz++;
 					}
 				}
@@ -70,7 +72,7 @@ namespace Listas
 			set => _serie[posicion] = value;
 		}
 
-		internal static bool CompatibleEnLista(T obj) => ((obj == null && default(T) == null));
+		internal static bool CompatibleEnLista(T? obj) => obj is not null || (obj == null && default(T) == null);
 
 		/// <summary>
 		/// Crea una serie a partir de otra lista con el nombre vacío
@@ -216,7 +218,13 @@ namespace Listas
 		public int BorrarUltimos(T elem)
 		{
 			int res = 0;
-			while (_serie[^1].Equals(elem))
+			Func<T, bool> condicion;
+			if (elem == null) {
+				condicion = (t => t is null);
+			} else {
+				condicion = (t => elem.Equals(t));
+			}
+			while (condicion(_serie[^1]))
 			{
 				_serie.RemoveAt(_serie.Count - 1);
 				res++;
@@ -260,10 +268,12 @@ namespace Listas
 		public int Ocurrencias(T elem)
 		{
 			int num = 0;
-			foreach (T tipo in
-				_serie)
-			{
-				if (elem.Equals(tipo)) num++;
+			foreach (T tipo in _serie) {
+				if (elem is null) {
+					if (tipo is null) {
+						num++;
+					}
+				} else if (elem.Equals(tipo)) num++;
 			}
 			return num;
 		}
