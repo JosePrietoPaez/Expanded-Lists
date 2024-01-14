@@ -7,14 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas", "ListaBloques-Rema
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Operaciones", "Operaciones\Operaciones.csproj", "{11BCB70C-77E5-4831-9E1D-1DF417C89A84}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgramaDivisibilidad", "PruebaListas\ProgramaDivisibilidad.csproj", "{6537DC23-8A8C-4E08-87A8-5C250328E2C4}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{700E5ABE-0978-4966-BEF0-011CC7CC2298}"
 	ProjectSection(SolutionItems) = preProject
 		Ayuda.txt = Ayuda.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listas.nUnitTests", "Listas.nUnitTests\Listas.nUnitTests.csproj", "{4DC16046-D7AA-477D-B628-17A64015EB58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgramaDivisibilidadCLI", "ProgramaDivisibilidadCLI\ProgramaDivisibilidadCLI.csproj", "{4F70911F-5BB6-48F4-936C-82E259BD3F15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,14 +30,14 @@ Global
 		{11BCB70C-77E5-4831-9E1D-1DF417C89A84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11BCB70C-77E5-4831-9E1D-1DF417C89A84}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11BCB70C-77E5-4831-9E1D-1DF417C89A84}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6537DC23-8A8C-4E08-87A8-5C250328E2C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6537DC23-8A8C-4E08-87A8-5C250328E2C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6537DC23-8A8C-4E08-87A8-5C250328E2C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6537DC23-8A8C-4E08-87A8-5C250328E2C4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4DC16046-D7AA-477D-B628-17A64015EB58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4DC16046-D7AA-477D-B628-17A64015EB58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DC16046-D7AA-477D-B628-17A64015EB58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DC16046-D7AA-477D-B628-17A64015EB58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F70911F-5BB6-48F4-936C-82E259BD3F15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F70911F-5BB6-48F4-936C-82E259BD3F15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F70911F-5BB6-48F4-936C-82E259BD3F15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F70911F-5BB6-48F4-936C-82E259BD3F15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

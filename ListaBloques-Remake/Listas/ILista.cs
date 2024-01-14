@@ -4,9 +4,10 @@ using System.Collections.Generic;
 namespace Listas
 {
 	/// <summary>
-	/// Las listas contienen elementos del tipo parámetro <c>T</c>, pueden contener elementos nulos
+	/// Las listas contienen elementos del tipo parámetro <c>T</c>, dependiendo de la implementación podrán permitir elementos nulos o no
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
+	/// <typeparam name="T">
+	/// </typeparam>
 	public interface ILista<T> : IEnumerable<T>
 	{
 		/// <summary>
@@ -15,7 +16,7 @@ namespace Listas
 		/// <remarks>
 		/// En el caso de intentar operación <c>lista.Vacia = false</c>, se insertará a <c>InstanciaDeRespaldo</c> si la lista estaba vacía
 		/// </remaks>
-		/// <exception cref="InvalidOperationException"> si <see cref="InstanciaDeRespaldo"/> es nula</exception>
+		/// <exception cref="InvalidOperationException"> si <see cref="FuncionDeGeneracion"/> es nula y la lista no permite elementos nulos</exception>
 		bool Vacia { get; set; }
 
 		/// <summary>
@@ -23,89 +24,77 @@ namespace Listas
 		/// </summary>
 		/// <remarks>
 		/// En el caso de aumentar la longiud mediante esta propiedad, se rellenará la lista con referencias a <c>InstanciaDeRespaldo</c>
+		/// <para>
+		/// En el caso de reducirla se eliminarán los últimos elementos, la cantidad dependiendo del sustraendo
+		/// </para>
 		/// </remarks>
 		int Longitud { get; set; }
 
 		/// <summary>
-		/// Esta propiedad representa a la instancia de <c>T</c> que se usará para rellenar la lista en el caso de que se intente poner <c>Vacia</c> a <c>true</c> o <c>Longitud</c> a un valor mayor al actual
+		/// Esta propiedad representa a la función que genera nuevas instancias de <c>T</c> que se usarán para rellenar la lista
+		/// en el caso de que se intente poner <c>Vacia</c> a <c>true</c> o <c>Longitud</c> a un valor mayor al actual
 		/// </summary>
-		T? InstanciaDeRespaldo { get; set; }
+		/// <remarks>
+		/// El argumento usado para la función será el tamaño de la lista
+		/// <para>
+		/// Por defecto genera la instancia por defecto de la clase, por ello se recomienda instanciarla en el constructor o mediante esta propiedad
+		/// </para>
+		/// </remarks>
+		Func<int,T?> FuncionDeGeneracion { get; set; }
 
 		/// <summary>
 		/// Obtiene el elemento en la posición <c>posicion</c>
 		/// </summary>
 		/// <remarks>
+		/// <para>Es de solo lectura</para>
 		/// Equivalente a 
 		/// <see cref="ILista{T}.Elemento(int)"/>
 		/// </remarks>
 		/// <param name="posicion"></param>
 		/// <returns></returns>
-		T this[int posicion] { get; set; }
+		T this[int posicion] { get; }
 
 		/// <summary>
-		/// Pone <see cref="ILista{T}.InstanciaDeRespaldo"/> al final de la lista 
+		/// Introduce <see cref="ILista{T}.FuncionDeGeneracion"/> en la lista
 		/// </summary>
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <remarks>
 		/// Equivalente a 
-		/// <c>lista.PonerFin(lista.Longitud++)</c>
+		/// <c>lista.Longitud++</c>
 		/// </remarks>
-		/// Necesita que <see cref="ILista{T}.InstanciaDeRespaldo"/> no sea nula si la lista no admite elementos nulos
+		/// Necesita que <see cref="ILista{T}.FuncionDeGeneracion"/> no sea nula si la lista no admite elementos nulos
 		/// <returns></returns>
 		static ILista<T> operator ++(ILista<T> lista) {
-			if (lista.InstanciaDeRespaldo is T) {
+			if (lista.FuncionDeGeneracion is T) {
 				throw new InvalidOperationException("La instancia de respaldo del objeto es nula");
 			}
-			lista.Longitud++; return lista;
+			lista.Longitud++;
+			return lista;
 		}
 
 		/// <summary>
-		/// Coloca <c>elemento</c> al principio de la lista
+		/// Elimina el último elemento de la lista 
+		/// </summary>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <remarks>
+		/// Equivalente a 
+		/// <c>lista.Longitud--</c>
+		/// </remarks>
+		/// Necesita que <see cref="ILista{T}.FuncionDeGeneracion"/> no sea nula si la lista no admite elementos nulos
+		/// <returns></returns>
+		static ILista<T> operator --(ILista<T> lista) {
+			lista.Longitud--;
+			return lista;
+		}
+
+		/// <summary>
+		/// Introduce <c>elemento</c> en la lista
 		/// </summary>
 		/// <param name = "elemento">elemento que colocar</param>
-		void PonerInicio(T elemento);
-
-		/// <summary>
-		/// Coloca a <c>elemento</c> en la posición posicion
-		/// </summary>
-		/// <remarks><c>posicion</c> no puede ser menor que 0 o mayor que el índice del último elemento</remarks>
-		/// <param name="elemento">elemento que colocar</param>
-		/// <param name="posicion">posición donde colocar <c>elemento</c></param>
-		void Poner(T elemento, int posicion);
-
-		/// <summary>
-		/// Coloca <c>elemento</c> al final de la lista
-		/// </summary>
-		/// <param name="elemento">el elemento que colocar</param>
-		void PonerFin(T elemento);
-
-		/// <summary>
-		/// Coloca el elemento <c>elemento num</c> veces seguidas en la lista, desde la posición <c>posicion</c>
-		/// </summary>
-		/// <remarks>
-		/// <c>posicion} no puede ser menor que 0 o mayor que el índice del último elemento
-		/// <para>
-		/// Si <c>num</c> no es positivo, el método no hará nada
-		/// </para>
-		/// </remarks>
-		/// <param name="elemento">elemento el elemento que colocar</param>
-		/// <param name="num">num la cantidad de veces que se pondrá</param>
-		/// <param name="posicion">posición por la que se enpieza a poner</param>
-		void PonerVarios(T elemento, int num, int posicion);
-
-		/// <summary>
-		/// Cambia el elemento de la posición <c>posicion</c> por <c>elemento</c>
-		/// </summary>
-		/// <param name="posicion">posición donde colocar <c>elemento</c></param>
-		/// <param name="elemento">elemento que colocar</param>
-		/// <returns>Elemento que estaba en la posición <c>posicion</c></returns>
-		T Cambiar(int posicion, T elemento);
-
-		/// <summary>
-		/// Borra el primer elemento de la lista y lo devuelve como resultado
-		/// </summary>
-		/// <returns>El primer elemento de la lista</returns>
-		T BorrarInicio();
+		/// <returns>
+		/// Devuelve la posición en la que se ha insertado
+		/// </returns>
+		int Insertar(T elemento);
 
 		/// <summary>
 		/// Borra la primera ocurrencia de <c>elemento</c> de la lista y devuelve su posición como resultado
@@ -126,15 +115,6 @@ namespace Listas
 		T Borrar(int posicion);
 
 		/// <summary>
-		/// Borra el último elemento de la lista y lo devuelve como resultado
-		/// </summary>
-		/// <remarks>
-		/// La lista no puede estar vacía
-		/// </remarks>
-		/// <returns>El último elemento de la lista</returns>
-		T BorrarFin();
-
-		/// <summary>
 		/// Borra <c>num</c> elementos desde la posición <c>posicion</c>, o hasta que no haya más
 		/// </summary>
 		/// <remarks>
@@ -146,19 +126,16 @@ namespace Listas
 		int BorrarVarios(int num, int posicion);
 
 		/// <summary>
-		/// Borra las últimas ocurrencias de <c>elemento</c> hasta que llega al inicio o encuentra otro elemento
-		/// </summary>
-		/// <param name="elemento">elemento que eliminar del final</param>
-		/// <remarks>
-		/// Creado para eliminar los elementos insertados al alargar la lista con <see cref="ILista{T}.Longitud"/>
-		/// </remarks>
-		/// <returns>Ocurrencias de elemento quitadas</returns>
-		int BorrarUltimos(T elemento);
-
-		/// <summary>
 		/// Elimina todos los elementos de la lista, dejándola vacía
 		/// </summary>
 		void BorrarTodos();
+
+		/// <summary>
+		/// Borra todas las ocurrencias <c>elemento</c> de la lista y devuelve la cantidad de veces que estaba en la lista
+		/// </summary>
+		/// <param name="elemento">elemento que quitar</param>
+		/// <returns>Número de veces que <c>elemento</c> estaba en la lista</returns>
+		int Eliminar(T elemento);
 
 		/// <summary>
 		/// Devuelve el primer elemento de la lista, si tiene
@@ -208,6 +185,9 @@ namespace Listas
 		/// <returns><c>true</c> si <c>elemento</c> se encuentra en la lista o <c>false</c> si no está</returns>
 		bool Pertenece(T elemento);
 
-		
+		/// <summary>
+		/// Invierte el orden de los elementos de la lista
+		/// </summary>
+		void Invertir();
 	}
 }

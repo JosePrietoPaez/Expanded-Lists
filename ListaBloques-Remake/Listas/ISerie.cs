@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Listas
 {
-	public interface ISerie<T> : ILista<T>
+	public interface ISerie<T> : IListaArbitraria<T>
 	{
 		string Nombre { get; set; }
 

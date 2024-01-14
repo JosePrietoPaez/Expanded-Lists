@@ -65,9 +65,9 @@ namespace Operaciones
 		public static ISerie<long> DescompsicionEnPrimos(long num)
 		{
 			ISerie<long> primos = PrimosHasta(num);
-			AListSerie<long> res = new(primos.Longitud)
+			ArrayListSerie<long> res = new(primos.Longitud)
 			{
-				InstanciaDeRespaldo = 0L,
+				FuncionDeGeneracion = 0L,
 				Longitud = primos.Longitud
 			};
 			Calculos.Descomposicion(primos, res, num);
@@ -94,9 +94,9 @@ namespace Operaciones
 		{
 			if (num < 2)
 			{
-				return new AListSerie<long>();
+				return new ArrayListSerie<long>();
 			}
-			AListSerie<long> serie = new();
+			ArrayListSerie<long> serie = new();
 			serie.PonerFin(2L);
 			if (num == 2)
 			{
@@ -289,14 +289,14 @@ namespace Operaciones
 		{
 			reglas.BorrarTodos(); //Se borra la serie
 			String nombre = reglas.Nombre;
-			reglas.PonerFin(new AListSerie<long>(nombre, cantidad));
+			reglas.PonerFin(new ArrayListSerie<long>(nombre, cantidad));
 			ReglaDivisibilidadBase(reglas[0], num, cantidad, raiz); //Se calcula la regla de positivos
 			ISerie<long> aux, atajo = reglas[0]; //aux guarda la serie que se añadirá y atajo es un atajo
 			bool[] producto = new bool[cantidad]; //guarda si el elemento i de atajo se le resta num
 			OperacionesSeries.IncrementarArray(producto); //Como el primero ya está se incrementa
 			do
 			{
-				aux = new AListSerie<long>(nombre, cantidad);
+				aux = new ArrayListSerie<long>(nombre, cantidad);
 				for (int i = 0; i < atajo.Longitud; i++)
 				{
 					aux.PonerFin(atajo[i] - (producto[i] ? num : 0)); //Se añade en la serie de regla
@@ -340,7 +340,7 @@ namespace Operaciones
 			OperacionesSeries.PotenciaModProgresiva(serie, inv, num, cantidad, 0);
 		}
 
-		public static String ToStringCompleto<T>(this AListSerie<T> lista)
+		public static String ToStringCompleto<T>(this ArrayListSerie<T> lista)
 		{
 			if (lista.Longitud == 0) return "Serie vacía";
 			StringBuilder sb = new();
@@ -355,7 +355,7 @@ namespace Operaciones
 			return sb.ToString();
 		}
 
-		public static String ToStringCompletoInverso<T>(this AListSerie<T> lista)
+		public static String ToStringCompletoInverso<T>(this ArrayListSerie<T> lista)
 		{
 			if (lista.Longitud == 0) return "Serie vacía";
 			StringBuilder sb = new();
