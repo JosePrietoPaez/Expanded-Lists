@@ -1,8 +1,7 @@
 ﻿using Listas;
 using System.Text;
 
-namespace Operaciones
-{
+namespace Operaciones {
 	public class Calculos
 	{
 		private long _raiz;
@@ -15,7 +14,7 @@ namespace Operaciones
 				{
 					throw new ArgumentException("La raiz de los cálculos debe ser mayor que 0");
 				}
-				this._raiz = value;
+				_raiz = value;
 			}
 		}
 
@@ -30,7 +29,7 @@ namespace Operaciones
 			{
 				throw new ArgumentException("La raiz de los cálculos debe ser mayor que 0");
 			}
-			this._raiz = raiz;
+			_raiz = raiz;
 		}
 
 		/**

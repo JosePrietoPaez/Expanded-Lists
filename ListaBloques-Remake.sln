@@ -3,18 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas", "ListaBloques-Remake\Listas\Listas.csproj", "{5737F7D1-70A3-4437-97F4-D48249FA5EE6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Operaciones", "Operaciones\Operaciones.csproj", "{11BCB70C-77E5-4831-9E1D-1DF417C89A84}"
+	ProjectSection(ProjectDependencies) = postProject
+		{24A2ACFD-24AD-4024-8390-D8516C1BB6B4} = {24A2ACFD-24AD-4024-8390-D8516C1BB6B4}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{700E5ABE-0978-4966-BEF0-011CC7CC2298}"
 	ProjectSection(SolutionItems) = preProject
 		Ayuda.txt = Ayuda.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listas.nUnitTests", "Listas.nUnitTests\Listas.nUnitTests.csproj", "{4DC16046-D7AA-477D-B628-17A64015EB58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas.nUnitTests", "Listas.nUnitTests\Listas.nUnitTests.csproj", "{4DC16046-D7AA-477D-B628-17A64015EB58}"
+	ProjectSection(ProjectDependencies) = postProject
+		{24A2ACFD-24AD-4024-8390-D8516C1BB6B4} = {24A2ACFD-24AD-4024-8390-D8516C1BB6B4}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgramaDivisibilidadCLI", "ProgramaDivisibilidadCLI\ProgramaDivisibilidadCLI.csproj", "{4F70911F-5BB6-48F4-936C-82E259BD3F15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgramaDivisibilidadCLI", "ProgramaDivisibilidadCLI\ProgramaDivisibilidadCLI.csproj", "{4F70911F-5BB6-48F4-936C-82E259BD3F15}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas", "Listas\Listas.csproj", "{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,10 +28,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5737F7D1-70A3-4437-97F4-D48249FA5EE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5737F7D1-70A3-4437-97F4-D48249FA5EE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5737F7D1-70A3-4437-97F4-D48249FA5EE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5737F7D1-70A3-4437-97F4-D48249FA5EE6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{11BCB70C-77E5-4831-9E1D-1DF417C89A84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{11BCB70C-77E5-4831-9E1D-1DF417C89A84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11BCB70C-77E5-4831-9E1D-1DF417C89A84}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -38,6 +40,10 @@ Global
 		{4F70911F-5BB6-48F4-936C-82E259BD3F15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F70911F-5BB6-48F4-936C-82E259BD3F15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F70911F-5BB6-48F4-936C-82E259BD3F15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

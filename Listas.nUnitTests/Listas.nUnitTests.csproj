@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ListaBloques-Remake\Listas\Listas.csproj" />
+    <ProjectReference Include="..\Listas\Listas.csproj" />
   </ItemGroup>
 
 </Project>
