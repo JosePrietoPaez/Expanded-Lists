@@ -41,6 +41,21 @@ namespace Listas {
 		}
 
 		/// <summary>
+		/// Inserta el elemento en la lista
+		/// </summary>
+		/// <remarks>
+		/// Equivalente a 
+		/// <see cref="ILista{T}.Sumar(T)"/>
+		/// </remarks>
+		/// Necesita que <see cref="ILista{T}.FuncionDeGeneracion"/> no sea nula si la lista no admite elementos nulos
+		/// <returns></returns>
+		static ILista<T> operator +(IListaArbitraria<T> lista, (T, int) tupla) {
+			IListaArbitraria<T> nueva = lista.Clonar();
+			nueva.Poner(tupla.Item1, tupla.Item2);
+			return nueva;
+		}
+
+		/// <summary>
 		/// Coloca <c>elemento</c> al principio de la lista
 		/// </summary>
 		/// <param name = "elemento">elemento que colocar</param>
@@ -124,5 +139,16 @@ namespace Listas {
 		/// Nueva lista con los elementos repetidos
 		/// </returns>
 		IListaArbitraria<T> Multiplicar(int factor);
+
+		/// <summary>
+		/// Crea una lista nueva igual a la llamada, la lista será del mismo tipo
+		/// </summary>
+		/// <remarks>
+		/// Las interfaces que extiendan de <see cref="ILista{T}"/> deberían sobreescribir este método
+		/// </remarks>
+		/// <returns>
+		/// Lista igual a la llamada
+		/// </returns>
+		new IListaArbitraria<T> Clonar();
 	}
 }

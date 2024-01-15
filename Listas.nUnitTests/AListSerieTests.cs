@@ -410,5 +410,28 @@ namespace Listas.nUnitTests {
 					[indice++%_listaConElementos.Longitud])); //Asegura que se recorra circularmente
 			}
 		}
+
+		[TestCase(100)]
+		[TestCase(-1)]
+		[TestCase(1)]
+		[TestCase(0)]
+		public void Demostracion_GeneracionDeElementos(int value) {
+			static double funcion(int num) => Math.Pow(2, num);
+			var serie = new ArrayListSerie<double>(funcion);
+
+			if (value < 0) {
+				Assert.Throws<ArgumentOutOfRangeException>(() => serie.Longitud = value);
+			} else {
+				serie.Longitud = value;
+				Assert.That(serie.Longitud, Is.EqualTo(value));
+
+				for (int i = 0; i < value; i++) {
+					Assert.That(serie[i], Is.EqualTo(funcion(i)));
+				}
+			}
+
+
+
+        }
 	}
 }

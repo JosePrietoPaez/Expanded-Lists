@@ -6,41 +6,26 @@ namespace Listas
 	/// <summary>
 	/// Las listas contienen elementos del tipo parámetro <c>T</c>, dependiendo de la implementación podrán permitir elementos nulos o no
 	/// </summary>
+	/// <remarks>
+	/// Todas las listas de esta biblioteca implementan esta interfaz
+	/// <para>
+	/// Las otras subinterfaces ofrecen más métodos y propiedades
+	/// </para>
+	/// </remarks>
 	/// <typeparam name="T">
 	/// </typeparam>
 	public interface ILista<T> : IEnumerable<T>
 	{
 		/// <summary>
-		/// Esta propiedad permite ver si la lista esta vacía al leerla y ponerla vacía si se escribe
+		/// Esta propiedad permite ver si la lista esta vacía
 		/// </summary>
-		/// <remarks>
-		/// En el caso de intentar operación <c>lista.Vacia = false</c>, se insertará a <c>InstanciaDeRespaldo</c> si la lista estaba vacía
-		/// </remaks>
-		/// <exception cref="InvalidOperationException"> si <see cref="FuncionDeGeneracion"/> es nula y la lista no permite elementos nulos</exception>
-		bool Vacia { get; set; }
+		bool Vacia { get;}
 
 		/// <summary>
-		/// Esta propiedad permite obtener la longitud de la lista al leerla y cambiarla al escribirla
+		/// Esta propiedad permite obtener la longitud de la lista
 		/// </summary>
-		/// <remarks>
-		/// En el caso de aumentar la longiud mediante esta propiedad, se rellenará la lista con referencias a <c>InstanciaDeRespaldo</c>
-		/// <para>
-		/// En el caso de reducirla se eliminarán los últimos elementos, la cantidad dependiendo del sustraendo
-		/// </para>
-		/// </remarks>
-		int Longitud { get; set; }
-
-		/// <summary>
-		/// Esta propiedad representa a la función que genera nuevas instancias de <c>T</c> que se usarán para rellenar la lista
-		/// en el caso de que se intente poner <c>Vacia</c> a <c>true</c> o <c>Longitud</c> a un valor mayor al actual
-		/// </summary>
-		/// <remarks>
-		/// El argumento usado para la función será el tamaño de la lista
-		/// <para>
-		/// Por defecto genera la instancia por defecto de la clase, por ello se recomienda instanciarla en el constructor o mediante esta propiedad
-		/// </para>
-		/// </remarks>
-		Func<int,T?> FuncionDeGeneracion { get; set; }
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		int Longitud { get;}
 
 		/// <summary>
 		/// Obtiene el elemento en la posición <c>posicion</c>
@@ -55,37 +40,26 @@ namespace Listas
 		T this[int posicion] { get; }
 
 		/// <summary>
-		/// Introduce <see cref="ILista{T}.FuncionDeGeneracion"/> en la lista
+		/// Inserta el elemento en la lista
 		/// </summary>
-		/// <exception cref="InvalidOperationException"></exception>
 		/// <remarks>
 		/// Equivalente a 
-		/// <c>lista.Longitud++</c>
+		/// <see cref="ILista{T}.Sumar(T)"/>
 		/// </remarks>
 		/// Necesita que <see cref="ILista{T}.FuncionDeGeneracion"/> no sea nula si la lista no admite elementos nulos
 		/// <returns></returns>
-		static ILista<T> operator ++(ILista<T> lista) {
-			if (lista.FuncionDeGeneracion is T) {
-				throw new InvalidOperationException("La instancia de respaldo del objeto es nula");
-			}
-			lista.Longitud++;
-			return lista;
-		}
+		static ILista<T> operator +(ILista<T> lista, T elemento) => lista.Sumar(elemento);
 
 		/// <summary>
-		/// Elimina el último elemento de la lista 
+		/// Inserta el elemento en la lista
 		/// </summary>
-		/// <exception cref="InvalidOperationException"></exception>
 		/// <remarks>
 		/// Equivalente a 
-		/// <c>lista.Longitud--</c>
+		/// <see cref="ILista{T}.Sumar(T)"/>
 		/// </remarks>
 		/// Necesita que <see cref="ILista{T}.FuncionDeGeneracion"/> no sea nula si la lista no admite elementos nulos
 		/// <returns></returns>
-		static ILista<T> operator --(ILista<T> lista) {
-			lista.Longitud--;
-			return lista;
-		}
+		static ILista<T> operator +(ILista<T> primera, ILista<T> segunda) => primera.Unir(segunda);
 
 		/// <summary>
 		/// Introduce <c>elemento</c> en la lista
@@ -189,5 +163,42 @@ namespace Listas
 		/// Invierte el orden de los elementos de la lista
 		/// </summary>
 		void Invertir();
+
+		/// <summary>
+		/// Inserta el elemento en la lista
+		/// </summary>
+		/// <remarks>
+		/// La posición depende de la implementación
+		/// <para>Para saber en que posición se encuentra al insertarla use
+		/// <see cref="ILista{T}.Insertar(T)"/>
+		/// </para>
+		/// </remarks>
+		/// <returns></returns>
+		ILista<T> Sumar(T elemento);
+
+		/// <summary>
+		/// Crea una lista con los elementos de la lista llamada y la pasada como argumento
+		/// </summary>
+		/// <remarks>
+		/// La posición de los elementos depende de la implementación
+		/// <para>Para saber en que posición se encuentra al insertarla use
+		/// <see cref="ILista{T}.Insertar(T)"/>
+		/// </para>
+		/// </remarks>
+		/// <returns>
+		/// Lista con los elementos de las dos listas
+		/// </returns>
+		ILista<T> Unir(ILista<T> segunda);
+
+		/// <summary>
+		/// Crea una lista nueva igual a la llamada, la lista será del mismo tipo
+		/// </summary>
+		/// <remarks>
+		/// Las interfaces que extiendan de <see cref="ILista{T}"/> deberían sobreescribir este método
+		/// </remarks>
+		/// <returns>
+		/// Lista igual a la llamada
+		/// </returns>
+		ILista<T> Clonar();
 	}
 }

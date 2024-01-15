@@ -67,7 +67,7 @@ namespace Operaciones
 			ISerie<long> primos = PrimosHasta(num);
 			ArrayListSerie<long> res = new(primos.Longitud)
 			{
-				FuncionDeGeneracion = 0L,
+				FuncionDeGeneracion = num => 0L,
 				Longitud = primos.Longitud
 			};
 			Calculos.Descomposicion(primos, res, num);

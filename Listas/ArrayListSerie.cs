@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 
-namespace Listas
-{
+namespace Listas {
 	public class ArrayListSerie<T> : ISerie<T>
 	{
 		private string _nombre;
 		private List<T> _serie;
 		private Func<int,T?> _generadora = num=>default;
+
+		private T? Generar() {
+			return _generadora.Invoke(_serie.Count);
+		}
 
 		/// <inheritdoc/>
 		public string Nombre
@@ -48,9 +51,10 @@ namespace Listas
 				{
 					while (value > siz)
 					{
-						if (!CompatibleEnLista(_generadora.Invoke(siz-1))) throw new InvalidOperationException("");
+
+						if (!CompatibleEnLista(Generar())) throw new InvalidOperationException("");
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
-						_serie.Add(_generadora.Invoke(siz-1)); //Ignorar el warning
+						_serie.Add(Generar()); //Ignorar el warning
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
 						siz++;
 					}
@@ -81,6 +85,17 @@ namespace Listas
 		/// La serie tendrá todos los elementos de la lista y su función generadora
 		/// </remarks>
 		/// <param name="lista">lista que copiar</param>
+		public ArrayListSerie(ISerie<T> lista) : this(lista as ILista<T>){
+			_generadora = lista?.FuncionDeGeneracion ?? (num => default);
+		}
+
+		/// <summary>
+		/// Crea una serie a partir de otra lista con el nombre vacío
+		/// </summary>
+		/// <remarks>
+		/// La serie tendrá todos los elementos de la lista y su función generadora
+		/// </remarks>
+		/// <param name="lista">lista que copiar</param>
 		public ArrayListSerie(ILista<T> lista)
 		{
 			_serie = [];
@@ -92,7 +107,6 @@ namespace Listas
 					_serie.Add(elem);
 				}
 			}
-			_generadora = lista?.FuncionDeGeneracion ?? (num => default);
 			_nombre = string.Empty;
 		}
 
@@ -102,7 +116,8 @@ namespace Listas
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ArrayListSerie{T}"/> vacío con nombre <c>nombre</c> y capacidad inicial <c>capacidad</c>
+		/// Crea un objeto <see cref="ArrayListSerie{T}"/>
+		/// vacío con nombre <c>nombre</c> y capacidad inicial <c>capacidad</c>
 		/// </summary>
 		public ArrayListSerie(string nombre, int capacidad)
 		{
@@ -111,7 +126,8 @@ namespace Listas
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ArrayListSerie{T}"/> vacío con nombre <c>nombre</c> y capacidad inicial <c>capacidad</c>
+		/// Crea un objeto <see cref="ArrayListSerie{T}"/>
+		/// vacío con nombre <c>nombre</c> y capacidad inicial <c>capacidad</c>
 		/// </summary>
 		public ArrayListSerie(string nombre, int capacidad, Func<int,T?> generadora) : this(nombre,capacidad) {
 			_generadora = generadora;
@@ -128,7 +144,8 @@ namespace Listas
 		public ArrayListSerie(int cap) : this("", cap) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ArrayListSerie{T}"/> vacío con el nombre vacío, capacidad inicial <c>cap</c> y la función generadora proporcionada
+		/// Crea un objeto <see cref="ArrayListSerie{T}"/>
+		/// vacío con el nombre vacío, capacidad inicial <c>cap</c> y la función generadora proporcionada
 		/// </summary>
 		public ArrayListSerie(int cap, Func<int,T?> generadora) : this("", cap) {
 			_generadora = generadora;
@@ -140,14 +157,16 @@ namespace Listas
 		public ArrayListSerie() : this("", 10) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ArrayListSerie{T}"/> vacío con el nombre vacío, capacidad inicial 10 y la función generadora proporcionada
+		/// Crea un objeto <see cref="ArrayListSerie{T}"/>
+		/// vacío con el nombre vacío, capacidad inicial 10 y la función generadora proporcionada
 		/// </summary>
 		public ArrayListSerie(Func<int,T?> generadora) : this("", 10) {
 			_generadora = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ArrayListSerie{T}"/> vacío con nombre <c>nombre</c> y los elementos de <c>col</c>
+		/// Crea un objeto <see cref="ArrayListSerie{T}"/>
+		/// vacío con nombre <c>nombre</c> y los elementos de <c>col</c>
 		/// </summary>
 		public ArrayListSerie(string nombre, ICollection<T> col)
 		{
@@ -156,19 +175,22 @@ namespace Listas
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ArrayListSerie{T}"/> vacío con el nombre vacío y los elementos de <c>col</c>
+		/// Crea un objeto <see cref="ArrayListSerie{T}"/>
+		/// vacío con el nombre vacío y los elementos de <c>col</c>
 		/// </summary>
 		public ArrayListSerie(ICollection<T> col) : this("", col) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ArrayListSerie{T}"/> vacío con el nombre vacío, los elementos de <c>col</c> y la función generadora proporcionada
+		/// Crea un objeto <see cref="ArrayListSerie{T}"/>
+		/// vacío con el nombre vacío, los elementos de <c>col</c> y la función generadora proporcionada
 		/// </summary>
 		public ArrayListSerie(ICollection<T> col, Func<int,T?> generadora) : this("", col) {
 			_generadora = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ArrayListSerie{T}"/> vacío con el nombre vacío, los elementos de <c>col</c> y la función generadora proporcionada
+		/// Crea un objeto <see cref="ArrayListSerie{T}"/>
+		/// vacío con el nombre vacío, los elementos de <c>col</c> y la función generadora proporcionada
 		/// </summary>
 		public ArrayListSerie(ICollection<T> col, string nombre, Func<int, T?> generadora) : this(nombre, col) {
 			_generadora = generadora;
@@ -407,7 +429,8 @@ namespace Listas
 				nueva = new ArrayListSerie<T>();
 			} else {
 				nueva = new(this);
-				for (int i = 0; i < _serie.Count*(Math.Abs(factor)-1); i++) { //Si se produce OverflowException no es mi problema, la lista no podría contenerlo
+				//Si se produce OverflowException no es mi problema, la lista no podría contenerlo
+				for (int i = 0; i < _serie.Count*(Math.Abs(factor)-1); i++) { 
 					nueva.PonerFin(_serie[i%_serie.Count]);
 				}
 				if (factor < 0) {
@@ -424,6 +447,28 @@ namespace Listas
 		public int Insertar(T elemento) {
 			_serie.Add(elemento);
 			return _serie.Count-1;
+		}
+
+		public ILista<T> Sumar(T elemento) {
+			var nueva = new ArrayListSerie<T>(this);
+			nueva.Insertar(elemento);
+			return nueva;
+		}
+
+		public ILista<T> Unir(ILista<T> segunda) {
+			var nueva = new ArrayListSerie<T>(this);
+			foreach (var item in segunda) {
+				nueva.Insertar(item);
+			}
+			return nueva;
+		}
+
+		public IListaArbitraria<T> Clonar() {
+			return new ArrayListSerie<T>(this);
+		}
+
+		ILista<T> ILista<T>.Clonar() {
+			return Clonar();
 		}
 	}
 }
