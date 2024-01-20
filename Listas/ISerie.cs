@@ -22,7 +22,7 @@ namespace Listas
 		/// Esta propiedad permite obtener la longitud de la lista al leerla y cambiarla al escribirla
 		/// </summary>
 		/// <remarks>
-		/// En el caso de aumentar la longiud mediante esta propiedad, se rellenará la lista con referencias a <c>InstanciaDeRespaldo</c>
+		/// En el caso de aumentar la longitud mediante esta propiedad, se rellenará la lista con referencias a <c>InstanciaDeRespaldo</c>
 		/// <para>
 		/// En el caso de reducirla se eliminarán los últimos elementos, la cantidad dependiendo del sustraendo
 		/// </para>
@@ -78,6 +78,6 @@ namespace Listas
 		/// <summary>
 		/// Devuelve un objeto String que representa la lista, pero con los elementos en el orden inverso
 		/// </summary>
-		String SringInverso();
+		String StringInverso();
 	}
 }

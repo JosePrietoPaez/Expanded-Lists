@@ -418,14 +418,17 @@ namespace Listas {
 			return _serie.GetHashCode() ^ _nombre.GetHashCode();
 		}
 
-		string ISerie<T>.SringInverso()
+		string ISerie<T>.StringInverso()
 		{
-			throw new NotImplementedException();
+			_serie.Reverse();
+			string? inverso = _serie.ToString();
+			_serie.Reverse();
+			return _nombre + inverso??"";
 		}
 
 		public IListaArbitraria<T> Multiplicar(int factor) {
 			ArrayListSerie<T> nueva;
-			if (factor == 0 || _serie.Count == 0) { //Multplicar por 0 da cero
+			if (factor == 0 || _serie.Count == 0) { //Multiplicar por 0 da cero
 				nueva = new ArrayListSerie<T>();
 			} else {
 				nueva = new(this);
@@ -469,6 +472,23 @@ namespace Listas {
 
 		ILista<T> ILista<T>.Clonar() {
 			return Clonar();
+		}
+
+		public ILista<T> Restar(T elemento) {
+			var nueva = Clonar();
+			nueva.Eliminar(elemento);
+			return nueva;
+		}
+
+		public ILista<T> Diferencia(ILista<T> lista) {
+			var nueva = Clonar();
+			foreach (var item in lista)
+			{
+				if (nueva.Pertenece(item)) {
+					nueva.Eliminar(item);
+				}
+			}
+			return nueva;
 		}
 	}
 }

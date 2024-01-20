@@ -340,7 +340,7 @@ namespace Operaciones
 			OperacionesSeries.PotenciaModProgresiva(serie, inv, num, cantidad, 0);
 		}
 
-		public static String ToStringCompleto<T>(this ArrayListSerie<T> lista)
+		public static string ToStringCompleto<T>(this ISerie<T> lista)
 		{
 			if (lista.Longitud == 0) return "Serie vacía";
 			StringBuilder sb = new();
@@ -355,7 +355,7 @@ namespace Operaciones
 			return sb.ToString();
 		}
 
-		public static String ToStringCompletoInverso<T>(this ArrayListSerie<T> lista)
+		public static string ToStringCompletoInverso<T>(this ISerie<T> lista)
 		{
 			if (lista.Longitud == 0) return "Serie vacía";
 			StringBuilder sb = new();

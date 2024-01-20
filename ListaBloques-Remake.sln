@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{700E5ABE-0978-4966-BEF0-011CC7CC2298}"
 	ProjectSection(SolutionItems) = preProject
 		Ayuda.txt = Ayuda.txt
+		AyudaCorta.txt = AyudaCorta.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas.nUnitTests", "Listas.nUnitTests\Listas.nUnitTests.csproj", "{4DC16046-D7AA-477D-B628-17A64015EB58}"
@@ -16,7 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgramaDivisibilidadCLI", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas", "Listas\Listas.csproj", "{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listas.Bloques", "Listas.Bloques\Listas.Bloques.csproj", "{15E10E52-43D0-45EA-8B8E-09F82029E9E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas.Bloques", "Listas.Bloques\Listas.Bloques.csproj", "{15E10E52-43D0-45EA-8B8E-09F82029E9E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D45AE9F0-E077-4947-8DC7-6CB2C04D57E4}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

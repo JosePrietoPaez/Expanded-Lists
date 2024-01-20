@@ -62,7 +62,7 @@ namespace Listas {
 		void PonerInicio(T elemento);
 
 		/// <summary>
-		/// Coloca a <c>elemento</c> en la posición posicion
+		/// Coloca a <c>elemento</c> en la posición <c>posicion</c>
 		/// </summary>
 		/// <remarks><c>posicion</c> no puede ser menor que 0 o mayor que el índice del último elemento</remarks>
 		/// <param name="elemento">elemento que colocar</param>
@@ -79,14 +79,14 @@ namespace Listas {
 		/// Coloca el elemento <c>elemento num</c> veces seguidas en la lista, desde la posición <c>posicion</c>
 		/// </summary>
 		/// <remarks>
-		/// <c>posicion} no puede ser menor que 0 o mayor que el índice del último elemento
+		/// <c>posicion</c> no puede ser menor que 0 o mayor que el índice del último elemento
 		/// <para>
 		/// Si <c>num</c> no es positivo, el método no hará nada
 		/// </para>
 		/// </remarks>
 		/// <param name="elemento">elemento el elemento que colocar</param>
 		/// <param name="num">num la cantidad de veces que se pondrá</param>
-		/// <param name="posicion">posición por la que se enpieza a poner</param>
+		/// <param name="posicion">posición por la que se empieza a poner</param>
 		void PonerVarios(T elemento, int num, int posicion);
 
 		/// <summary>
@@ -117,7 +117,7 @@ namespace Listas {
 		/// </summary>
 		/// <param name="elemento">elemento que eliminar del final</param>
 		/// <remarks>
-		/// Creado para eliminar los elementos insertados al alargar la lista con <see cref="ILista{T}.Longitud"/>
+		/// Pensado para la versión de Java de esta biblioteca, tiene más utilidad en <see cref="ISerie{T}"/>
 		/// </remarks>
 		/// <returns>Ocurrencias de elemento quitadas</returns>
 		int BorrarUltimos(T elemento);
@@ -130,9 +130,9 @@ namespace Listas {
 		/// <para>
 		/// Por ejemplo para <c>lista == [1,2,3]</c>, haciendo <c>lista.Multiplicar(2)</c> obtenemos <c>lista == [1,2,3,1,2,3]</c>
 		/// </para>
-		/// Multplicar por un número negativo realiza la misma operación, pero invirtiendo la lista
+		/// Multiplicar por un número negativo realiza la misma operación, pero invirtiendo la lista
 		/// <para>
-		/// Multiplicar por 0 hace que se vacie la lista
+		/// Multiplicar por 0 hace que se vacíe la lista
 		/// </para>
 		/// </remarks>
 		/// <returns>
@@ -144,7 +144,7 @@ namespace Listas {
 		/// Crea una lista nueva igual a la llamada, la lista será del mismo tipo
 		/// </summary>
 		/// <remarks>
-		/// Las interfaces que extiendan de <see cref="ILista{T}"/> deberían sobreescribir este método
+		/// Las interfaces que extiendan de <see cref="ILista{T}"/> deberían sobrescribir este método
 		/// </remarks>
 		/// <returns>
 		/// Lista igual a la llamada

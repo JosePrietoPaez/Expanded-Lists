@@ -7,126 +7,148 @@ namespace Operaciones
 {
 	public class OperacionesSeries
 	{
-		/**
-     * Escribe, a partir de la posici&oacute;n {@code pos}, las potencias de {@code raiz} en aumento desde {@code desde} hasta {@code hasta}
-     * <p>Ambos {@code desde} y {@code hasta} est&aacute;n incluidos</p>
-     * <p>{@code hasta} no puede ser menor que {@code desde} y ninguno puede ser menor que 0</p>
-     * Se alargar&aacute; la serie si no cabe
-     * @param serie la serie que modificar
-     * @param raiz la raiz de la potencia
-     * @param pos la posici&oacute;n de inicio
-     * @param desde exponente de la primera potencia
-     * @param hasta exponente de la &uacute;ltima potencia
-     * @param incremento diferencia entre el exponente en cada posici&oacute;n adyacente
-     */
-		public static void PotenciaProgresiva(ISerie<long> serie, long raiz, int desde, int hasta, int incremento, int pos)
+		/// <summary>
+		/// Escribe, a partir de la posición <c>pos</c>, las potencias de <c>base</c> en aumento desde <c>inicio</c> hasta <c>fin</c>
+		/// </summary>
+		/// <remarks>
+		/// Ambos <c>inicio</c> y <c>fin</c> están incluidos
+		/// <para>
+		/// <c>fin</c> no puede ser menor que <c>inicio</c> y ninguno puede ser menor que 0
+		/// </para>
+		/// </remarks>
+		/// <param name="fin">exponente de la última potencia</param>
+		/// <param name="incremento">diferencia entre el exponente en cada posición adyacente</param>
+		/// <param name="inicio">exponente de la primera potencia</param>
+		/// <param name="pos">la posición de inicio</param>
+		/// <param name="base">la base de la potencia</param>
+		/// <param name="serie">la serie que modificar</param>
+		public static void PotenciaProgresiva(ISerie<long> serie, long @base, int inicio, int fin, int incremento, int pos)
 		{
-			if (desde < 0 || hasta < 0) throw new ArgumentOutOfRangeException(nameof(desde));
-			ArgumentOutOfRangeException.ThrowIfGreaterThan(desde, hasta);
-			int iteraciones = (hasta - desde) / incremento;
-			long num = (long)Math.Pow(raiz, desde);
-			for (int i = pos, cont = desde; i <= iteraciones; i++)
+			if (inicio < 0 || fin < 0) throw new ArgumentOutOfRangeException(nameof(inicio));
+			ArgumentOutOfRangeException.ThrowIfGreaterThan(inicio, fin);
+			int iteraciones = (fin - inicio) / incremento;
+			long num = (long)Math.Pow(@base, inicio);
+			for (int i = pos, cont = inicio; i <= iteraciones; i++)
 			{
 				serie.Poner(num, i);
 				cont += incremento;
-				num = (long)Math.Pow(raiz, cont);
+				num = (long)Math.Pow(@base, cont);
 			}
 		}
 
-		/**
-		 * Escribe, a partir de la posici&oacute;n {@code pos}, las potencias de {@code raiz} en aumento desde {@code desde} hasta {@code hasta}
-		 * <p>Ambos {@code desde} y {@code hasta} est&aacute;n incluidos</p>
-		 * <p>{@code hasta} no puede ser menor que {@code desde}</p>
-		 * Se alargar&aacute; la serie si no cabe
-		 * @param serie la serie que modificar
-		 * @param raiz la raiz de la potencia
-		 * @param pos la posici&oacute;n de inicio
-		 * @param desde exponente de la primera potencia
-		 * @param hasta exponente de la &uacute;ltima potencia
-		 * @param incremento diferencia entre el exponente en cada posici&oacute;n adyacente
-		 */
-		public static void PotenciaProgresiva(ISerie<Double> serie, double raiz, double desde, double hasta, double incremento, int pos)
+		/// <summary>
+		/// Escribe, a partir de la posición <c>pos</c>, las potencias de <c>base</c> en aumento desde <c>inicio</c> hasta <c>fin</c>
+		/// </summary>
+		/// <remarks>
+		/// Ambos <c>inicio</c> y <c>fin</c> están incluidos
+		/// <para>
+		/// <c>fin</c> no puede ser menor que <c>inicio</c> y ninguno puede ser menor que 0
+		/// </para>
+		/// </remarks>
+		/// <param name="fin">exponente de la última potencia</param>
+		/// <param name="incremento">diferencia entre el exponente en cada posición adyacente</param>
+		/// <param name="inicio">exponente de la primera potencia</param>
+		/// <param name="pos">la posición de inicio</param>
+		/// <param name="base">la base de la potencia</param>
+		/// <param name="serie">la serie que modificar</param>
+		public static void PotenciaProgresiva(ISerie<double> serie, double @base, double inicio, double fin, double incremento, int pos)
 		{
-			if (desde > hasta) throw new ArgumentOutOfRangeException("La última potencia no puede ser menor que la primera");
-			double num = Math.Pow(raiz, desde), cont = desde;
-			double iteraciones = (hasta - desde) / incremento;
+			if (inicio > fin) throw new ArgumentOutOfRangeException("La última potencia no puede ser menor que la primera");
+			double num = Math.Pow(@base, inicio), cont = inicio;
+			double iteraciones = (fin - inicio) / incremento;
 			for (int i = pos; i <= iteraciones; i++)
 			{
 				serie.Poner(num, i);
 				cont += incremento;
-				num = Math.Pow(raiz, cont);
+				num = Math.Pow(@base, cont);
 			}
 		}
 
-		/**
-		 * Escribe, a partir de la posici&oacute;n {@code pos}, las potencias de {@code raiz} en aumento desde {@code desde} hasta {@code hasta}
-		 * <p>Ambos {@code desde} y {@code hasta} est&aacute;n incluidos</p>
-		 * <p>{@code hasta} no puede ser menor que {@code desde} y ninguno puede ser menor que 0</p>
-		 * Se alargar&aacute; la serie si no cabe
-		 * @param serie la serie que modificar
-		 * @param raiz la raiz de la potencia
-		 * @param pos la posici&oacute;n de inicio
-		 * @param mod m&oacute;dulo que aplicar a la potencia
-		 * @param desde exponente de la primera potencia
-		 * @param hasta exponente de la &uacute;ltima potencia
-		 * @param incremento diferencia entre el exponente en cada posici&oacute;n adyacente
-		 */
-		public static void PotenciaModProgresiva(ISerie<long> serie, long raiz, long mod, int desde, int hasta, int incremento, int pos)
+		/// <summary>
+		/// Escribe, a partir de la posición <c>pos</c>, las potencias de <c>base</c> en aumento desde <c>inicio</c> hasta <c>fin</c>
+		/// </summary>
+		/// <remarks>
+		/// Ambos <c>inicio</c> y <c>fin</c> están incluidos
+		/// <para>
+		/// <c>fin</c> no puede ser menor que <c>inicio</c> y ninguno puede ser menor que 0
+		/// </para>
+		/// </remarks>
+		/// <param name="fin">exponente de la última potencia</param>
+		/// <param name="incremento">diferencia entre el exponente en cada posición adyacente</param>
+		/// <param name="inicio">exponente de la primera potencia</param>
+		/// <param name="mod">modulo que aplicar a la potencia</param>
+		/// <param name="pos">la posición de inicio</param>
+		/// <param name="base">la base de la potencia</param>
+		/// <param name="serie">la serie que modificar</param>
+		public static void PotenciaModProgresiva(ISerie<long> serie, long @base, long mod, int inicio, int fin, int incremento, int pos)
 		{
-			if (desde < 0 || hasta < 0) throw new ArgumentException("Las potencias son de exponentes no negativos");
-			ArgumentOutOfRangeException.ThrowIfGreaterThan(desde, hasta,"La última potencia no puede ser menor que la primera");
-			long num = (long)Math.Pow(raiz, desde);
-			int iteraciones = (hasta - desde) / incremento;
-			for (int i = pos, cont = desde; i <= iteraciones; i++)
+			if (inicio < 0 || fin < 0) throw new ArgumentException("Las potencias son de exponentes no negativos");
+			ArgumentOutOfRangeException.ThrowIfGreaterThan(inicio, fin,"La última potencia no puede ser menor que la primera");
+			long num = (long)Math.Pow(@base, inicio);
+			int iteraciones = (fin - inicio) / incremento;
+			for (int i = pos, cont = inicio; i <= iteraciones; i++)
 			{
 				serie.Poner(num, i);
 				cont += incremento;
 				for (int j = 0; j < incremento; j++)
 				{
-					num = CalculosEstatico.ProductoMod(num, raiz, mod);
+					num = CalculosEstatico.ProductoMod(num, @base, mod);
 				}
 			}
 		}
 
-		/**
-		 * Escribe, a partir de la posici&oacute;n {@code pos}, las primeras {@code hasta} potencias de {@code raiz}, desde 1
-		 * <p>{@code hasta} no puede ser menor que 1 y ninguno puede ser menor que 0</p>
-		 * Se alargar&aacute; la serie si no cabe
-		 * @param serie la serie que modificar
-		 * @param raiz la raiz de la potencia
-		 * @param pos la posici&oacute;n de inicio
-		 * @param hasta exponente de la &uacute;ltima potencia
-		 */
-		public static void PotenciaProgresiva(ISerie<long> serie, long raiz, int hasta, int pos)
+		/// <summary>
+		/// Escribe, a partir de la posición <c>pos</c>, las potencias de <c>base</c> en aumento desde 1 hasta <c>fin</c>
+		/// </summary>
+		/// <remarks>
+		/// Ambos <c>inicio</c> y <c>fin</c> están incluidos
+		/// <para>
+		/// <c>fin</c> no puede ser menor que <c>inicio</c> y ninguno puede ser menor que 0
+		/// </para>
+		/// </remarks>
+		/// <param name="fin">exponente de la última potencia</param>
+		/// <param name="pos">la posición de inicio</param>
+		/// <param name="base">la base de la potencia</param>
+		/// <param name="serie">la serie que modificar</param>
+		public static void PotenciaProgresiva(ISerie<long> serie, long @base, int fin, int pos)
 		{
-			PotenciaProgresiva(serie, raiz, 1, hasta, 1, pos);
+			PotenciaProgresiva(serie, @base, 1, fin, 1, pos);
 		}
 
-		/**
-		 * Escribe, a partir de la posici&oacute;n {@code pos}, las primeras {@code hasta} potencias de {@code raiz}, desde 1
-		 * <p>{@code hasta} no puede ser menor que 1 y ninguno puede ser menor que 0</p>
-		 * Se alargar&aacute; la serie si no cabe
-		 * @param serie la serie que modificar
-		 * @param raiz la raiz de la potencia
-		 * @param pos la posici&oacute;n de inicio
-		 * @param hasta exponente de la &uacute;ltima potencia
-		 */
-		public static void PotenciaProgresiva(ISerie<Double> serie, double raiz, double hasta, int pos)
+		/// <summary>
+		/// Escribe, a partir de la posición <c>pos</c>, las potencias de <c>base</c> en aumento desde 1 hasta <c>fin</c>
+		/// </summary>
+		/// <remarks>
+		/// Ambos <c>inicio</c> y <c>fin</c> están incluidos
+		/// <para>
+		/// <c>fin</c> no puede ser menor que <c>inicio</c> y ninguno puede ser menor que 0
+		/// </para>
+		/// </remarks>
+		/// <param name="fin">exponente de la última potencia</param>
+		/// <param name="pos">la posición de inicio</param>
+		/// <param name="base">la base de la potencia</param>
+		/// <param name="serie">la serie que modificar</param>
+		public static void PotenciaProgresiva(ISerie<double> serie, double @base, double fin, int pos)
 		{
-			PotenciaProgresiva(serie, raiz, 1, hasta, 1, pos);
+			PotenciaProgresiva(serie, @base, 1, fin, 1, pos);
 		}
 
-		/**
-		 * Escribe, a partir de la posici&oacute;n {@code pos}, las potencias de {@code raiz} en aumento desde 1 hasta {@code hasta}
-		 * <p> 1 y {@code hasta} est&aacute;n incluidos</p>
-		 * <p>{@code hasta} no puede ser menor que 1 y no puede ser menor que 0</p>
-		 * Se alargar&aacute; la serie si no cabe
-		 * @param serie la serie que modificar
-		 * @param raiz la raiz de la potencia
-		 * @param pos la posici&oacute;n de inicio
-		 * @param mod m&oacute;dulo que aplicar a la potencia
-		 * @param hasta exponente de la &uacute;ltima potencia
-		 */
+		/// <summary>
+		/// Escribe, a partir de la posición <c>pos</c>, las potencias de <c>base</c> en aumento desde <c>inicio</c> hasta <c>fin</c>
+		/// </summary>
+		/// <remarks>
+		/// Ambos <c>inicio</c> y <c>fin</c> están incluidos
+		/// <para>
+		/// <c>fin</c> no puede ser menor que <c>inicio</c> y ninguno puede ser menor que 0
+		/// </para>
+		/// </remarks>
+		/// <param name="fin">exponente de la última potencia</param>
+		/// <param name="incremento">diferencia entre el exponente en cada posición adyacente</param>
+		/// <param name="inicio">exponente de la primera potencia</param>
+		/// <param name="mod">modulo que aplicar a la potencia</param>
+		/// <param name="pos">la posición de inicio</param>
+		/// <param name="base">la base de la potencia</param>
+		/// <param name="serie">la serie que modificar</param>
 		public static void PotenciaModProgresiva(ISerie<long> serie, long raiz, long mod, int hasta, int pos)
 		{
 			PotenciaModProgresiva(serie, raiz, mod, 1, hasta, 1, pos);
@@ -134,16 +156,16 @@ namespace Operaciones
 
 		/**
 		 * Indica si {@code arr} solo tiene valores false
-		 * @return {@code true} si {@code arr} no tiene ning&uacute;n valor a {@code true}
+		 * @return {@code true} si {@code arr} no tiene ningún valor a {@code true}
 		 */
 		public static bool ArrayFalso(bool[] arr)
 		{
 			bool res = true;
-			for (int i = 0; i < arr.Length && res; i++) res = !arr[i];
+			for (int i = 0; i < arr.Length && res; i++) res |= arr[i];
 			return res;
 		}
 		/**
-		 * Incrementa el valor de {@code arr} en 1 de la misma forma que con un n&uacute;mero binario
+		 * Incrementa el valor de {@code arr} en 1 de la misma forma que con un número binario
 		 * <p>Puede producir overflow</p>
 		 */
 		public static void IncrementarArray(bool[] arr)
@@ -169,7 +191,7 @@ namespace Operaciones
 		{
 			long res = 1;
 			foreach (long elem in
-             serie)
+			 serie)
 			{
 				res *= elem;
 			}
