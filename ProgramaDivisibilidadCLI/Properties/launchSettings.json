@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ProgramaDivisibilidadCLI": {
+      "commandName": "Project",
+      "commandLineArgs": "-dt 7 10 2"
+    }
+  }
+}

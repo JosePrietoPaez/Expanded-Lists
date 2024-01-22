@@ -359,7 +359,7 @@ namespace Listas {
 
 		public override String ToString()
 		{
-			return _nombre + _serie.ToString();
+			return (_nombre == string.Empty ? string.Empty : _nombre + ": ") +  string.Join(',',_serie);
 		}
 		public IEnumerator<T> GetEnumerator()
 		{
@@ -421,9 +421,9 @@ namespace Listas {
 		string ISerie<T>.StringInverso()
 		{
 			_serie.Reverse();
-			string? inverso = _serie.ToString();
+			string? inverso = ToString();
 			_serie.Reverse();
-			return _nombre + inverso??"";
+			return inverso??"";
 		}
 
 		public IListaArbitraria<T> Multiplicar(int factor) {
