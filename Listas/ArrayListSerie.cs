@@ -418,7 +418,7 @@ namespace Listas {
 			return _serie.GetHashCode() ^ _nombre.GetHashCode();
 		}
 
-		string ISerie<T>.StringInverso()
+		string ISerie<T>.ToStringInverso()
 		{
 			_serie.Reverse();
 			string? inverso = ToString();

@@ -5,16 +5,13 @@ using System.Text;
 
 namespace Operaciones
 {
-	public static class CalculosEstatico
-	{
-		public static bool EsPrimo(long raiz)
-		{
+	public static class CalculosEstatico {
+		public static bool EsPrimo(long raiz) {
 			if (raiz <= 1) return false; //Por definición
 			if (raiz == 2) return true; //Porque si no, no va
 			long cont = 2;
 			double raizT = ((long)Math.Sqrt(raiz)) + 1;
-			while (cont < raizT && raiz % cont != 0)
-			{
+			while (cont < raizT && raiz % cont != 0) {
 				cont++;
 			}
 			bool primo = raiz % cont != 0;
@@ -25,12 +22,10 @@ namespace Operaciones
 		 * Calcula el factorial de raiz
 		 * @return raiz!
 		 */
-		public static long Factorial(long raiz)
-		{
+		public static long Factorial(long raiz) {
 			ArgumentOutOfRangeException.ThrowIfNegative(raiz);
 			long res = raiz;
-			while (raiz > 1)
-			{
+			while (raiz > 1) {
 				res *= raiz;
 				raiz--;
 			}
@@ -41,16 +36,14 @@ namespace Operaciones
 		 * Devuelve el máximo común divisor de raiz y segundo
 		 * <p></p>
 		 * Se usa el algoritmo de Euclidess
-		 * @return mcd(raiz, segundo) (Se que esto es una tautología)
+		 * @return mcd(raiz, segundo)
 		 */
 		public static long Mcd(long raiz, long segundo)
 		{
-			if (raiz < segundo)
-			{ //Necesitamos que raiz sea mayor o igual que segundo
+			if (raiz < segundo) { //Necesitamos que raiz sea mayor o igual que segundo
 				(segundo, raiz) = (raiz, segundo);
 			}
-			while (segundo != 0)
-			{
+			while (segundo != 0) {
 				long aux = raiz;
 				raiz = segundo;
 				segundo = aux % segundo;
@@ -62,11 +55,9 @@ namespace Operaciones
 		 * Devuelve una serie que contiene la descomposición en números primos de {@code num}
 		 * <p>Los elementos de la serie son los exponentes de los números primos en orden ascendente</p>
 		 */
-		public static ISerie<long> DescompsicionEnPrimos(long num)
-		{
+		public static ISerie<long> DescompsicionEnPrimos(long num) {
 			ISerie<long> primos = PrimosHasta(num);
-			ArrayListSerie<long> res = new(primos.Longitud)
-			{
+			ArrayListSerie<long> res = new(primos.Longitud) {
 				FuncionDeGeneracion = num => 0L,
 				Longitud = primos.Longitud
 			};
@@ -79,8 +70,7 @@ namespace Operaciones
 		 * Calcula el mínimo común múltiplo de {@code primero} y {@code segundo}
 		 * @return mcm(primero,segundo)
 		 */
-		public static long Mcm(long primero, long segundo)
-		{
+		public static long Mcm(long primero, long segundo) {
 			if (primero < 0 || segundo < 0) throw new ArgumentException("Los argumentos deben ser no negativos");
 			if (primero == 0 || segundo == 0) return 0;
 			return primero * segundo / Mcd(primero, segundo);
@@ -90,23 +80,18 @@ namespace Operaciones
 		 * Devuelve una serie con los números primos hasta num incluido
 		 * <p>La serie tendrá nombre nulo</p>
 		 */
-		public static ISerie<long> PrimosHasta(long num)
-		{
-			if (num < 2)
-			{
+		public static ISerie<long> PrimosHasta(long num) {
+			if (num < 2) {
 				return new ArrayListSerie<long>();
 			}
 			ArrayListSerie<long> serie = new();
 			serie.PonerFin(2L);
-			if (num == 2)
-			{
+			if (num == 2) {
 				return serie;
 			}
 			long cont = 3;
-			while (cont <= num)
-			{
-				if (EsPrimo(cont))
-				{
+			while (cont <= num) {
+				if (EsPrimo(cont)) {
 					serie.PonerFin(cont);
 				}
 				cont += 2;
@@ -125,8 +110,7 @@ namespace Operaciones
 		 * @param m módulo que se usa para el cálculo
 		 * @return a^-1, talque a*a^-1 &equiv; 1 (mód m)
 		 */
-		public static long InversoMod(long a, long m)
-		{
+		public static long InversoMod(long a, long m) {
 			long c1 = 1;
 			long c2 = -(m / a); //coeficiente de a y b respectivamente
 			long t1 = 0;
@@ -134,8 +118,7 @@ namespace Operaciones
 			long r = m % a; //residuo, asignamos 1 como condicion de entrada
 			long x = a, y = r, c;
 
-			while (r != 0)
-			{
+			while (r != 0) {
 				c = x / y; //cociente
 				r = x % y; //residuo
 
@@ -154,12 +137,9 @@ namespace Operaciones
 				x = y;
 				y = r;
 			}
-			if (x == 1)
-			{ //En Wikipedia no usaba returns
+			if (x == 1) { //En Wikipedia no usaba returns
 				return t2 < 0 ? t2 + m : t2;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
 		}
@@ -171,8 +151,7 @@ namespace Operaciones
 		 * @param num número de elementos de la progresión
 		 * @return valor de la progresión aritmética
 		 */
-		public static long SumatorioIntervalo(long inicio, long fin, long num)
-		{
+		public static long SumatorioIntervalo(long inicio, long fin, long num) {
 			return (inicio + fin) * num / 2;
 		}
 
@@ -180,10 +159,8 @@ namespace Operaciones
 		 * Devuelve el mínimo de los absolutos entre {@code un} y {@code dos}
 		 * @return min{|{@code un}|,|{@code dos}|}
 		 */
-		public static long MinAbs(long un, long dos)
-		{
-			if (Math.Min(Math.Abs(un), Math.Abs(dos)) == Math.Abs(un))
-			{
+		public static long MinAbs(long un, long dos) {
+			if (Math.Min(Math.Abs(un), Math.Abs(dos)) == Math.Abs(un)) {
 				return un;
 			}
 			return dos;
@@ -194,8 +171,7 @@ namespace Operaciones
 		 * @param raiz raiz del número
 		 * @return número de cifras de {@code num} en raiz {@code raiz}
 		 */
-		public static short Cifras(long num, long raiz)
-		{
+		public static short Cifras(long num, long raiz) {
 			if (num == 0) return 1;
 			return (short)Math.Ceiling(Math.Log(Math.Abs(num) + 1L) / Math.Log(raiz));
 		}
@@ -205,8 +181,7 @@ namespace Operaciones
 		 * @param raiz raiz del número
 		 * @return número de cifras de {@code num} en raiz {@code raiz}
 		 */
-		public static short Cifras(double num, double raiz)
-		{
+		public static short Cifras(double num, double raiz) {
 			if (num == 0) return 1;
 			return (short)Math.Ceiling(Math.Log(Math.BitIncrement(Math.Abs(num))) / Math.Log(raiz));
 		}
@@ -216,8 +191,7 @@ namespace Operaciones
 		 * <p>Equivalente a {@code cifras(num,10)}</p>
 		 * @return número de cifras de {@code num} en raiz 10
 		 */
-		public static short Cifras10(long num)
-		{
+		public static short Cifras10(long num) {
 			return Cifras(num, 10);
 		}
 
@@ -229,8 +203,7 @@ namespace Operaciones
 		 * @param raiz raiz del número
 		 * @return cifra {@code pos} de {@code num} en raiz {@code raiz}
 		 */
-		public static byte Cifra(long num, long pos, long raiz)
-		{
+		public static byte Cifra(long num, long pos, long raiz) {
 			if (pos >= Cifras(num, raiz) || pos < 0) throw new ArgumentException("La posición debe ser una cifra del número");
 			return (byte)(num / (long)Math.Pow(raiz, pos) % raiz);
 		}
@@ -239,12 +212,10 @@ namespace Operaciones
 		 * Devuelve un objeto {@code String} que contiene {@code num} escrito con subíndices de sus cifras en raiz 10
 		 * @return {@code num} en subíndices
 		 */
-		public static String NumASubindice(long num)
-		{
+		public static String NumASubindice(long num) {
 			StringBuilder res = new();
 			short cifras = Cifras(num, 10);
-			for (int i = cifras - 1; i >= 0; i--)
-			{
+			for (int i = cifras - 1; i >= 0; i--) {
 				res.Append(CifraASubindice(Cifra(num, i, 10)));
 			}
 			return res.ToString();
@@ -261,20 +232,17 @@ namespace Operaciones
 		 * @param raiz raiz del módulo
 		 * @return {@code num}^{@code exp} en módulo {@code raiz}
 		 */
-		public static long PotenciaMod(long num, long exp, long raiz)
-		{
+		public static long PotenciaMod(long num, long exp, long raiz) {
 			long res = 1;
 			num %= raiz;
-			while (exp > 0)
-			{
+			while (exp > 0) {
 				res = ProductoMod(res, num, raiz);
 				exp--;
 			}
 			return res;
 		}
 
-		public static long ProductoMod(long fac1, long fac2, long raiz)
-		{
+		public static long ProductoMod(long fac1, long fac2, long raiz) {
 			return fac1 * fac2 % raiz;
 		}
 
@@ -285,8 +253,7 @@ namespace Operaciones
 		 * @param cantidad número de coeficientes de la regla
 		 * @param raiz raiz que se usa para crear la regla
 		 */
-		public static void ReglasDivisibilidad(ISerie<ISerie<long>> reglas, long num, int cantidad, long raiz)
-		{
+		public static void ReglasDivisibilidad(ISerie<ISerie<long>> reglas, long num, int cantidad, long raiz) {
 			reglas.BorrarTodos(); //Se borra la serie
 			String nombre = reglas.Nombre;
 			reglas.PonerFin(new ArrayListSerie<long>(nombre, cantidad));
@@ -294,11 +261,9 @@ namespace Operaciones
 			ISerie<long> aux, atajo = reglas[0]; //aux guarda la serie que se añadirá y atajo es un atajo
 			bool[] producto = new bool[cantidad]; //guarda si el elemento i de atajo se le resta num
 			OperacionesSeries.IncrementarArray(producto); //Como el primero ya está se incrementa
-			do
-			{
+			do {
 				aux = new ArrayListSerie<long>(nombre, cantidad);
-				for (int i = 0; i < atajo.Longitud; i++)
-				{
+				for (int i = 0; i < atajo.Longitud; i++) {
 					aux.PonerFin(atajo[i] - (producto[i] ? num : 0)); //Se añade en la serie de regla
 				}
 				reglas.PonerFin(aux);
@@ -313,11 +278,9 @@ namespace Operaciones
 		 * @param cantidad número de coeficientes de la regla
 		 * @param raiz raiz que se usa para crear la regla
 		 */
-		public static void ReglaDivisibilidadOptima(ISerie<long> serie, long num, int cantidad, long raiz)
-		{
+		public static void ReglaDivisibilidadOptima(ISerie<long> serie, long num, int cantidad, long raiz) {
 			ReglaDivisibilidadBase(serie, num, cantidad, raiz);
-			for (int i = 0; i < serie.Longitud; i++)
-			{
+			for (int i = 0; i < serie.Longitud; i++) {
 				serie.Cambiar(i, MinAbs(serie[i], serie[i] - num));
 			}
 		}
@@ -331,8 +294,7 @@ namespace Operaciones
 		 * @param cantidad número de coeficientes de la regla
 		 * @param raiz raiz que se usa para crear la regla
 		 */
-		public static void ReglaDivisibilidadBase(ISerie<long> serie, long num, int cantidad, long raiz)
-		{
+		public static void ReglaDivisibilidadBase(ISerie<long> serie, long num, int cantidad, long raiz) {
 			if (num < 0 || raiz < 0 || cantidad < 0) throw new ArgumentException("Los argumentos no pueden ser negativos");
 			long inv = InversoMod(raiz, num);
 			if (inv == 0) throw new ArithmeticException("num debe ser coprimo com raiz");
@@ -340,30 +302,24 @@ namespace Operaciones
 			OperacionesSeries.PotenciaModProgresiva(serie, inv, num, cantidad, 0);
 		}
 
-		public static string ToStringCompleto<T>(this ISerie<T> lista)
-		{
+		public static string ToStringCompleto<T>(this ISerie<T> lista) {
 			if (lista.Longitud == 0) return "Serie vacía";
 			StringBuilder sb = new();
-			for (int i = 0; i < lista.Longitud; i++)
-			{
+			for (int i = 0; i < lista.Longitud; i++) {
 				sb.Append(lista.Nombre).Append(NumASubindice(i)).Append('=').Append(lista[i]);
-				if (i + 1 != lista.Longitud)
-				{
+				if (i + 1 != lista.Longitud) {
 					sb.Append(", ");
 				}
 			}
 			return sb.ToString();
 		}
 
-		public static string ToStringCompletoInverso<T>(this ISerie<T> lista)
-		{
+		public static string ToStringCompletoInverso<T>(this ISerie<T> lista) {
 			if (lista.Longitud == 0) return "Serie vacía";
 			StringBuilder sb = new();
-			for (int i = lista.Longitud - 1; i >= 0; i--)
-			{
+			for (int i = lista.Longitud - 1; i >= 0; i--) {
 				sb.Append(lista.Nombre).Append(NumASubindice(i)).Append('=').Append(lista[i]);
-				if (i > 0)
-				{
+				if (i > 0) {
 					sb.Append(", ");
 				}
 			}

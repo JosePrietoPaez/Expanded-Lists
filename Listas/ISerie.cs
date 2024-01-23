@@ -78,6 +78,6 @@ namespace Listas
 		/// <summary>
 		/// Devuelve un objeto String que representa la lista, pero con los elementos en el orden inverso
 		/// </summary>
-		String StringInverso();
+		String ToStringInverso();
 	}
 }

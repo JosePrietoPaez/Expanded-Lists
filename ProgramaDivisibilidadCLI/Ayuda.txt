@@ -30,3 +30,4 @@ Si se introduce un argumento incorrecto será ignorado
 
 0: el programa se ha ejecutado de forma correcta
 1: no todos los datos introducidos fueron correctos
+2: el usuario ha cerrado el programa de forma voluntaria
