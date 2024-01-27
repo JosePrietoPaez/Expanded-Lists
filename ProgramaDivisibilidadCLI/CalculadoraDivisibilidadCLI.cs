@@ -7,7 +7,7 @@ using Operaciones;
 
 namespace ProgramaDivisibilidad {
 	public static class CalculadoraDivisibilidadCLI {
-		private const int MAX_ARGS = 64,MAX_DATOS = 3;
+		private const int MAX_ARGS = 64,MAX_DATOS = 4;
 		private const string ERROR_NUEMRICO = "El divisor, base y el número de coeficientes deben ser números enteros positivos\r\ndivisor y base deben ser mayor que 1"
 			,SALIDA = "FIN";
 		private static readonly bool[] flags = new bool[MAX_ARGS]; //Serán usados en todo el programa
@@ -16,13 +16,13 @@ namespace ProgramaDivisibilidad {
 		private static int salida = 0; //Salida del programa
 		public static int Main(string[] args) {
 			ObtenerFlags(args); //Obtenemos los flags y los argumentos numéricos de args
-			if (flags[DatosFlags.AYUDA_I]) {
+			if (flags[DatosFlags.AYUDA]) {
 				EscribirArchivo("Ayuda.txt");
-			} else if (flags[DatosFlags.CORTA_I]) {
+			} else if (flags[DatosFlags.CORTA]) {
 				EscribirArchivo("AyudaCorta.txt");
 			} else {
 				bool exito = true; //Valor de éxito de la última llamada, usada para llamar a ayuda si falla sin cambiar los flags
-				if (flags[DatosFlags.DIRECTO_I]) { //Si args incluye d
+				if (flags[DatosFlags.DIRECTO]) { //Si args incluye d
 					exito = IntentarDirecto();
 				} else {
 					salida = IniciarAplicacion();
@@ -35,7 +35,7 @@ namespace ProgramaDivisibilidad {
 		}
 
 		private static bool IntentarDirecto() { //Intenta dar las reglas de forma directa, devuelve true si lo consigue y false si hay algún error
-			bool correcto = DatosFlags.NumeroArgumentosCorrecto(datos.Length, Flag.Directo);
+			bool correcto = DatosFlags.NumeroArgumentosCorrecto(PrimerNullOFin(datos), flags);
 			if (correcto) {
 				if (!long.TryParse(datos[0], out long divisor) ||
 					!long.TryParse(datos[1], out long @base) ||
@@ -43,17 +43,17 @@ namespace ProgramaDivisibilidad {
 					(divisor <= 1 && @base <= 1 && coeficientes <= 0)) { //Si los argumentos no son correctos
 					Console.WriteLine(ERROR_NUEMRICO);
 					salida = 1;
-					flags[DatosFlags.AYUDA_I] = true;
+					flags[DatosFlags.AYUDA] = true;
 					correcto = false;
 				} else { //Si los argumentos son correctos
-					Console.WriteLine(ObtenerReglas(divisor,@base,coeficientes));
+					Console.WriteLine(StringReglasConNombre(divisor,@base,coeficientes,3));
 				}
 			}
 			return correcto;
 		}
 
 		private static int IniciarAplicacion() { //Si no se proporcionan los argumentos de forma directa, se establece un diálogo con el usuario para obtenerlos
-			bool preguntarTodos = !flags[DatosFlags.TODOS_I], preguntarInverso = !flags[DatosFlags.INVERSO_I] //Si los flags están activados no se preguntan
+			bool preguntarTodos = !flags[DatosFlags.TODOS], preguntarInverso = !flags[DatosFlags.INVERSO] //Si los flags están activados no se preguntan
 				, continuar; //Si se cambia a true se continua el bucle
 			Console.WriteLine($"El programa se ejecutará de forma normal, escriba {SALIDA} para cerrarlo");
 
@@ -78,7 +78,7 @@ namespace ProgramaDivisibilidad {
 				}
 				if (preguntarTodos) {
 					Console.WriteLine("Escriba S si quiere obtener todas las reglas de divisibilidad con coeficientes pequeños, si no se devolverá el que tenga menores coeficientes");
-					ObtenerDeUsuario(out flags[DatosFlags.TODOS_I]);
+					ObtenerDeUsuario(out flags[DatosFlags.TODOS]);
 					if (salir) {
 						Console.WriteLine("Se ha interrumpido el programa");
 						break;
@@ -86,13 +86,14 @@ namespace ProgramaDivisibilidad {
 				}
 				if (preguntarInverso) {
 					Console.WriteLine("Escriba S si quiere que se escriban las reglas en orden inverso");
-					ObtenerDeUsuario(out flags[DatosFlags.INVERSO_I]);
+					ObtenerDeUsuario(out flags[DatosFlags.INVERSO]);
 					if (salir) {
 						Console.WriteLine("Se ha interrumpido el programa");
 						break;
 					}
 				}
-				Console.WriteLine("Reglas obtenidas:\n" + ObtenerReglas(divisor, @base, coeficientes));
+				Console.WriteLine("Reglas obtenidas");
+				Console.WriteLine(StringReglasConNombre(divisor, @base, coeficientes, 0));
 				Console.WriteLine("Escriba S si calcular otras reglas");
 				ObtenerDeUsuario(out continuar);
 			} while (continuar);
@@ -100,9 +101,23 @@ namespace ProgramaDivisibilidad {
 			return salir? 2 : 0;
 		}
 
+		private static string StringReglasConNombre(long divisor, long @base, int coeficientes, int indice) {
+			if (flags[DatosFlags.NOMBRE]) {
+				return ObtenerReglas(divisor, @base, coeficientes, datos[indice]);
+			} else {
+				return ObtenerReglas(divisor, @base, coeficientes);
+			}
+		}
+
+		private static int PrimerNullOFin(object[] arr) {
+			int i = 0;
+			while (i < arr.Length && arr[i] != null) i++;
+			return i;
+		}
+
 		private static void ObtenerDeUsuario(out long dato, long minimo, string mensaje) {
 			string? linea = Console.ReadLine();
-			while (linea is null || !long.TryParse(linea, out dato) || dato < minimo) {
+			while (!long.TryParse(linea, out dato) || dato < minimo) {
 				Console.WriteLine(mensaje);
 				linea = Console.ReadLine();
 			}
@@ -111,20 +126,26 @@ namespace ProgramaDivisibilidad {
 
 		private static void ObtenerDeUsuario(out int dato, long minimo, string mensaje) {
 			string? linea = Console.ReadLine();
-			while (linea is null || !int.TryParse(linea, out dato) || dato < minimo) {
+			while (!int.TryParse(linea, out dato) || dato < minimo) {
 				Console.WriteLine(mensaje);
 				linea = Console.ReadLine();
+				if (linea == SALIDA) {
+					salir = true;
+					break;
+				}
 			}
-			salir = linea == SALIDA;
 		}
 
 		private static void ObtenerDeUsuarioCoprimo(out long dato, long minimo, string mensaje, long coprimo) {
 			string? linea = Console.ReadLine();
-			while (linea is null || !long.TryParse(linea, out dato) || dato < minimo || CalculosEstatico.Mcd(dato,coprimo) > 1) {
+			while (!long.TryParse(linea, out dato) || dato < minimo || CalculosEstatico.Mcd(dato,coprimo) > 1) {
 				Console.WriteLine(mensaje);
 				linea = Console.ReadLine();
+				if (linea == SALIDA) {
+					salir = true;
+					break;
+				}
 			}
-			salir = linea == SALIDA;
 		}
 
 		private static void ObtenerDeUsuario(out bool dato) {
@@ -136,15 +157,20 @@ namespace ProgramaDivisibilidad {
 			salir = linea == SALIDA;
 		}
 
-		private static string ObtenerReglas(long divisor, long @base, int coeficientes) {
+		private static string ObtenerReglas(long divisor, long @base, int coeficientes, string nombre = "") {
 			Calculos calc = new(@base);
 			string resultado;
-			if (flags[DatosFlags.TODOS_I]) { //Si se piden las 2^coeficientes reglas
+			if (flags[DatosFlags.TODOS]) { //Si se piden las 2^coeficientes reglas
 				ISerie<ISerie<long>> series = new ArrayListSerie<ISerie<long>>();
 				calc.ReglasDivisibilidad(series, divisor, coeficientes);
+				if (nombre != "") {
+					foreach (var serie in series) {
+						serie.Nombre = nombre;
+					}
+				}
 				resultado = SerieRectangularString(series);
 			} else {
-				ArrayListSerie<long> serie = new();
+				ArrayListSerie<long> serie = new(nombre);
 				calc.ReglaDivisibilidadOptima(serie, divisor, coeficientes);
 				resultado = StringSerieConFlags(serie);
 			}
@@ -189,24 +215,16 @@ namespace ProgramaDivisibilidad {
 		private static string SerieRectangularString(ISerie<ISerie<long>> serie) {
 			StringBuilder stringBuilder = new();
 			foreach (var item in serie) {
-				if (flags[DatosFlags.INVERSO_I]) {
-					stringBuilder.Append(item.ToStringInverso());
-				} else {
-					stringBuilder.Append(item.ToString());
-				}
-				stringBuilder.Append('\n');
+				stringBuilder.Append(StringSerieConFlags(item)).Append('\n');
 			}
 			return stringBuilder.ToString();
 		}
 
 		private static string StringSerieConFlags(ISerie<long> serie) {
-			string res;
-			if (flags[DatosFlags.INVERSO_I]) {
-				res = serie.ToStringInverso();
-			} else {
-				res = serie.ToString()??string.Empty;
+			if (flags[DatosFlags.INVERSO]) {
+				return flags[DatosFlags.NOMBRE] ? serie.ToStringCompletoInverso() : serie.ToStringInverso();
 			}
-			return res;
+			return flags[DatosFlags.NOMBRE] ? serie.ToStringCompleto() : serie.ToString()??"";
 		}
 	}
 }

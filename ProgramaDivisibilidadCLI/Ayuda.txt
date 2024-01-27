@@ -1,6 +1,6 @@
 ﻿Ayuda de CalculadoraDeDivisibilidadConsola:
 
-- Plantilla de uso: DivCalc -[argumentos] (divisor base coeficientes), se incluyen con -d
+- Plantilla de uso: DivCalc -[argumentos] (divisor base coeficientes) (nombre)
 
 Este programa permite calcular reglas de divisibilidad de cualquier número natural positivo en cualquier base natural mayor que 1.
 Las reglas se expresan como coeficientes, estos coeficientes se multiplican a las cifras correspondientes y son sumados al resto de número al que se aplique.
@@ -23,6 +23,7 @@ Si no es tan fácil ver si el resultado es múltiplo del divisor, se aplica la r
 -r: las series se escriben en orden inverso, se salta la comprobación en la aplicación
 -d: si se pasan todos los datos se obtiene un resultado sin que la aplicación pida datos
 -t: se escriben todas las reglas posibles con la cantidad de coeficientes proporcionado, el valor absoluto de los coeficientes será menor al del divisor
+-n: escribe el nombre introducido como parámetro antes de cada elemento con su indice
 
 Si se introduce un argumento incorrecto será ignorado
 
