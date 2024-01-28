@@ -197,37 +197,31 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public void PonerInicio(T elem)
+		public void InsertarInicio(T elem)
 		{
 			_serie.Insert(0,elem);
 		}
 
 		///<inheritdoc/>
-		public void Poner(T elem, int pos)
+		public void Insertar(T elem, int pos)
 		{
 			_serie.Insert(pos, elem);
 		}
 
 		///<inheritdoc/>
-		public void PonerFin(T elem)
+		public void InsertarFin(T elem)
 		{
 			_serie.Add(elem);
 		}
 
 		///<inheritdoc/>
-		public void PonerVarios(T elem, int num, int pos)
+		public void InsertarVarios(T elem, int num, int pos)
 		{
 			while (num > 0)
 			{
-				Poner(elem, pos);
+				Insertar(elem, pos);
 				num--;
 			}
-		}
-
-		///<inheritdoc/>
-		public T Cambiar(int pos, T elem)
-		{
-			return _serie[pos] = elem;
 		}
 
 		///<inheritdoc/>
@@ -239,7 +233,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public int Borrar(T elem)
+		public int Eliminar(T elem)
 		{
 			int pos = _serie.IndexOf(elem);
 			if (pos != -1)
@@ -248,7 +242,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public T Borrar(int pos)
+		public T Eliminar(int pos)
 		{
 			T elemento = _serie[pos];
 			_serie.RemoveAt(pos);
@@ -264,7 +258,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public int BorrarVarios(int num, int pos)
+		public int EliminarVarios(int num, int pos)
 		{
 			int real = 0;
 			while (real < num && pos < _serie.Count)
@@ -299,7 +293,7 @@ namespace Listas {
 			_serie.Clear();
 		}
 
-		public int Eliminar(T elemento) {
+		public int BorrarTodos(T elemento) {
 			int res = 0;
 			for (int i = _serie.Count - 1; i >= 0; i--)
 			{
@@ -316,12 +310,6 @@ namespace Listas {
 		{
 			if (_serie.Count == 0) throw new InvalidOperationException("La serie está vacía");
 			return _serie[0];
-		}
-
-		///<inheritdoc/>
-		public T Elemento(int pos)
-		{
-			return _serie[pos];
 		}
 
 		///<inheritdoc/>
@@ -352,7 +340,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public bool Pertenece(T elem)
+		public bool Contiene(T elem)
 		{
 			return _serie.Contains(elem);
 		}
@@ -434,7 +422,7 @@ namespace Listas {
 				nueva = new(this);
 				//Si se produce OverflowException no es mi problema, la lista no podría contenerlo
 				for (int i = 0; i < _serie.Count*(Math.Abs(factor)-1); i++) { 
-					nueva.PonerFin(_serie[i%_serie.Count]);
+					nueva.InsertarFin(_serie[i%_serie.Count]);
 				}
 				if (factor < 0) {
 					nueva.Invertir();
@@ -476,7 +464,7 @@ namespace Listas {
 
 		public ILista<T> Restar(T elemento) {
 			var nueva = Clonar();
-			nueva.Eliminar(elemento);
+			nueva.BorrarTodos(elemento);
 			return nueva;
 		}
 
@@ -484,8 +472,8 @@ namespace Listas {
 			var nueva = Clonar();
 			foreach (var item in lista)
 			{
-				if (nueva.Pertenece(item)) {
-					nueva.Eliminar(item);
+				if (nueva.Contiene(item)) {
+					nueva.BorrarTodos(item);
 				}
 			}
 			return nueva;

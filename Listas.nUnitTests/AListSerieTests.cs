@@ -14,8 +14,8 @@ namespace Listas.nUnitTests {
 			_listaConElementos.Vacia = true;
 			_listaConElementosNula.Vacia = true;
 			for (int i = 0; i < 10; i++) {
-				_listaConElementos.PonerFin(i);
-				_listaConElementosNula.PonerFin(i);
+				_listaConElementos.InsertarFin(i);
+				_listaConElementosNula.InsertarFin(i);
 			}
 		}
 
@@ -26,7 +26,7 @@ namespace Listas.nUnitTests {
 			int elem = default(int);
 
 			// Act
-			aListSerie.PonerInicio(
+			aListSerie.InsertarInicio(
 				elem);
 
 			// Assert
@@ -40,7 +40,7 @@ namespace Listas.nUnitTests {
 			int? elem = null;
 
 			// Act
-			aListSerie.PonerInicio(
+			aListSerie.InsertarInicio(
 				elem);
 
 			// Assert
@@ -55,7 +55,7 @@ namespace Listas.nUnitTests {
 			int pos = 0;
 
 			// Act
-			aListSerie.Poner(
+			aListSerie.Insertar(
 				elem,
 				pos);
 
@@ -64,15 +64,15 @@ namespace Listas.nUnitTests {
 
 			elem = 2;
 
-			aListSerie.Poner(elem, pos);
+			aListSerie.Insertar(elem, pos);
 
-			Assert.That(aListSerie.Elemento(pos), Is.EqualTo(elem));
+			Assert.That(aListSerie[pos], Is.EqualTo(elem));
 
 			elem = 3; pos = 1;
 
-			aListSerie.Poner(elem,pos);
+			aListSerie.Insertar(elem,pos);
 
-			Assert.That(aListSerie.Elemento(pos), Is.EqualTo(elem));
+			Assert.That(aListSerie[pos], Is.EqualTo(elem));
 		}
 
 		[Test]
@@ -82,13 +82,13 @@ namespace Listas.nUnitTests {
 			int elem = default(int);
 
 			// Act
-			aListSerie.PonerFin(
+			aListSerie.InsertarFin(
 				elem);
 
 			// Assert
 			Assert.That(aListSerie.Longitud, Is.EqualTo(1));
 
-			aListSerie.PonerFin(
+			aListSerie.InsertarFin(
 				elem+1);
 
 			Assert.That(aListSerie.UltimoElemento(), Is.EqualTo(elem+1));
@@ -106,43 +106,27 @@ namespace Listas.nUnitTests {
 			int pos = 1;
 
 			// Act
-			aListSerie.PonerInicio(123);
+			aListSerie.InsertarInicio(123);
 
-			aListSerie.PonerFin(678);
+			aListSerie.InsertarFin(678);
 
-			aListSerie.PonerVarios(
+			aListSerie.InsertarVarios(
 				elem,
 				num,
 				pos);
 
 			// Assert
-			Assert.That(aListSerie.Elemento(0),Is.EqualTo(123)); //Asegurar que se mantienen el resto de elementos
+			Assert.That(aListSerie[0],Is.EqualTo(123)); //Asegurar que se mantienen el resto de elementos
 
 			for (int i = 1; i < aListSerie.Longitud; i++) {
 				if (i == aListSerie.Longitud-1) {
-					Assert.That(aListSerie.Elemento(i), Is.EqualTo(678));
+					Assert.That(aListSerie[i], Is.EqualTo(678));
 				} else {
-					Assert.That(aListSerie.Elemento(i), Is.EqualTo(elem)); //Asegurar que se han colocado los elementos correctos
+					Assert.That(aListSerie[i], Is.EqualTo(elem)); //Asegurar que se han colocado los elementos correctos
 				}
 			}
 
 			Assert.That(aListSerie.Longitud, Is.EqualTo(2+Math.Max(0,num))); //Asegurar que la longitud es correcta
-		}
-
-		[Test]
-		public void Cambiar_StateUnderTest_ExpectedBehavior() {
-			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
-			int pos = 0;
-			int elem = default(int);
-
-			// Act
-			var result = aListSerie.Cambiar(
-				pos,
-				elem);
-
-			// Assert
-			Assert.Fail();
 		}
 
 		[Test]
@@ -166,9 +150,9 @@ namespace Listas.nUnitTests {
 			float elem = 15.0f;
 
 			// Act
-			aListSerie.PonerVarios(15.0f, 10, 0);
+			aListSerie.InsertarVarios(15.0f, 10, 0);
 
-			var result = aListSerie.Borrar(
+			var result = aListSerie.Eliminar(
 				elem);
 
 			// Assert
@@ -176,7 +160,7 @@ namespace Listas.nUnitTests {
 
 			elem = 0;
 
-			result = aListSerie.Borrar(elem);
+			result = aListSerie.Eliminar(elem);
 
 			Assert.That(result, Is.EqualTo(-1));
 		}
@@ -188,7 +172,7 @@ namespace Listas.nUnitTests {
 			int pos = 0;
 
 			// Act
-			var result = aListSerie.Borrar(
+			var result = aListSerie.Eliminar(
 				pos);
 
 			// Assert
@@ -215,7 +199,7 @@ namespace Listas.nUnitTests {
 			int pos = 0;
 
 			// Act
-			var result = aListSerie.BorrarVarios(
+			var result = aListSerie.EliminarVarios(
 				num,
 				pos);
 
@@ -268,8 +252,7 @@ namespace Listas.nUnitTests {
 			int pos = 0;
 
 			// Act
-			var result = aListSerie.Elemento(
-				pos);
+			var result = aListSerie[pos];
 
 			// Assert
 			Assert.Fail();
@@ -322,7 +305,7 @@ namespace Listas.nUnitTests {
 			int elem = default(int);
 
 			// Act
-			var result = aListSerie.Pertenece(
+			var result = aListSerie.Contiene(
 				elem);
 
 			// Assert

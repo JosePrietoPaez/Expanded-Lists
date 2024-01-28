@@ -51,7 +51,7 @@ namespace Listas {
 		/// <returns></returns>
 		static ILista<T> operator +(IListaArbitraria<T> lista, (T, int) tupla) {
 			IListaArbitraria<T> nueva = lista.Clonar();
-			nueva.Poner(tupla.Item1, tupla.Item2);
+			nueva.Insertar(tupla.Item1, tupla.Item2);
 			return nueva;
 		}
 
@@ -59,7 +59,7 @@ namespace Listas {
 		/// Coloca <c>elemento</c> al principio de la lista
 		/// </summary>
 		/// <param name = "elemento">elemento que colocar</param>
-		void PonerInicio(T elemento);
+		void InsertarInicio(T elemento);
 
 		/// <summary>
 		/// Coloca a <c>elemento</c> en la posición <c>posicion</c>
@@ -67,13 +67,13 @@ namespace Listas {
 		/// <remarks><c>posicion</c> no puede ser menor que 0 o mayor que el índice del último elemento</remarks>
 		/// <param name="elemento">elemento que colocar</param>
 		/// <param name="posicion">posición donde colocar <c>elemento</c></param>
-		void Poner(T elemento, int posicion);
+		void Insertar(T elemento, int posicion);
 
 		/// <summary>
 		/// Coloca <c>elemento</c> al final de la lista
 		/// </summary>
 		/// <param name="elemento">el elemento que colocar</param>
-		void PonerFin(T elemento);
+		void InsertarFin(T elemento);
 
 		/// <summary>
 		/// Coloca el elemento <c>elemento num</c> veces seguidas en la lista, desde la posición <c>posicion</c>
@@ -87,15 +87,7 @@ namespace Listas {
 		/// <param name="elemento">elemento el elemento que colocar</param>
 		/// <param name="num">num la cantidad de veces que se pondrá</param>
 		/// <param name="posicion">posición por la que se empieza a poner</param>
-		void PonerVarios(T elemento, int num, int posicion);
-
-		/// <summary>
-		/// Cambia el elemento de la posición <c>posicion</c> por <c>elemento</c>
-		/// </summary>
-		/// <param name="posicion">posición donde colocar <c>elemento</c></param>
-		/// <param name="elemento">elemento que colocar</param>
-		/// <returns>Elemento que estaba en la posición <c>posicion</c></returns>
-		T Cambiar(int posicion, T elemento);
+		void InsertarVarios(T elemento, int num, int posicion);
 
 		/// <summary>
 		/// Borra el primer elemento de la lista y lo devuelve como resultado

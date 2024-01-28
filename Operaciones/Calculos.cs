@@ -79,7 +79,7 @@ namespace Operaciones {
 				while (num % primos[j] == 0)
 				{
 					num /= primos[j];
-					desc.Cambiar(j, desc[j] + 1);
+					desc[j]++;
 				}
 			}
 		}

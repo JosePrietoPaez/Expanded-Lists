@@ -7,13 +7,13 @@ using Operaciones;
 
 namespace ProgramaDivisibilidad {
 	public static class CalculadoraDivisibilidadCLI {
-		private const int MAX_ARGS = 64,MAX_DATOS = 4;
+		private const int MAX_ARGS = 64,MAX_DATOS = 4, SALIDA_CORRECTA = 0, SALIDA_ERROR = 1, SALIDA_VOLUNTARIA = 2;
 		private const string ERROR_NUEMRICO = "El divisor, base y el número de coeficientes deben ser números enteros positivos\r\ndivisor y base deben ser mayor que 1"
-			,SALIDA = "FIN";
+			,SALIDA = "FIN", ERROR_PRIMO = "La base y el divisor deben ser coprimos";
 		private static readonly bool[] flags = new bool[MAX_ARGS]; //Serán usados en todo el programa
 		private static readonly string[] datos = new string[MAX_DATOS];
 		private static bool salir = false; //Usado para saber si el usuario ha solicitado terminar la ejecución
-		private static int salida = 0; //Salida del programa
+		private static int salida = SALIDA_CORRECTA; //Salida del programa
 		public static int Main(string[] args) {
 			ObtenerFlags(args); //Obtenemos los flags y los argumentos numéricos de args
 			if (flags[DatosFlags.AYUDA]) {
@@ -42,11 +42,14 @@ namespace ProgramaDivisibilidad {
 					!int.TryParse(datos[2], out int coeficientes) ||
 					(divisor <= 1 && @base <= 1 && coeficientes <= 0)) { //Si los argumentos no son correctos
 					Console.WriteLine(ERROR_NUEMRICO);
-					salida = 1;
-					flags[DatosFlags.AYUDA] = true;
+					salida = SALIDA_ERROR;
+					correcto = false;
+				} else if (CalculosEstatico.Mcd(divisor,@base) != 1) { //Si la base y divisor no son coprimos
+					Console.WriteLine(ERROR_PRIMO);
+					salida = SALIDA_ERROR;
 					correcto = false;
 				} else { //Si los argumentos son correctos
-					Console.WriteLine(StringReglasConNombre(divisor,@base,coeficientes,3));
+					Console.WriteLine(StringReglasConNombre(divisor, @base, coeficientes, 3));
 				}
 			}
 			return correcto;
@@ -98,7 +101,7 @@ namespace ProgramaDivisibilidad {
 				ObtenerDeUsuario(out continuar);
 			} while (continuar);
 			
-			return salir? 2 : 0;
+			return salir? SALIDA_VOLUNTARIA : 0;
 		}
 
 		private static string StringReglasConNombre(long divisor, long @base, int coeficientes, int indice) {

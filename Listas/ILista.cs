@@ -101,7 +101,7 @@ namespace Listas
 		/// </summary>
 		/// <param name="elemento">elemento que quitar</param>
 		/// <returns>la primera posición de elemento o <c>-1</c> si no está en la lista</returns>
-		int Borrar(T elemento);
+		int Eliminar(T elemento);
 
 		/// <summary>
 		/// Borra el elemento en la posición <c>posicion</c> de la lista y lo devuelve como resultado
@@ -112,7 +112,7 @@ namespace Listas
 		/// </remarks>
 		/// <param name="posicion">la posición del elemento que se borrará</param>
 		/// <returns>El elemento borrado</returns>
-		T Borrar(int posicion);
+		T Eliminar(int posicion);
 
 		/// <summary>
 		/// Borra <c>num</c> elementos desde la posición <c>posicion</c>, o hasta que no haya más
@@ -123,7 +123,7 @@ namespace Listas
 		/// <param name="num">número de elementos que eliminar</param>
 		/// <param name="posicion">posición donde empezar a borrar</param>
 		/// <returns>Número de elementos borrados</returns>
-		int BorrarVarios(int num, int posicion);
+		int EliminarVarios(int num, int posicion);
 
 		/// <summary>
 		/// Elimina todos los elementos de la lista, dejándola vacía
@@ -135,7 +135,7 @@ namespace Listas
 		/// </summary>
 		/// <param name="elemento">elemento que quitar</param>
 		/// <returns>Número de veces que <c>elemento</c> estaba en la lista</returns>
-		int Eliminar(T elemento);
+		int BorrarTodos(T elemento);
 
 		/// <summary>
 		/// Devuelve el primer elemento de la lista, si tiene
@@ -144,16 +144,6 @@ namespace Listas
 		/// Primer elemento de la lista
 		/// </returns>
 		T PrimerElemento();
-
-		/// <summary>
-		/// Devuelve el elemento de la posición <c>posicion</c> de la lista
-		/// </summary>
-		/// <remarks>
-		/// <c>posicion</c> no puede ser menor que 0 o mayor que el índice del último elemento
-		/// </remarks>
-		/// <param name="posicion">la posición del elemento</param>
-		/// <returns>El elemento en la posición <c>posicion</c></returns>
-		T Elemento(int posicion);
 
 		/// <summary>
 		/// Devuelve el último elemento de la lista, si hay
@@ -183,7 +173,7 @@ namespace Listas
 		/// </summary>
 		/// <param name="elemento">elemento que buscar</param>
 		/// <returns><c>true</c> si <c>elemento</c> se encuentra en la lista o <c>false</c> si no está</returns>
-		bool Pertenece(T elemento);
+		bool Contiene(T elemento);
 
 		/// <summary>
 		/// Invierte el orden de los elementos de la lista
@@ -233,7 +223,7 @@ namespace Listas
 		/// Crea una lista igual a la invocada y elimina el elemento en la lista
 		/// </summary>
 		/// <remarks>Para saber cuantas veces se encontraba en la lista use
-		/// <see cref="ILista{T}.Eliminar(T)"/> en su lugar
+		/// <see cref="ILista{T}.BorrarTodos(T)"/> en su lugar
 		/// </remarks>
 		/// <returns>
 		/// Nueva lista con los elementos anteriores sin <c>elemento</c>

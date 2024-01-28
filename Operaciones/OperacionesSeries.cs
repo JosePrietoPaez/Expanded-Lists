@@ -28,7 +28,7 @@ namespace Operaciones
 			long num = (long)Math.Pow(@base, inicio);
 			for (int i = pos, cont = inicio; i <= iteraciones; i++)
 			{
-				serie.Poner(num, i);
+				serie.Insertar(num, i);
 				cont += incremento;
 				num = (long)Math.Pow(@base, cont);
 			}
@@ -54,7 +54,7 @@ namespace Operaciones
 			double num = Math.Pow(@base, inicio), cont = inicio;
 			double iteraciones = (fin - inicio) / incremento;
 			for (int i = pos; i <= iteraciones; i++) {
-				serie.Poner(num, i);
+				serie.Insertar(num, i);
 				cont += incremento;
 				num = Math.Pow(@base, cont);
 			}
@@ -82,7 +82,7 @@ namespace Operaciones
 			long num = (long)Math.Pow(@base, inicio);
 			int iteraciones = (fin - inicio) / incremento;
 			for (int i = pos, cont = inicio; i <= iteraciones; i++) {
-				serie.Poner(num, i);
+				serie.Insertar(num, i);
 				cont += incremento;
 				for (int j = 0; j < incremento; j++) {
 					num = CalculosEstatico.ProductoMod(num, @base, mod);
