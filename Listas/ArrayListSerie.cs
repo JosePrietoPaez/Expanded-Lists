@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.Contracts;
 
 namespace Listas {
 	public class ArrayListSerie<T> : ISerie<T>
@@ -40,7 +41,7 @@ namespace Listas {
 			get => _serie.Count;
 			set
 			{
-				ArgumentOutOfRangeException.ThrowIfNegative(value);
+				Contract.Requires<ArgumentOutOfRangeException>(value >= 0, "La longitud no puede ser negativa");
 				int siz = _serie.Count;
 				if (value == 0) _serie.Clear();
 				else if (value < siz)
@@ -51,8 +52,7 @@ namespace Listas {
 				{
 					while (value > siz)
 					{
-
-						if (!CompatibleEnLista(Generar())) throw new InvalidOperationException("");
+						Contract.Requires<InvalidOperationException>(ILista<T>.CompatibleEnLista(Generar()), "La función de generación ha creado un elemento nulo");
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 						_serie.Add(Generar()); //Ignorar el warning
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
@@ -76,8 +76,6 @@ namespace Listas {
 			set => _serie[posicion] = value;
 		}
 
-		internal static bool CompatibleEnLista(T? obj) => obj is not null || (obj == null && default(T) == null);
-
 		/// <summary>
 		/// Crea una serie a partir de otra lista con el nombre vacío
 		/// </summary>
@@ -85,7 +83,7 @@ namespace Listas {
 		/// La serie tendrá todos los elementos de la lista y su función generadora
 		/// </remarks>
 		/// <param name="lista">lista que copiar</param>
-		public ArrayListSerie(ISerie<T> lista) : this(lista as ILista<T>){
+		public ArrayListSerie(IListaDinamica<T> lista) : this(lista as ILista<T>){
 			_generadora = lista?.FuncionDeGeneracion ?? (num => default);
 		}
 
@@ -308,14 +306,14 @@ namespace Listas {
 		///<inheritdoc/>
 		public T PrimerElemento()
 		{
-			if (_serie.Count == 0) throw new InvalidOperationException("La serie está vacía");
+			Contract.Requires<InvalidOperationException>(_serie.Count > 0,"La serie está vacía");
 			return _serie[0];
 		}
 
 		///<inheritdoc/>
 		public T UltimoElemento()
 		{
-			if (_serie.Count == 0) throw new InvalidOperationException("La serie está vacía");
+			Contract.Requires<InvalidOperationException>(_serie.Count > 0, "La serie está vacía");
 			return _serie[^1];
 		}
 
@@ -406,7 +404,7 @@ namespace Listas {
 			return _serie.GetHashCode() ^ _nombre.GetHashCode();
 		}
 
-		string ISerie<T>.ToStringInverso()
+		string IListaNombrada<T>.ToStringInverso()
 		{
 			_serie.Reverse();
 			string? inverso = ToString();
@@ -455,7 +453,7 @@ namespace Listas {
 		}
 
 		public IListaArbitraria<T> Clonar() {
-			return new ArrayListSerie<T>(this);
+			return Clonar();
 		}
 
 		ILista<T> ILista<T>.Clonar() {
@@ -470,13 +468,16 @@ namespace Listas {
 
 		public ILista<T> Diferencia(ILista<T> lista) {
 			var nueva = Clonar();
-			foreach (var item in lista)
-			{
+			foreach (var item in lista) {
 				if (nueva.Contiene(item)) {
 					nueva.BorrarTodos(item);
 				}
 			}
 			return nueva;
+		}
+
+		ISerie<T> ISerie<T>.Clonar() {
+			return new ArrayListSerie<T>(this);
 		}
 	}
 }

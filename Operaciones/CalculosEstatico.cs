@@ -55,8 +55,8 @@ namespace Operaciones
 		 * Devuelve una serie que contiene la descomposición en números primos de {@code num}
 		 * <p>Los elementos de la serie son los exponentes de los números primos en orden ascendente</p>
 		 */
-		public static ISerie<long> DescompsicionEnPrimos(long num) {
-			ISerie<long> primos = PrimosHasta(num);
+		public static IListaDinamica<long> DescompsicionEnPrimos(long num) {
+			IListaDinamica<long> primos = PrimosHasta(num);
 			ArrayListSerie<long> res = new(primos.Longitud) {
 				FuncionDeGeneracion = num => 0L,
 				Longitud = primos.Longitud
@@ -80,7 +80,7 @@ namespace Operaciones
 		 * Devuelve una serie con los números primos hasta num incluido
 		 * <p>La serie tendrá nombre nulo</p>
 		 */
-		public static ISerie<long> PrimosHasta(long num) {
+		public static IListaDinamica<long> PrimosHasta(long num) {
 			if (num < 2) {
 				return new ArrayListSerie<long>();
 			}
@@ -278,7 +278,7 @@ namespace Operaciones
 		 * @param cantidad número de coeficientes de la regla
 		 * @param raiz raiz que se usa para crear la regla
 		 */
-		public static void ReglaDivisibilidadOptima(ISerie<long> serie, long num, int cantidad, long raiz) {
+		public static void ReglaDivisibilidadOptima(IListaDinamica<long> serie, long num, int cantidad, long raiz) {
 			ReglaDivisibilidadBase(serie, num, cantidad, raiz);
 			for (int i = 0; i < serie.Longitud; i++) {
 				serie[i] = MinAbs(serie[i], serie[i] - num);
@@ -294,7 +294,7 @@ namespace Operaciones
 		 * @param cantidad número de coeficientes de la regla
 		 * @param raiz raiz que se usa para crear la regla
 		 */
-		public static void ReglaDivisibilidadBase(ISerie<long> serie, long num, int cantidad, long raiz) {
+		public static void ReglaDivisibilidadBase(IListaDinamica<long> serie, long num, int cantidad, long raiz) {
 			if (num < 0 || raiz < 0 || cantidad < 0) throw new ArgumentException("Los argumentos no pueden ser negativos");
 			long inv = InversoMod(raiz, num);
 			if (inv == 0) throw new ArithmeticException("num debe ser coprimo com raiz");

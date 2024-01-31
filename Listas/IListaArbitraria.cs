@@ -109,7 +109,7 @@ namespace Listas {
 		/// </summary>
 		/// <param name="elemento">elemento que eliminar del final</param>
 		/// <remarks>
-		/// Pensado para la versión de Java de esta biblioteca, tiene más utilidad en <see cref="ISerie{T}"/>
+		/// Pensado para la versión de Java de esta biblioteca, tiene más utilidad en <see cref="IListaDinamica{T}"/>
 		/// </remarks>
 		/// <returns>Ocurrencias de elemento quitadas</returns>
 		int BorrarUltimos(T elemento);

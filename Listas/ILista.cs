@@ -16,6 +16,9 @@ namespace Listas
 	/// </typeparam>
 	public interface ILista<T> : IEnumerable<T>
 	{
+
+		static bool CompatibleEnLista(T? obj) => obj is not null || (obj == null && default(T) == null);
+
 		/// <summary>
 		/// Esta propiedad permite ver si la lista esta vacía
 		/// </summary>

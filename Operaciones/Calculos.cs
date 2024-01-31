@@ -66,13 +66,13 @@ namespace Operaciones {
 		 * Devuelve una serie que contiene la descomposición en números primos de la raiz del objeto {@code Calculos}
 		 * <p>Los elementos de la serie son los exponentes de los números primos en orden ascendente</p>
 		 */
-		public ISerie<long> DescomposicionEnPrimos()
+		public IListaDinamica<long> DescomposicionEnPrimos()
 		{
 			return CalculosEstatico.DescompsicionEnPrimos(_raiz);
 		}
 
 		//Guarda en desc la descomposicion de num, usando los primos de primos
-		internal static void Descomposicion(ISerie<long> primos, ISerie<long> desc, long num)
+		internal static void Descomposicion(IListaDinamica<long> primos, IListaDinamica<long> desc, long num)
 		{
 			for (int j = 0; j < primos.Longitud && num > 1; j++)
 			{
@@ -97,7 +97,7 @@ namespace Operaciones {
 		 * Devuelve una serie con los números primos hasta raiz incluido
 		 * <p>La serie tendrá nombre nulo</p>
 		 */
-		public ISerie<long> PrimosHasta()
+		public IListaDinamica<long> PrimosHasta()
 		{
 			return CalculosEstatico.PrimosHasta(_raiz);
 		}
@@ -195,7 +195,7 @@ namespace Operaciones {
 		 * @param serie serie donde guardar la regla
 		 * @param cantidad número de coeficientes de la regla
 		 */
-		public void ReglaDivisibilidadOptima(ISerie<long> serie, long num, int cantidad)
+		public void ReglaDivisibilidadOptima(IListaDinamica<long> serie, long num, int cantidad)
 		{
 			CalculosEstatico.ReglaDivisibilidadOptima(serie, num, cantidad, _raiz);
 		}

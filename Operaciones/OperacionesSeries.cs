@@ -76,7 +76,7 @@ namespace Operaciones
 		/// <param name="pos">la posición de inicio</param>
 		/// <param name="base">la base de la potencia</param>
 		/// <param name="serie">la serie que modificar</param>
-		public static void PotenciaModProgresiva(ISerie<long> serie, long @base, long mod, int inicio, int fin, int incremento, int pos) {
+		public static void PotenciaModProgresiva(IListaDinamica<long> serie, long @base, long mod, int inicio, int fin, int incremento, int pos) {
 			if (inicio < 0 || fin < 0) throw new ArgumentException("Las potencias son de exponentes no negativos");
 			ArgumentOutOfRangeException.ThrowIfGreaterThan(inicio, fin,"La última potencia no puede ser menor que la primera");
 			long num = (long)Math.Pow(@base, inicio);
@@ -103,7 +103,7 @@ namespace Operaciones
 		/// <param name="pos">la posición de inicio</param>
 		/// <param name="base">la base de la potencia</param>
 		/// <param name="serie">la serie que modificar</param>
-		public static void PotenciaProgresiva(ISerie<long> serie, long @base, int fin, int pos) {
+		public static void PotenciaProgresiva(IListaDinamica<long> serie, long @base, int fin, int pos) {
 			PotenciaProgresiva(serie, @base, 1, fin, 1, pos);
 		}
 
@@ -120,7 +120,7 @@ namespace Operaciones
 		/// <param name="pos">la posición de inicio</param>
 		/// <param name="base">la base de la potencia</param>
 		/// <param name="serie">la serie que modificar</param>
-		public static void PotenciaProgresiva(ISerie<double> serie, double @base, double fin, int pos) {
+		public static void PotenciaProgresiva(IListaDinamica<double> serie, double @base, double fin, int pos) {
 			PotenciaProgresiva(serie, @base, 1, fin, 1, pos);
 		}
 
@@ -138,7 +138,7 @@ namespace Operaciones
 		/// <param name="pos">la posición de inicio</param>
 		/// <param name="base">la base de la potencia</param>
 		/// <param name="serie">la serie que modificar</param>
-		public static void PotenciaModProgresiva(ISerie<long> serie, long @base, long mod, int fin, int pos) {
+		public static void PotenciaModProgresiva(IListaDinamica<long> serie, long @base, long mod, int fin, int pos) {
 			PotenciaModProgresiva(serie, @base, mod, 1, fin, 1, pos);
 		}
 
