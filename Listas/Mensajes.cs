@@ -1,0 +1,21 @@
+﻿using System;
+
+namespace Listas {
+	public static class Mensajes {
+		public static string RangoLista(int indice, int limite) {
+			return $"La posición indicada no es válida({indice}, con longitud {limite})";
+		}
+
+		public static string VacioBloque => "El bloque está vacío";
+
+		public static string VacioLista => "La lista está vacía";
+
+		public static string VacioSerie => "La serie está vacía";
+
+		public static string GeneracionNula => "La función de generación ha creado un elemento nulo";
+
+		public static string LongitudNegativa => "La longitud no puede ser negativa";
+
+
+	}
+}

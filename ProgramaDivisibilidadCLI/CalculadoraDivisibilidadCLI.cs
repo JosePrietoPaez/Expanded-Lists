@@ -164,7 +164,7 @@ namespace ProgramaDivisibilidad {
 			Calculos calc = new(@base);
 			string resultado;
 			if (flags[DatosFlags.TODOS]) { //Si se piden las 2^coeficientes reglas
-				ISerie<ISerie<long>> series = new ArrayListSerie<ISerie<long>>();
+				ISerie<ISerie<long>> series = new ListSerie<ISerie<long>>();
 				calc.ReglasDivisibilidad(series, divisor, coeficientes);
 				if (nombre != "") {
 					foreach (var serie in series) {
@@ -173,7 +173,7 @@ namespace ProgramaDivisibilidad {
 				}
 				resultado = SerieRectangularString(series);
 			} else {
-				ArrayListSerie<long> serie = new(nombre);
+				ListSerie<long> serie = new(nombre);
 				calc.ReglaDivisibilidadOptima(serie, divisor, coeficientes);
 				resultado = StringSerieConFlags(serie);
 			}

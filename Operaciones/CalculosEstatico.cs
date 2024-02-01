@@ -57,7 +57,7 @@ namespace Operaciones
 		 */
 		public static IListaDinamica<long> DescompsicionEnPrimos(long num) {
 			IListaDinamica<long> primos = PrimosHasta(num);
-			ArrayListSerie<long> res = new(primos.Longitud) {
+			ListSerie<long> res = new(primos.Longitud) {
 				FuncionDeGeneracion = num => 0L,
 				Longitud = primos.Longitud
 			};
@@ -82,9 +82,9 @@ namespace Operaciones
 		 */
 		public static IListaDinamica<long> PrimosHasta(long num) {
 			if (num < 2) {
-				return new ArrayListSerie<long>();
+				return new ListSerie<long>();
 			}
-			ArrayListSerie<long> serie = new();
+			ListSerie<long> serie = new();
 			serie.InsertarFin(2L);
 			if (num == 2) {
 				return serie;
@@ -256,13 +256,13 @@ namespace Operaciones
 		public static void ReglasDivisibilidad(ISerie<ISerie<long>> reglas, long num, int cantidad, long raiz) {
 			reglas.BorrarTodos(); //Se borra la serie
 			String nombre = reglas.Nombre;
-			reglas.InsertarFin(new ArrayListSerie<long>(nombre, cantidad));
+			reglas.InsertarFin(new ListSerie<long>(nombre, cantidad));
 			ReglaDivisibilidadBase(reglas[0], num, cantidad, raiz); //Se calcula la regla de positivos
 			ISerie<long> aux, atajo = reglas[0]; //aux guarda la serie que se añadirá y atajo es un atajo
 			bool[] producto = new bool[cantidad]; //guarda si el elemento i de atajo se le resta num
 			OperacionesSeries.IncrementarArray(producto); //Como el primero ya está se incrementa
 			do {
-				aux = new ArrayListSerie<long>(nombre, cantidad);
+				aux = new ListSerie<long>(nombre, cantidad);
 				for (int i = 0; i < atajo.Longitud; i++) {
 					aux.InsertarFin(atajo[i] - (producto[i] ? num : 0)); //Se añade en la serie de regla
 				}

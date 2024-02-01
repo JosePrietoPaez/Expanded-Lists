@@ -6,8 +6,8 @@ namespace Listas.nUnitTests {
 	[TestFixture]
 	public class AListSerieTests {
 
-		private readonly ArrayListSerie<int> _listaConElementos = new();
-		private readonly ArrayListSerie<int?> _listaConElementosNula = new();
+		private readonly ListSerie<int> _listaConElementos = new();
+		private readonly ListSerie<int?> _listaConElementosNula = new();
 
 		[SetUp]
 		public void SetUp() {
@@ -22,7 +22,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void PonerInicio_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int elem = default(int);
 
 			// Act
@@ -36,7 +36,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void PonerInicio_StateUnderTest_ListaConValoresNulos() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int?>();
+			var aListSerie = new ListSerie<int?>();
 			int? elem = null;
 
 			// Act
@@ -50,7 +50,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Poner_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int elem = default(int);
 			int pos = 0;
 
@@ -78,7 +78,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void PonerFin_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int elem = default(int);
 
 			// Act
@@ -100,7 +100,7 @@ namespace Listas.nUnitTests {
 		[TestCase(-1)]
 		public void PonerVarios_StateUnderTest_ExpectedBehavior(int value) {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int elem = 45;
 			int num = value;
 			int pos = 1;
@@ -132,7 +132,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarInicio_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>(_listaConElementos);
+			var aListSerie = new ListSerie<int>(_listaConElementos);
 
 			// Act
 			var elementoInicial = aListSerie.PrimerElemento();
@@ -146,7 +146,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Borrar_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<float>();
+			var aListSerie = new ListSerie<float>();
 			float elem = 15.0f;
 
 			// Act
@@ -168,7 +168,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Borrar_StateUnderTest_ExpectedBehavior1() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>(_listaConElementos);
+			var aListSerie = new ListSerie<int>(_listaConElementos);
 			int pos = 0;
 
 			// Act
@@ -182,7 +182,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarFin_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 
 			// Act
 			var result = aListSerie.BorrarFin();
@@ -194,7 +194,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarVarios_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int num = 0;
 			int pos = 0;
 
@@ -210,7 +210,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarUltimos_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int elem = default(int);
 
 			// Act
@@ -224,7 +224,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarTodos_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 
 			// Act
 			aListSerie.BorrarTodos();
@@ -236,7 +236,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void PrimerElemento_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 
 			// Act
 			var result = aListSerie.PrimerElemento();
@@ -248,7 +248,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Elemento_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int pos = 0;
 
 			// Act
@@ -261,7 +261,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void UltimoElemento_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 
 			// Act
 			var result = aListSerie.UltimoElemento();
@@ -273,7 +273,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Posicion_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int elem = default(int);
 
 			// Act
@@ -287,7 +287,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Ocurrencias_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int elem = default(int);
 
 			// Act
@@ -301,7 +301,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Pertenece_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			int elem = default(int);
 
 			// Act
@@ -315,7 +315,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void ToString_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 
 			// Act
 			var result = aListSerie.ToString();
@@ -327,7 +327,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void GetEnumerator_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 
 			// Act
 			var result = aListSerie.GetEnumerator();
@@ -339,7 +339,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Equals_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 			Object? obj = null;
 
 			// Act
@@ -353,7 +353,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void GetHashCode_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>();
+			var aListSerie = new ListSerie<int>();
 
 			// Act
 			var result = aListSerie.GetHashCode();
@@ -364,7 +364,7 @@ namespace Listas.nUnitTests {
 
 		[Test]
 		public void Longitud_StateUnderTest_ExpectedBehavior() {
-			var aListSerie = new ArrayListSerie<int?>();
+			var aListSerie = new ListSerie<int?>();
 
 			aListSerie.Longitud++;
 
@@ -377,7 +377,7 @@ namespace Listas.nUnitTests {
 		[TestCase(2)]
 		public void Multiplicar_StateUnderTest_ExpectedBehavior(int value) {
 			// Arrange
-			var aListSerie = new ArrayListSerie<int>(_listaConElementos);
+			var aListSerie = new ListSerie<int>(_listaConElementos);
 			int indice = 0;
 
 			// Act
@@ -400,7 +400,7 @@ namespace Listas.nUnitTests {
 		[TestCase(0)]
 		public void Demostracion_GeneracionDeElementos(int value) {
 			static double funcion(int num) => Math.Pow(2, num);
-			var serie = new ArrayListSerie<double>(funcion);
+			var serie = new ListSerie<double>(funcion);
 
 			if (value < 0) {
 				Assert.Throws<ArgumentOutOfRangeException>(() => serie.Longitud = value);

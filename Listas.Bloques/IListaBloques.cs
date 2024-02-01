@@ -107,7 +107,7 @@
 		/// <returns>
 		/// Bloque que contiene a pos o -1 si no está en la lista
 		/// </returns>
-		int BuscarBLoque(E elemento);
+		int BuscarBloque(E elemento);
 
 		/// <summary>
 		/// Devuelve una lista de bloques como la llamada, con <c>bloque</c>
