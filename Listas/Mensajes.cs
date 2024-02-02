@@ -16,6 +16,8 @@ namespace Listas {
 
 		public static string LongitudNegativa => "La longitud no puede ser negativa";
 
+		public static string ArgumentoNegativo => "Se ha pasado un argumento negativo";
 
+		public static string BloqueNoLleno => "Se ha pasado un bloque no lleno como parámetro";
 	}
 }

@@ -36,7 +36,7 @@ namespace Listas.Bloques {
 			_longitud = 0;
 		}
 
-		public override bool Contiene(object elemento) {
+		public override bool Contiene(object? elemento) {
 			bool res = false;
 			for (int i = 0; i < _array.Length && !res; i++) {
 				if (elemento == null) {

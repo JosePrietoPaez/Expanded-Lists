@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Listas {
-	public sealed class LinkedListaBloques<E,B> :
+	public sealed class ListBloques<E,B> :
 		IListaDinamica<E>, IListaBloquesDinamica<E, B> where B : Bloque<E>{
 
 		private readonly List<B> _bloques = [];
@@ -73,7 +74,7 @@ namespace Listas {
 		/// Crea una <see cref="LinkedListaBloques{E}"/> que genera nuevos elementos con <c>generadora</c>,
 		/// guardados en bloques con capacidad dictada por <c>extensora</c>
 		/// </summary>
-		public LinkedListaBloques(Func<int,int> extensora, Func<int,E?> generadora) {
+		public ListBloques(Func<int,int> extensora, Func<int,E?> generadora) {
 			_extensora = extensora;
 			_generadora = generadora;
 			_bloques.Add(CrearInstancia(_extensora(0)));
@@ -83,17 +84,17 @@ namespace Listas {
 		/// <summary>
 		/// Crea una <see cref="LinkedListaBloques{E}"/> con bloques de capacidad definida por <c>extensora</c>
 		/// </summary>
-		public LinkedListaBloques(Func<int,int> extensora) : this(extensora, n => default) { }
+		public ListBloques(Func<int,int> extensora) : this(extensora, n => default) { }
 
 		/// <summary>
 		/// Crea una <see cref="LinkedListaBloques{E}"/> con bloques con la capacidad especificada
 		/// </summary>
-		public LinkedListaBloques(int capacidad) : this(n => capacidad, n => default) { }
+		public ListBloques(int capacidad) : this(n => capacidad, n => default) { }
 
 		/// <summary>
 		/// Crea una <see cref="LinkedListaBloques{E}"/> con bloques con capacidad para 10 elementos
 		/// </summary>
-		public LinkedListaBloques() : this(n => 10, n => default) { }
+		public ListBloques() : this(n => 10, n => default) { }
 
 		public E this[int posicion] { 
 			get {
@@ -101,8 +102,13 @@ namespace Listas {
 					Mensajes.RangoLista(posicion,Longitud));
 				int bloque = BuscarBloque(posicion);
 				return _bloques[bloque][posicion - _posiciones[bloque]];
-			} 
-			set => throw new NotImplementedException(); }
+			}
+			set {
+				Contract.Requires(posicion >= 0 && posicion < Longitud, Mensajes.RangoLista(posicion, Longitud));
+				int bloque = BuscarBloque(posicion);
+				_bloques[bloque][posicion - _posiciones[bloque]] = value;
+			}
+		}
 
 		E ILista<E>.this[int posicion] => this[posicion];
 
@@ -143,7 +149,14 @@ namespace Listas {
 		int ILista<E>.Longitud => Longitud;
 
 		public int Borrar(B bloque) {
-			throw new NotImplementedException();
+			int i = 0; bool encontrado = false;
+			for (; i < _bloques.Count && (encontrado = _bloques[i].Equals(bloque)); i++) ; // Busca un bloque igual a bloque
+			if (encontrado) {
+				BorrarBloque(i); //Lo borra si está
+			} else {
+				i = -1;
+			}
+			return i;
 		}
 
 		public B BorrarBloque(int posicion) {
@@ -212,15 +225,21 @@ namespace Listas {
 		}
 
 		public void BorrarTodos() {
-			throw new NotImplementedException();
+			_bloques.Clear();
+			_posiciones.Clear();
+			_bloques.Add(CrearInstancia(_extensora(0)));
+			_posiciones.Add(0);
 		}
 
+		//Este método podría optimizarse para no tener que buscarlo cada vez
 		public int BorrarTodos(E elemento) {
-			throw new NotImplementedException();
+			int veces = Ocurrencias(elemento);
+			while (Eliminar(elemento) != -1) ;
+			return veces;
 		}
 
 		public void BorrarTodosBloques() {
-			throw new NotImplementedException();
+			BorrarTodos();
 		}
 
 		public int BorrarUltimos(E elemento) {
@@ -233,7 +252,15 @@ namespace Listas {
 		}
 
 		public int BorrarVariosBloques(int num, int posicion) {
-			throw new NotImplementedException();
+			Contract.Requires<ArgumentOutOfRangeException>(num >= 0,Mensajes.ArgumentoNegativo);
+			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud
+				,Mensajes.RangoLista(posicion,Longitud));
+			int contador = 0;
+			while (num + posicion + contador < _bloques.Count) {
+				BorrarBloque(num + posicion + contador);
+				contador++;
+			}
+			return contador;
 		}
 
 		public int BuscarBloque(int posicion) {
@@ -243,7 +270,16 @@ namespace Listas {
 		}
 
 		public int BuscarBloque(E elemento) {
-			throw new NotImplementedException();
+			int pos = 0;
+			bool encontrado = false;
+			foreach (Bloque<E> bloque in _bloques) {
+				if (bloque.Contiene(elemento)) {
+					encontrado = true;
+					break;
+				}
+				pos++;
+			}
+			return encontrado ? pos : -1;
 		}
 
 		public IListaArbitraria<E> Clonar() {
@@ -346,7 +382,11 @@ namespace Listas {
 		}
 
 		public IEnumerator<E> GetEnumerator() {
-			throw new NotImplementedException();
+			foreach (var bloque in _bloques) {
+				foreach (var elemento in bloque) {
+					yield return elemento;
+				}
+			}
 		}
 
 		public void Insertar(E elemento, int posicion) {
@@ -457,8 +497,22 @@ namespace Listas {
 			}
 		}
 
+		/// <inheritdoc/>
+		/// <remarks>
+		/// Esta clase no permite cambiar la posición del último bloque
+		/// </remarks>
 		public void IntercambiarBloques(int primero, int segundo) {
-			throw new NotImplementedException();
+			if (primero == segundo) return;
+			Contract.Requires<ArgumentOutOfRangeException>(primero >= 0 && primero < _posiciones.Count,
+				Mensajes.RangoLista(primero,Longitud));
+			Contract.Requires<ArgumentOutOfRangeException>(segundo >= 0 && segundo < _posiciones.Count,
+				Mensajes.RangoLista(segundo,Longitud));
+			(_bloques[segundo], _bloques[primero]) = (_bloques[primero], _bloques[segundo]);
+			int deltaL = _bloques[primero].Longitud - _bloques[segundo].Longitud;
+			for (int i = primero + 1; i <= segundo; i++) {
+				_posiciones[i] = _posiciones[i] + deltaL;
+			}
+			AsegurarEspacio();
 		}
 
 		public void Invertir() {
@@ -516,15 +570,29 @@ namespace Listas {
 			throw new NotImplementedException();
 		}
 
+		/// <inheritdoc/>
+		/// <remarks>
+		/// Solo se permite que <c>bloque</c> no este lleno si se cambia por el último
+		/// <para><c>posicion</c></para> debe ser una posición de bloque válida
+		/// </remarks>
+		/// <exception cref="ArgumentException"></exception>
 		public B SetBloque(B bloque, int posicion) {
-			throw new NotImplementedException();
+			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques,
+				Mensajes.RangoLista(posicion,CantidadBloques));
+			Contract.Requires<ArgumentException>(bloque != null && (bloque.Lleno || posicion == _bloques.Count - 1),
+				Mensajes.BloqueNoLleno); // Si el bloque no está lleno debe cambiarse por el último
+			Debug.Assert(bloque != null);
+			B antiguo = _bloques[posicion];
+			_bloques[posicion] = bloque;
+			AsegurarEspacio();
+			return antiguo;
 		}
 
 		public ILista<E> Sumar(E elemento) {
 			throw new NotImplementedException();
 		}
 
-		public IListaBloques<E, B> Sumar(B bloque) {
+		public IListaBloquesDinamica<E, B> Sumar(B bloque) {
 			throw new NotImplementedException();
 		}
 
@@ -542,7 +610,7 @@ namespace Listas {
 		}
 
 		ILista<E> ILista<E>.Clonar() {
-			throw new NotImplementedException();
+			return Clonar();
 		}
 
 		IListaBloques<E, B> IListaBloques<E, B>.Clonar() {

@@ -170,7 +170,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Booleano que representa si se tiene el elemento
 		/// </returns>
-		abstract public bool Contiene(object elemento);
+		abstract public bool Contiene(object? elemento);
 
 		abstract public IEnumerator<T> GetEnumerator();
 
