@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Listas.Bloques\Listas.Bloques.csproj" />
     <ProjectReference Include="..\Listas\Listas.csproj" />
   </ItemGroup>
 
