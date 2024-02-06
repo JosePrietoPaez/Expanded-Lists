@@ -202,9 +202,6 @@ namespace Listas
 		/// </summary>
 		/// <remarks>
 		/// La posición de los elementos depende de la implementación
-		/// <para>Para saber en que posición se encuentra al insertarla use
-		/// <see cref="ILista{T}.Insertar(T)"/> en su lugar
-		/// </para>
 		/// </remarks>
 		/// <returns>
 		/// Lista con los elementos de las dos listas

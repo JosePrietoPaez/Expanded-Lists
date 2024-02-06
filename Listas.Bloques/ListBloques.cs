@@ -5,9 +5,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Listas {
+
+	/// <summary>
+	/// Esta clase usa una instancia de <see cref="List{T}"/> para guardar las instancias de <c>B</c>
+	/// </summary>
+	/// <remarks>
+	/// Las instancias de estas clases siempre tendrán un bloque con espacio para insertar más datos
+	/// <para>
+	/// Se usa una función para generar elementos y otra para calcular las nuevas longitudes de los bloques, 
+	/// pueden ser cambiadas mediante propiedades
+	/// </para>
+	/// </remarks>
+	/// <typeparam name="E"></typeparam>
+	/// <typeparam name="B"></typeparam>
 	public sealed class ListBloques<E,B> :
 		IListaDinamica<E>, IListaBloquesDinamica<E, B> where B : Bloque<E>{
 
@@ -70,8 +82,12 @@ namespace Listas {
 			return inicio + EncontrarBinarioRecursivo(lista.GetRange(medio + 1, tam - medio - 1), medio + 1, posicion);
 		}
 
+		private static B Clonar(B bloque) {
+			return Bloque<E>.CopiarInstancia<B>(bloque);
+		}
+
 		/// <summary>
-		/// Crea una <see cref="LinkedListaBloques{E}"/> que genera nuevos elementos con <c>generadora</c>,
+		/// Crea una <see cref="ListBloques{E, B}"/> que genera nuevos elementos con <c>generadora</c>,
 		/// guardados en bloques con capacidad dictada por <c>extensora</c>
 		/// </summary>
 		public ListBloques(Func<int,int> extensora, Func<int,E?> generadora) {
@@ -82,19 +98,48 @@ namespace Listas {
 		}
 
 		/// <summary>
-		/// Crea una <see cref="LinkedListaBloques{E}"/> con bloques de capacidad definida por <c>extensora</c>
+		/// Crea una <see cref="ListBloques{E, B}"/> con bloques de capacidad definida por <c>extensora</c>
 		/// </summary>
 		public ListBloques(Func<int,int> extensora) : this(extensora, n => default) { }
 
 		/// <summary>
-		/// Crea una <see cref="LinkedListaBloques{E}"/> con bloques con la capacidad especificada
+		/// Crea una <see cref="ListBloques{E, B}"/> con bloques con la capacidad especificada
 		/// </summary>
 		public ListBloques(int capacidad) : this(n => capacidad, n => default) { }
 
 		/// <summary>
-		/// Crea una <see cref="LinkedListaBloques{E}"/> con bloques con capacidad para 10 elementos
+		/// Crea una <see cref="ListBloques{E, B}"/> con bloques con capacidad para 10 elementos
 		/// </summary>
 		public ListBloques() : this(n => 10, n => default) { }
+
+		/// <summary>
+		/// Crea un <see cref="ListBloques{E, B}"/> con los elementos de col con bloques de capacidad 10
+		/// </summary>
+		/// <param name="col"></param>
+		public ListBloques(IEnumerable<E> col) : this(col, n => 10, n => default) { }
+
+		/// <summary>
+		/// Crea un <see cref="ListBloques{E, B}"/> con los elementos de <c>col</c> con bloques con la capacidad obtenida de <c>extensora</c>
+		/// </summary>
+		/// <remarks>
+		/// Si <c>lista</c> es una <see cref="IListaBloques{E, B}"/> se copiarán las capacidades de sus bloques
+		/// </remarks>
+		/// <param name="col"></param>
+		/// <param name="extensora"></param>
+		/// <param name="generadora"></param>
+		public ListBloques(IEnumerable<E> col, Func<int, int> extensora, Func<int, E?> generadora) : this() {
+			if (col is IListaBloques<E,B> lista) {
+				foreach (var bloque in lista.GetBloques()) {
+					Insertar(Bloque<E>.CopiarInstancia<B>(bloque),CantidadBloques);
+				}
+			} else {
+				foreach (var item in col) {
+					InsertarFin(item);
+				}
+			}
+			_extensora = extensora;
+			_generadora = generadora;
+		}
 
 		public E this[int posicion] { 
 			get {
@@ -283,7 +328,7 @@ namespace Listas {
 		}
 
 		public IListaArbitraria<E> Clonar() {
-			throw new NotImplementedException();
+			return new ListBloques<E, B>(this);
 		}
 
 		public bool Contiene(E elemento) {
@@ -295,7 +340,11 @@ namespace Listas {
 		}
 
 		public ILista<E> Diferencia(ILista<E> lista) {
-			throw new NotImplementedException();
+			ListBloques<E, B> nueva = new(this);
+			foreach (var item in lista) {
+				nueva.BorrarTodos(item);
+			}
+			return nueva;
 		}
 
 		public int Eliminar(E elemento) {
@@ -424,11 +473,18 @@ namespace Listas {
 		/// Última posición de la lista
 		/// </returns>
 		public int Insertar(E elemento) {
-			throw new NotImplementedException();
+			InsertarFin(elemento);
+			return Longitud - 1;
 		}
 
-		public int Insertar(B bloque) {
-			throw new NotImplementedException();
+		public void Insertar(B bloque, int posicion) {
+			Contract.Requires<ArgumentNullException>(bloque is not null, Mensajes.BloqueNulo);
+			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques, Mensajes.RangoLista(posicion,CantidadBloques));
+			Debug.Assert(bloque is not null);
+			_bloques.Insert(posicion,bloque);
+			for (int i = Math.Max(1,posicion); i < _posiciones.Count; i++) { // _posiciones[0] siempre debe ser 0
+				_posiciones[i] = _posiciones[i - 1] + _bloques[i - 1].Longitud;
+			}
 		}
 
 		public void InsertarFin(E elemento) {
@@ -515,12 +571,50 @@ namespace Listas {
 			AsegurarEspacio();
 		}
 
+		/// <inheritdoc/>
+		/// <remarks>
+		/// En esta clase si el último bloque está vacío, se cambia por otro después de invertirlo y se introduce otro
+		/// </remarks>
 		public void Invertir() {
-			throw new NotImplementedException();
+			foreach (var bloque in _bloques) { // Se invierten todos los bloques, después se invierte el orden de estos
+				bloque.Invertir();
+			}
+			if (_bloques[^1].Vacio) {
+				_bloques.Reverse(0,_bloques.Count - 2); // Si el último está vacío se deja al final
+			} else {
+				_bloques.Reverse();
+				B antiguo = _bloques[0];
+				_bloques[0] = CrearInstancia(antiguo.Longitud);
+				foreach (var item in antiguo) {
+					_bloques[0].InsertarUltimo(item);
+				}
+			} // Después de este if, se ha invertido la lista, pero se deben recalcular las longitudes
+			_posiciones[0] = 0;
+			for (int i = 1; i < _bloques.Count; i++) {
+				_posiciones[i] = _posiciones[i-1] + _bloques[i-1].Longitud;
+			}
+			AsegurarEspacio();
 		}
 
 		public IListaArbitraria<E> Multiplicar(int factor) {
-			throw new NotImplementedException();
+			ListBloques<E, B> listaNueva = new(this);
+			if (factor == 0) {
+				listaNueva.Vacia = true;
+			} else {
+				if (factor < 0) {
+					listaNueva.Invertir();
+				} else {
+					B nuevo = CrearInstancia(listaNueva._bloques[^1].Longitud); //Crea un bloque con la longitud justa
+					foreach (var item in listaNueva._bloques[^1]) {
+						nuevo.InsertarUltimo(item);
+					}
+					listaNueva._bloques[^1] = nuevo;
+				}
+				for (int i = 0; i < _bloques.Count * Math.Abs(factor); i++) {
+					listaNueva.Insertar(Clonar(_bloques[i%CantidadBloques]), i);
+				}
+			}
+			return listaNueva;
 		}
 
 		public int Ocurrencias(E elemento) {
@@ -557,23 +651,37 @@ namespace Listas {
 			}
 		}
 
+		public int Posicion(B bloque) {
+			int posicion = -1;
+			for (int i = 0; i < _bloques.Count && posicion < 0; i++) {
+				if (bloque.Equals(_bloques[i])) {
+					posicion = i;
+				}
+			}
+			return posicion;
+		}
+
 		public E PrimerElemento() {
 			Contract.Requires<InvalidOperationException>(!Vacia, Mensajes.VacioLista);
 			return _bloques[0].PrimerElemento();
 		}
 
 		public ILista<E> Restar(E elemento) {
-			throw new NotImplementedException();
+			ListBloques<E, B> nueva = new(this);
+			nueva.Eliminar(elemento);
+			return nueva;
 		}
 
 		public IListaBloques<E, B> Restar(B bloque) {
-			throw new NotImplementedException();
+			ListBloques<E,B> nueva = new(this);
+			nueva.BorrarBloque(nueva.Posicion(bloque));
+			return nueva;
 		}
 
 		/// <inheritdoc/>
 		/// <remarks>
-		/// Solo se permite que <c>bloque</c> no este lleno si se cambia por el último
-		/// <para><c>posicion</c></para> debe ser una posición de bloque válida
+		/// En esta clase solo se permite que <c>bloque</c> no este lleno si se cambia por el último
+		/// <para><c>posicion</c> debe ser una posición de bloque válida</para>
 		/// </remarks>
 		/// <exception cref="ArgumentException"></exception>
 		public B SetBloque(B bloque, int posicion) {
@@ -589,11 +697,15 @@ namespace Listas {
 		}
 
 		public ILista<E> Sumar(E elemento) {
-			throw new NotImplementedException();
+			ListBloques<E, B> nueva = new(this);
+			nueva.InsertarFin(elemento);
+			return nueva;
 		}
 
 		public IListaBloquesDinamica<E, B> Sumar(B bloque) {
-			throw new NotImplementedException();
+			ListBloques<E, B> nueva = new(this);
+			nueva.Insertar(bloque,nueva.CantidadBloques-1);
+			return nueva;
 		}
 
 		public E UltimoElemento() {
@@ -606,7 +718,11 @@ namespace Listas {
 		}
 
 		public ILista<E> Unir(ILista<E> segunda) {
-			throw new NotImplementedException();
+			ListBloques<E,B> nueva = new(this);
+			foreach (var item in segunda) {
+				nueva.InsertarFin(item);
+			}
+			return nueva;
 		}
 
 		ILista<E> ILista<E>.Clonar() {
@@ -614,11 +730,15 @@ namespace Listas {
 		}
 
 		IListaBloques<E, B> IListaBloques<E, B>.Clonar() {
-			throw new NotImplementedException();
+			return new ListBloques<E, B>(this, FuncionDeExtension, FuncionDeGeneracion);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
-			throw new NotImplementedException();
+			return GetEnumerator();
+		}
+
+		IListaBloquesDinamica<E, B> IListaBloquesDinamica<E, B>.Clonar() {
+			return new ListBloques<E, B>(this, FuncionDeExtension, FuncionDeGeneracion);
 		}
 	}
 }

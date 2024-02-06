@@ -101,6 +101,14 @@ namespace Listas.Bloques {
 			return aux;
 		}
 
+		public override void Invertir() {
+			T[] arrayCopia = new T[_longitud];
+			Array.Copy(_array, arrayCopia, _longitud);
+			for (int i = 0; i < _longitud; i++) {
+				_array[i] = arrayCopia[_longitud - i - 1];
+			}
+		}
+
 		public override T PrimerElemento() {
 			return _array[0];
 		}
@@ -121,5 +129,35 @@ namespace Listas.Bloques {
 			stringBuilder.Append(']');
 			return stringBuilder.ToString();
 		}
+
+		public override bool Equals(object? obj) {
+			bool iguales = Object.ReferenceEquals(this, obj); // Si son el mismo objeto, trivialmente son iguales
+			if (!iguales && obj is Bloque<T> otro) { // No pueden ser iguales si otro no es un bloque
+				iguales = Longitud == otro.Longitud && Capacidad == otro.Capacidad; // Para descartar bloques con distinta longitud o capacidad
+				int contador = 0;
+				while (iguales && contador < Longitud) {
+					iguales = _array[contador]?.Equals(otro[contador]) ?? otro[contador] is null;
+					contador++;
+				}
+			}
+			return iguales;
+		}
+
+		public override int GetHashCode() {
+			int codigo = Longitud ^ Capacidad; // Para que se tengan en cuenta como en Equals
+			for (int i = 0; i < _longitud; i++) {
+				codigo ^= _array[i]?.GetHashCode() ?? 0;
+			}
+			return codigo;
+		}
+
+		public static implicit operator ArrayBloque<T>(T[] array) {
+			ArrayBloque<T> bloque = CrearInstancia<ArrayBloque<T>>(array.Length);
+			foreach (var item in array) {
+				bloque.InsertarUltimo(item);
+			}
+			return bloque;
+		}
+
 	}
 }

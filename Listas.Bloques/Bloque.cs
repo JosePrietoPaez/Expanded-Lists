@@ -27,6 +27,14 @@ namespace Listas.Bloques {
 			return constructor?.Invoke([capacidad]) as B?? throw new NotImplementedException("No se ha implementado el constructor con argumento int");
 		}
 
+		public static B CopiarInstancia<B>(Bloque<T> bloque) where B : Bloque<T> {
+			B clon = CrearInstancia<B>(bloque.Capacidad);
+			foreach (var elemento in bloque) {
+				clon.InsertarUltimo(elemento);
+			}
+			return clon;
+		}
+
 		/// <summary>
 		/// Permite obtener o cambiar el elemento en la posición indicada, no permite la inserción de elementos
 		/// </summary>
@@ -171,6 +179,11 @@ namespace Listas.Bloques {
 		/// Booleano que representa si se tiene el elemento
 		/// </returns>
 		abstract public bool Contiene(object? elemento);
+
+		/// <summary>
+		/// Invierte el orden de los elementos del bloque
+		/// </summary>
+		abstract public void Invertir();
 
 		abstract public IEnumerator<T> GetEnumerator();
 

@@ -13,8 +13,6 @@ namespace Listas.Bloques {
 	/// <typeparam name="B"></typeparam>
 	public interface IListaBloquesDinamica<E,B> : IListaBloques<E,B> where B : Bloque<E> {
 
-		Func<int,int> FuncionDeExtension { get; set; }
-
 		/// <summary>
 		/// Devuelve la lista con <c>bloque</c> insertado
 		/// </summary>
@@ -40,11 +38,11 @@ namespace Listas.Bloques {
 		B SetBloque(B bloque, int posicion);
 
 		/// <summary>
-		/// Coloca el bloque en la lista
+		/// Coloca el bloque en la lista en la posición indicada
 		/// </summary>
 		/// <param name="bloque"></param>
 		/// <returns>La posición en la que se ha insertado</returns>
-		int Insertar(B bloque);
+		void Insertar(B bloque, int posicion);
 
 		/// <summary>
 		/// Intercambia los bloques con estas posiciones
@@ -58,6 +56,9 @@ namespace Listas.Bloques {
 		/// Devuelve una lista de bloques como la llamada, con <c>bloque</c>
 		/// </summary>
 		IListaBloquesDinamica<E, B> Sumar(B bloque);
+
+		
+		new IListaBloquesDinamica<E, B> Clonar();
 
 	}
 }

@@ -95,6 +95,15 @@
 		int BuscarBloque(E elemento);
 
 		/// <summary>
+		/// Devuelve la posición en la que se encuentra <c>bloque</c>
+		/// </summary>
+		/// <param name="bloque"></param>
+		/// <returns>
+		/// La posición de <c>bloque</c> en la lista o -1 si no está
+		/// </returns>
+		int Posicion(B bloque);
+
+		/// <summary>
 		/// Devuelve una lista de bloques como la llamada, sin <c>bloque</c>
 		/// </summary>
 		IListaBloques<E,B> Restar(B bloque);

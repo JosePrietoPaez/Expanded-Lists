@@ -19,5 +19,7 @@ namespace Listas {
 		public static string ArgumentoNegativo => "Se ha pasado un argumento negativo";
 
 		public static string BloqueNoLleno => "Se ha pasado un bloque no lleno como parámetro";
+
+		public static string BloqueNulo => "Se ha pasado un bloque nulo";
 	}
 }
