@@ -53,7 +53,7 @@ namespace Listas
 		/// </remarks>
 		/// <returns></returns>
 		static IListaDinamica<T> operator ++(IListaDinamica<T> serie) {
-			Contract.Requires<InvalidOperationException>
+			Contrato.Requires<InvalidOperationException>
 				(CompatibleEnLista(serie.FuncionDeGeneracion.Invoke(serie.Longitud)), "La función de generación ha creado un elemento nulo");
 			serie.Longitud++;
 			return serie;

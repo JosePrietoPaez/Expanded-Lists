@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Diagnostics.Contracts;
 
 namespace Listas {
 	/// <summary>
@@ -45,7 +44,7 @@ namespace Listas {
 			get => _serie.Count;
 			set
 			{
-				Contract.Requires<ArgumentOutOfRangeException>(value >= 0, Mensajes.LongitudNegativa);
+				Contrato.Requires<ArgumentOutOfRangeException>(value >= 0, Mensajes.LongitudNegativa);
 				int siz = _serie.Count;
 				if (value == 0) _serie.Clear();
 				else if (value < siz)
@@ -56,7 +55,7 @@ namespace Listas {
 				{
 					while (value > siz)
 					{
-						Contract.Requires<InvalidOperationException>(ILista<T>.CompatibleEnLista(Generar()),
+						Contrato.Requires<InvalidOperationException>(ILista<T>.CompatibleEnLista(Generar()),
 							Mensajes.GeneracionNula);
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 						_serie.Add(Generar()); //Ignorar el warning
@@ -311,14 +310,14 @@ namespace Listas {
 		///<inheritdoc/>
 		public T PrimerElemento()
 		{
-			Contract.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
+			Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
 			return _serie[0];
 		}
 
 		///<inheritdoc/>
 		public T UltimoElemento()
 		{
-			Contract.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
+			Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
 			return _serie[^1];
 		}
 

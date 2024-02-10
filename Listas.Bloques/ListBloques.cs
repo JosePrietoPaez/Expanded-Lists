@@ -1,10 +1,7 @@
 ﻿using Listas.Bloques;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
-using System.Linq;
 
 namespace Listas {
 
@@ -55,7 +52,7 @@ namespace Listas {
 
 		private E? Generar() {
 			E? generado = _generadora.Invoke(Longitud);
-			Contract.Requires<InvalidOperationException>(ILista<E>.CompatibleEnLista(generado),Mensajes.GeneracionNula);
+			Contrato.Requires<InvalidOperationException>(ILista<E>.CompatibleEnLista(generado),Mensajes.GeneracionNula);
 			return generado;
 		}
 
@@ -143,13 +140,14 @@ namespace Listas {
 
 		public E this[int posicion] { 
 			get {
-				Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud,
+				Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud,
 					Mensajes.RangoLista(posicion,Longitud));
 				int bloque = BuscarBloque(posicion);
 				return _bloques[bloque][posicion - _posiciones[bloque]];
 			}
 			set {
-				Contract.Requires(posicion >= 0 && posicion < Longitud, Mensajes.RangoLista(posicion, Longitud));
+				Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud,
+					Mensajes.RangoLista(posicion, Longitud));
 				int bloque = BuscarBloque(posicion);
 				_bloques[bloque][posicion - _posiciones[bloque]] = value;
 			}
@@ -160,7 +158,7 @@ namespace Listas {
 		public Func<int, E?> FuncionDeGeneracion { get => _generadora; set => _generadora = value; }
 		public int Longitud { get => _posiciones[^1] + _bloques[^1].Longitud;
 			set {
-				if (value < 0) throw new ArgumentOutOfRangeException(nameof(value));
+				Contrato.Requires<ArgumentOutOfRangeException>(value >= 0, Mensajes.ArgumentoNegativo);
 				int longitud = Longitud;
 				if (value == longitud) return;
 				while (longitud > value) { //Si se quiere reducir el tamaño
@@ -195,7 +193,9 @@ namespace Listas {
 
 		public int Borrar(B bloque) {
 			int i = 0; bool encontrado = false;
-			for (; i < _bloques.Count && (encontrado = _bloques[i].Equals(bloque)); i++) ; // Busca un bloque igual a bloque
+			while (i < _bloques.Count && !(encontrado = _bloques[i].Equals(bloque))) {
+				i++;
+			}
 			if (encontrado) {
 				BorrarBloque(i); //Lo borra si está
 			} else {
@@ -205,9 +205,9 @@ namespace Listas {
 		}
 
 		public B BorrarBloque(int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud, Mensajes.RangoLista(posicion,Longitud));
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques, Mensajes.RangoLista(posicion,CantidadBloques));
 			B aux;
-			if (posicion == _posiciones.Count - 1) {
+			if (posicion == CantidadBloques - 1) {
 				aux = _bloques[^1];
 				_bloques[posicion] = CrearInstancia(_extensora(posicion));
 			} else {
@@ -224,7 +224,7 @@ namespace Listas {
 		}
 
 		public E BorrarFin() {
-			Contract.Requires<InvalidOperationException>(Longitud > 0, Mensajes.VacioLista);
+			Contrato.Requires<InvalidOperationException>(Longitud > 0, Mensajes.VacioLista);
 			B ultimo = _bloques[^1];
 			E aux;
 			if (ultimo.Vacio) { //Si el ultimo bloque está vacío el anterior no lo está
@@ -238,7 +238,7 @@ namespace Listas {
 
 		// Este método ha sido cambiado al usar un List en lugar de LinkedList como en la versión de Java, antes se iteraba mediante un iterable de _bloques
 		public E BorrarInicio() {
-			Contract.Requires<InvalidOperationException>(Longitud > 0, Mensajes.VacioLista);
+			Contrato.Requires<InvalidOperationException>(Longitud > 0, Mensajes.VacioLista);
 			E? acarreo = default, acarreo2;
 			B bloque = _bloques[^1];
 			bool borrar = false; // Guarda si se ha borrado el último bloque
@@ -297,8 +297,8 @@ namespace Listas {
 		}
 
 		public int BorrarVariosBloques(int num, int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(num >= 0,Mensajes.ArgumentoNegativo);
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud
+			Contrato.Requires<ArgumentOutOfRangeException>(num >= 0,Mensajes.ArgumentoNegativo);
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud
 				,Mensajes.RangoLista(posicion,Longitud));
 			int contador = 0;
 			while (num + posicion + contador < _bloques.Count) {
@@ -309,7 +309,7 @@ namespace Listas {
 		}
 
 		public int BuscarBloque(int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= Longitud,
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= Longitud,
 				Mensajes.RangoLista(posicion, Longitud));
 			return EncontrarBinarioRecursivo(_posiciones, 0, posicion);
 		}
@@ -357,7 +357,7 @@ namespace Listas {
 
 		// Como BorrarInicio(), este método ha recibido cambios para aprovechar que se una un List
 		public E Eliminar(int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud, Mensajes.RangoLista(posicion, Longitud));
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud, Mensajes.RangoLista(posicion, Longitud));
 			E? acarreo = default, acarreo2;
 			B bloque = _bloques[^1];
 			bool borrar = false, borrado = false; // Borrado es para comprobar que se ha encontrado el elemento y se ha borrado antes de tiempo
@@ -411,7 +411,7 @@ namespace Listas {
 		}
 
 		public int EliminarVarios(int num, int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud, Mensajes.RangoLista(posicion,Longitud));
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud, Mensajes.RangoLista(posicion,Longitud));
 			int borrados = 0;
 			while (posicion < Longitud) {
 				Eliminar(num);
@@ -421,7 +421,7 @@ namespace Listas {
 		}
 
 		public B GetBloque(int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < _bloques.Count,
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < _bloques.Count,
 				Mensajes.RangoLista(posicion,Longitud));
 			return _bloques[posicion];
 		}
@@ -439,7 +439,7 @@ namespace Listas {
 		}
 
 		public void Insertar(E elemento, int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= Longitud,
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= Longitud,
 				Mensajes.RangoLista(posicion,Longitud));
 			if (posicion == 0) {
 				InsertarInicio(elemento);
@@ -478,10 +478,11 @@ namespace Listas {
 		}
 
 		public void Insertar(B bloque, int posicion) {
-			Contract.Requires<ArgumentNullException>(bloque is not null, Mensajes.BloqueNulo);
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques, Mensajes.RangoLista(posicion,CantidadBloques));
+			Contrato.Requires<ArgumentNullException>(bloque is not null, Mensajes.BloqueNulo);
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques, Mensajes.RangoLista(posicion,CantidadBloques));
 			Debug.Assert(bloque is not null);
 			_bloques.Insert(posicion,bloque);
+			_posiciones.Add(0);
 			for (int i = Math.Max(1,posicion); i < _posiciones.Count; i++) { // _posiciones[0] siempre debe ser 0
 				_posiciones[i] = _posiciones[i - 1] + _bloques[i - 1].Longitud;
 			}
@@ -510,7 +511,7 @@ namespace Listas {
 
 		public void InsertarVarios(E elemento, int num, int posicion) {
 			if (num < 1) return;
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= Longitud,
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= Longitud,
 				Mensajes.RangoLista(posicion,Longitud));
 			List<E> acarreo = [];
 			int bloque = BuscarBloque(posicion), inicial = _posiciones[bloque], posEnBloque = posicion - inicial;
@@ -559,9 +560,9 @@ namespace Listas {
 		/// </remarks>
 		public void IntercambiarBloques(int primero, int segundo) {
 			if (primero == segundo) return;
-			Contract.Requires<ArgumentOutOfRangeException>(primero >= 0 && primero < _posiciones.Count,
+			Contrato.Requires<ArgumentOutOfRangeException>(primero >= 0 && primero < _posiciones.Count,
 				Mensajes.RangoLista(primero,Longitud));
-			Contract.Requires<ArgumentOutOfRangeException>(segundo >= 0 && segundo < _posiciones.Count,
+			Contrato.Requires<ArgumentOutOfRangeException>(segundo >= 0 && segundo < _posiciones.Count,
 				Mensajes.RangoLista(segundo,Longitud));
 			(_bloques[segundo], _bloques[primero]) = (_bloques[primero], _bloques[segundo]);
 			int deltaL = _bloques[primero].Longitud - _bloques[segundo].Longitud;
@@ -662,7 +663,7 @@ namespace Listas {
 		}
 
 		public E PrimerElemento() {
-			Contract.Requires<InvalidOperationException>(!Vacia, Mensajes.VacioLista);
+			Contrato.Requires<InvalidOperationException>(!Vacia, Mensajes.VacioLista);
 			return _bloques[0].PrimerElemento();
 		}
 
@@ -685,9 +686,9 @@ namespace Listas {
 		/// </remarks>
 		/// <exception cref="ArgumentException"></exception>
 		public B SetBloque(B bloque, int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques,
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques,
 				Mensajes.RangoLista(posicion,CantidadBloques));
-			Contract.Requires<ArgumentException>(bloque != null && (bloque.Lleno || posicion == _bloques.Count - 1),
+			Contrato.Requires<ArgumentException>(bloque != null && (bloque.Lleno || posicion == _bloques.Count - 1),
 				Mensajes.BloqueNoLleno); // Si el bloque no está lleno debe cambiarse por el último
 			Debug.Assert(bloque != null);
 			B antiguo = _bloques[posicion];
@@ -709,7 +710,7 @@ namespace Listas {
 		}
 
 		public E UltimoElemento() {
-			Contract.Requires<InvalidOperationException>(!Vacia, Mensajes.VacioLista);
+			Contrato.Requires<InvalidOperationException>(!Vacia, Mensajes.VacioLista);
 			Bloque<E> ultimo = _bloques[^1];
 			if (ultimo.Vacio) {
 				return _bloques[^2].UltimoElemento();

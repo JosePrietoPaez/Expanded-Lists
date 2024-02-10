@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Reflection;
 using System.Text;
 
 namespace Listas.Bloques {
@@ -13,12 +9,12 @@ namespace Listas.Bloques {
 
 		public override T this[int index] {
 			get {
-				Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
+				Contrato.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
 					Mensajes.RangoLista(index,_longitud));
 				return _array[index];
 			}
 			set {
-				Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
+				Contrato.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
 					Mensajes.RangoLista(index, _longitud));
 				_array[index] = value;
 			}
@@ -49,7 +45,7 @@ namespace Listas.Bloques {
 		}
 
 		public override T Eliminar(int posicion) {
-			Contract.Requires<IndexOutOfRangeException>(posicion >= 0 && posicion < _longitud,
+			Contrato.Requires<IndexOutOfRangeException>(posicion >= 0 && posicion < _longitud,
 				Mensajes.RangoLista(posicion, _longitud));
 			T aux = _array[posicion];
 			Array.Copy(_array, posicion + 1, _array, posicion, _array.Length - posicion - 1);
@@ -62,7 +58,7 @@ namespace Listas.Bloques {
 		}
 
 		public override T EliminarUltimo() {
-			Contract.Requires<InvalidOperationException>(_longitud > 0, Mensajes.VacioBloque);
+			Contrato.Requires<InvalidOperationException>(_longitud > 0, Mensajes.VacioBloque);
 			_longitud--;
 			return _array[_longitud];
 		}
@@ -74,7 +70,7 @@ namespace Listas.Bloques {
 		}
 
 		public override T? Insertar(T elemento, int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= _longitud && (posicion != _longitud || _longitud != _array.Length)
+			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= _longitud && (posicion != _longitud || _longitud != _array.Length)
 				,Mensajes.RangoLista(posicion,_longitud));
 			if (posicion == _longitud) {
 				return InsertarUltimo(elemento);

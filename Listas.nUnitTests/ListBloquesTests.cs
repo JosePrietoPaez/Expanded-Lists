@@ -7,41 +7,75 @@ namespace Listas.nUnitTests {
 	[TestFixture]
 	public class ListBloquesTests {
 
-		private ArrayBloque<int> _bloqueVacio,
+		private static ArrayBloque<int> _bloqueVacio,
+			_bloqueConMenosElementos,
 			_bloqueConElementos;
+
+		private ArrayBloque<int>[] _bloques;
 
 		[SetUp]
 		public void SetUp() {
 			_bloqueConElementos = new int[10] { 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 };
+			_bloqueConMenosElementos = new int[5] { 1, 2, 3, 4, 5 };
 			_bloqueVacio = new int[10];
+			_bloques = [_bloqueVacio, _bloqueConMenosElementos, _bloqueConElementos];
 		}
 
 		[Test]
-		public void Borrar_StateUnderTest_ExpectedBehavior() {
+		public void Borrar_BloqueEnLaLista() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			ArrayBloque<int> bloque = null;
 
 			// Act
+			listBloques.Insertar(_bloqueConElementos,0);
+			listBloques.Insertar(_bloqueVacio, 1);
+
 			var result = listBloques.Borrar(
-				bloque);
+				_bloqueConElementos);
 
 			// Assert
-			Assert.Fail();
+			Assert.That(result, Is.EqualTo(0));
 		}
 
 		[Test]
-		public void BorrarBloque_StateUnderTest_ExpectedBehavior() {
+		public void Borrar_BloqueNoEnLaLista() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int posicion = 0;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 
 			// Act
-			var result = listBloques.BorrarBloque(
-				posicion);
+			listBloques.Insertar(_bloqueConElementos, 0);
+			listBloques.Insertar(_bloqueVacio, 1);
+
+			var result = listBloques.Borrar(
+				_bloqueConMenosElementos);
 
 			// Assert
-			Assert.Fail();
+			Assert.That(result, Is.EqualTo(-1));
+		}
+
+		[TestCase(-1)]
+		[TestCase(0)]
+		[TestCase(1)]
+		[TestCase(10)]
+		public void BorrarBloque_CasosDePrueba(int value) {
+			// Arrange
+			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			int cantidad;
+
+			// Act
+			for (int i = 0; i < _bloques.Length; i++) {
+				listBloques.Insertar(_bloques[i], i);
+			}
+
+			cantidad = listBloques.CantidadBloques;
+
+			// Assert
+			if (value < 0 || value > listBloques.CantidadBloques) {
+				Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.BorrarBloque(value));
+			} else {
+				listBloques.BorrarBloque(value);
+				Assert.That(cantidad, Is.EqualTo(listBloques.CantidadBloques + 1));
+			}
 		}
 
 		[Test]
