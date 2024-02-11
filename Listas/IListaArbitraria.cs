@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Listas {
+﻿namespace Listas {
 	/// <summary>
 	/// <see cref="ILista{T}"/> cuyos elementos solo se identifican por su posición y no un orden
 	/// </summary>
@@ -21,6 +16,21 @@ namespace Listas {
 		/// <param name="posicion"></param>
 		/// <returns></returns>
 		new T this[int posicion] { get; set; }
+
+		/// <summary>
+		/// Esta propiedad permite leer y escribir directamente el primer elemento de la lista
+		/// </summary>
+		/// <returns>
+		/// Primer elemento de la lista
+		/// </returns>
+		new T PrimerElemento { get; set; }
+
+		/// <summary>
+		/// Esta propiedad permite leer y escribir directamente el último elemento de la lista
+		/// </summary>
+		/// <returns>
+		/// Último elemento
+		new T UltimoElemento { get; set; }
 
 		/// <summary>
 		/// Devuelve una lista con los mismos elementos que <c>lista</c> repetidos <c>factor</c> veces

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Listas {
 	/// <summary>
@@ -14,10 +15,16 @@ namespace Listas {
 		/// <param name="predicate"></param>
 		/// <param name="message"></param>
 		/// <exception cref="TException"></exception>
-		public static void Requires<TException>(bool predicate, string message = "") where TException : Exception,new() {
+		public static void Requires<TException>(bool predicate, string message = "", string parametro = "") where TException : Exception,new() {
 			if (!predicate) {
-				Debug.Write(message);
-				throw new TException();
+				ConstructorInfo? constructor;
+				if (new TException() is ArgumentOutOfRangeException) {
+					throw new ArgumentOutOfRangeException(parametro,message);
+				} else if (new TException() is ArgumentException) {
+					throw new ArgumentException(message,parametro);
+				}
+				constructor = typeof(TException).GetConstructor([typeof(string)]);
+				throw constructor?.Invoke([message]) as TException ?? throw new NotImplementedException("¿Qué clase de excepción no permite añadir mensaje?");
 			}
 		}
 	}

@@ -308,17 +308,34 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public T PrimerElemento()
-		{
-			Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
-			return _serie[0];
+		public T PrimerElemento {
+			get {
+				Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
+				return _serie[0];
+			}
 		}
 
 		///<inheritdoc/>
-		public T UltimoElemento()
-		{
-			Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
-			return _serie[^1];
+		public T UltimoElemento {
+			get {
+				Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
+				return _serie[^1];
+			}
+		}
+
+		T IListaArbitraria<T>.PrimerElemento { 
+			get => PrimerElemento; 
+			set { 
+				Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
+				_serie[0] = value;
+			} 
+		}
+		T IListaArbitraria<T>.UltimoElemento {
+			get => UltimoElemento;
+			set {
+				Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
+				_serie[^1] = value;
+			}
 		}
 
 		///<inheritdoc/>

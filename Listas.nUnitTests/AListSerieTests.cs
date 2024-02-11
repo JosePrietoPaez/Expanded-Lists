@@ -91,7 +91,7 @@ namespace Listas.nUnitTests {
 			aListSerie.InsertarFin(
 				elem+1);
 
-			Assert.That(aListSerie.UltimoElemento(), Is.EqualTo(elem+1));
+			Assert.That(aListSerie.UltimoElemento, Is.EqualTo(elem+1));
 		}
 
 		[TestCase(0)]
@@ -135,7 +135,7 @@ namespace Listas.nUnitTests {
 			var aListSerie = new ListSerie<int>(_listaConElementos);
 
 			// Act
-			var elementoInicial = aListSerie.PrimerElemento();
+			var elementoInicial = aListSerie.PrimerElemento;
 			var result = aListSerie.BorrarInicio();
 
 			// Assert
@@ -239,7 +239,7 @@ namespace Listas.nUnitTests {
 			var aListSerie = new ListSerie<int>();
 
 			// Act
-			var result = aListSerie.PrimerElemento();
+			var result = aListSerie.PrimerElemento;
 
 			// Assert
 			Assert.Fail();
@@ -264,7 +264,7 @@ namespace Listas.nUnitTests {
 			var aListSerie = new ListSerie<int>();
 
 			// Act
-			var result = aListSerie.UltimoElemento();
+			var result = aListSerie.UltimoElemento;
 
 			// Assert
 			Assert.Fail();

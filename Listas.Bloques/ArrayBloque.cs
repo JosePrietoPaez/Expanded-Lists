@@ -28,6 +28,13 @@ namespace Listas.Bloques {
 
 		public new int Longitud => _longitud;
 
+		public ArrayBloque(T[] array) : this(array,array.Length) { }
+
+		public ArrayBloque(T[] array, int longitud) : this(array.Length) {
+			array.CopyTo(_array, 0);
+			_longitud = longitud;
+		}
+
 		public override void BorrarTodos() {
 			_longitud = 0;
 		}
@@ -105,13 +112,9 @@ namespace Listas.Bloques {
 			}
 		}
 
-		public override T PrimerElemento() {
-			return _array[0];
-		}
+		public override T PrimerElemento => _array[0];
 
-		public override T UltimoElemento() {
-			return _array[_longitud - 1];
-		}
+		public override T UltimoElemento => _array[_longitud - 1];
 
 		public override string ToString() {
 			StringBuilder stringBuilder = new();
@@ -127,7 +130,7 @@ namespace Listas.Bloques {
 		}
 
 		public override bool Equals(object? obj) {
-			bool iguales = Object.ReferenceEquals(this, obj); // Si son el mismo objeto, trivialmente son iguales
+			bool iguales = ReferenceEquals(this, obj); // Si son el mismo objeto, trivialmente son iguales
 			if (!iguales && obj is Bloque<T> otro) { // No pueden ser iguales si otro no es un bloque
 				iguales = Longitud == otro.Longitud && Capacidad == otro.Capacidad; // Para descartar bloques con distinta longitud o capacidad
 				int contador = 0;
@@ -148,11 +151,15 @@ namespace Listas.Bloques {
 		}
 
 		public static implicit operator ArrayBloque<T>(T[] array) {
-			ArrayBloque<T> bloque = CrearInstancia<ArrayBloque<T>>(array.Length);
-			foreach (var item in array) {
-				bloque.InsertarUltimo(item);
+			return new ArrayBloque<T>(array);
+		}
+
+		public static explicit operator T[](ArrayBloque<T> bloque) {
+			T[] nuevo = new T[bloque.Capacidad];
+			for (int i = 0; i < bloque.Longitud; i++) {
+				nuevo[i] = bloque[i];
 			}
-			return bloque;
+			return nuevo;
 		}
 
 	}

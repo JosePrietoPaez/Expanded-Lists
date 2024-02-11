@@ -141,20 +141,20 @@ namespace Listas
 		int BorrarTodos(T elemento);
 
 		/// <summary>
-		/// Devuelve el primer elemento de la lista, si tiene
+		/// Esta propiedad permite leer directamente el primer elemento de la lista
 		/// </summary>
 		/// <returns>
 		/// Primer elemento de la lista
 		/// </returns>
-		T PrimerElemento();
+		T PrimerElemento { get; }
 
 		/// <summary>
-		/// Devuelve el último elemento de la lista, si hay
+		/// Esta propiedad permite leer directamente el último elemento de la lista
 		/// </summary>
 		/// <returns>
 		/// Último elemento de la lista
 		/// </returns>
-		T UltimoElemento();
+		T UltimoElemento { get; }
 
 		/// <summary>
 		/// Devuelve la posición de la primera ocurrencia de <c>elemento</c> en la lista

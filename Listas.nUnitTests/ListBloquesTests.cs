@@ -18,6 +18,7 @@ namespace Listas.nUnitTests {
 			_bloqueConElementos = new int[10] { 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 };
 			_bloqueConMenosElementos = new int[5] { 1, 2, 3, 4, 5 };
 			_bloqueVacio = new int[10];
+			_bloqueVacio.BorrarTodos();
 			_bloques = [_bloqueVacio, _bloqueConMenosElementos, _bloqueConElementos];
 		}
 
@@ -79,15 +80,20 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarFin_StateUnderTest_ExpectedBehavior() {
+		public void BorrarFin_ElementoEnLista() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 
 			// Act
+			listBloques.Insertar(_bloques[1], 0);
+			var ultimo = _bloques[1].UltimoElemento;
 			var result = listBloques.BorrarFin();
 
 			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				Assert.That(ultimo, Is.EqualTo(result));
+				Assert.That(listBloques.Longitud, Is.EqualTo(_bloques[1].Longitud - 1));
+			});
 		}
 
 		[Test]
@@ -340,7 +346,7 @@ namespace Listas.nUnitTests {
 		public void Insertar_StateUnderTest_ExpectedBehavior1() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default(int);
+			int elemento = default;
 
 			// Act
 			var result = listBloques.Insertar(
@@ -351,10 +357,10 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Insertar_StateUnderTest_ExpectedBehavior2() {
+		public void Insertar_BloqueNoNulo_EnListaVacia() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			ArrayBloque<int> bloque = null;
+			ArrayBloque<int> bloque = _bloques[1];
 			int posicion = 0;
 
 			// Act
@@ -363,14 +369,18 @@ namespace Listas.nUnitTests {
 				posicion);
 
 			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				Assert.That(listBloques.Vacia, Is.False);
+				Assert.That(listBloques.CantidadBloques, Is.EqualTo(2));
+				Assert.That(listBloques.Longitud, Is.EqualTo(_bloques[1].Longitud));
+			});
 		}
 
 		[Test]
 		public void InsertarFin_StateUnderTest_ExpectedBehavior() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default(int);
+			int elemento = default;
 
 			// Act
 			listBloques.InsertarFin(
@@ -502,7 +512,7 @@ namespace Listas.nUnitTests {
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 
 			// Act
-			var result = listBloques.PrimerElemento();
+			var result = listBloques.PrimerElemento;
 
 			// Assert
 			Assert.Fail();
@@ -586,7 +596,7 @@ namespace Listas.nUnitTests {
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 
 			// Act
-			var result = listBloques.UltimoElemento();
+			var result = listBloques.UltimoElemento;
 
 			// Assert
 			Assert.Fail();

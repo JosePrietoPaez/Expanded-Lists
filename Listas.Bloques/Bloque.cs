@@ -117,7 +117,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Primer elemento del bloque
 		/// </returns>
-		abstract public T PrimerElemento();
+		abstract public T PrimerElemento { get; }
 
 		/// <summary>
 		/// Devuelve el último elemento del bloque, si hay
@@ -129,7 +129,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Último elemento del bloque
 		/// </returns>
-		abstract public T UltimoElemento();
+		abstract public T UltimoElemento { get; }
 
 		/// <summary>
 		/// Elimina el elemento al inicio del bloque y lo devuelve
