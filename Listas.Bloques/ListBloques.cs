@@ -44,9 +44,9 @@ namespace Listas {
 				longitudNueva = _extensora(tam);
 				_bloques.Add(CrearInstancia(_extensora(Longitud)));
 				_posiciones.Add(_posiciones[tam - 1] + _bloques[tam - 1].Capacidad); //Se mete la primera posición del nuevo bloque
-			} else if (tam > 1 && _bloques[^1].Vacio && !_bloques[tam - 2].Lleno) {
+			} else if (tam > 1 && _bloques[^1].Vacio && !_bloques[^2].Lleno) {
 				_bloques.RemoveAt(_bloques.Count-1);
-				_posiciones.Remove(tam - 1);
+				_posiciones.RemoveAt(tam - 1);
 			}
 		}
 
@@ -488,7 +488,7 @@ namespace Listas {
 			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques,
 				Mensajes.RangoLista(posicion,CantidadBloques), nameof(posicion));
 			_bloques.Insert(posicion,bloque);
-			_posiciones.Insert(_posiciones[posicion],posicion);
+			_posiciones.Insert(posicion,_posiciones[posicion]);
 			for (int i = Math.Max(1,posicion); i < _posiciones.Count; i++) { // Se mantienen las longitudes de bloques anteriores
 				_posiciones[i] = _posiciones[i - 1] + bloque.Longitud;
 			}

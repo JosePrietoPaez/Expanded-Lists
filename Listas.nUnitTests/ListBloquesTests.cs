@@ -80,26 +80,52 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarFin_ElementoEnLista() {
+		public void BorrarFin_ConElementos() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var bloque = _bloqueConMenosElementos;
 
 			// Act
-			listBloques.Insertar(_bloques[1], 0);
-			var ultimo = _bloques[1].UltimoElemento;
+			listBloques.Insertar(_bloqueConMenosElementos, 0);
+			var lleno = bloque.Lleno;
+			var cantidad = listBloques.CantidadBloques;
+			var ultimo = bloque.UltimoElemento;
+			var longitudInicial = bloque.Longitud;
 			var result = listBloques.BorrarFin();
 
 			// Assert
 			Assert.Multiple(() => {
+				Assert.That(lleno && (cantidad == listBloques.CantidadBloques - 1) || cantidad == listBloques.CantidadBloques);
 				Assert.That(ultimo, Is.EqualTo(result));
-				Assert.That(listBloques.Longitud, Is.EqualTo(_bloques[1].Longitud - 1));
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitudInicial - 1));
 			});
 		}
 
 		[Test]
-		public void BorrarInicio_StateUnderTest_ExpectedBehavior() {
+		public void BorrarFin_SinElementos() {
+			// Arrange
+			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+
+			// Assert
+			Assert.Throws<InvalidOperationException>(() => listBloques.BorrarFin());
+		}
+
+		[Test]
+		public void BorrarInicio_ConElementos() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+
+			// Act
+			var result = listBloques.BorrarInicio();
+
+			// Assert
+			Assert.Fail();
+		}
+
+		[Test]
+		public void BorrarInicio_SinElementos() {
+			// Arrange
+			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 
 			// Act
 			var result = listBloques.BorrarInicio();

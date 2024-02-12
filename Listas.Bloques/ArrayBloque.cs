@@ -20,13 +20,13 @@ namespace Listas.Bloques {
 			}
 		}
 
-		public new bool Lleno => _longitud == _array.Length;
+		public override bool Lleno => _longitud == _array.Length;
 
-		public new bool Vacio => _longitud == 0;
+		public override bool Vacio => _longitud == 0;
 
-		public new int Capacidad => _array.Length;
+		public override int Capacidad => _array.Length;
 
-		public new int Longitud => _longitud;
+		public override int Longitud => _longitud;
 
 		public ArrayBloque(T[] array) : this(array,array.Length) { }
 

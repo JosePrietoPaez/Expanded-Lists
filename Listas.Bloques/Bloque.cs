@@ -47,12 +47,12 @@ namespace Listas.Bloques {
 		/// <summary>
 		/// Esta propiedad permite consultar el bloque para ver si queda espacio
 		/// </summary>
-		public bool Lleno { get; }
+		abstract public bool Lleno { get; }
 
 		/// <summary>
 		/// Esta propiedad permite consultar el bloque para ver si hay elementos
 		/// </summary>
-		public bool Vacio { get; }
+		abstract public bool Vacio { get; }
 
 		/// <summary>
 		/// Esta propiedad permite obtener la cantidad de elementos que podrán ser guardados el en bloque
@@ -60,7 +60,7 @@ namespace Listas.Bloques {
 		/// <remarks>
 		/// Debe ser positiva
 		/// </remarks>
-		public int Capacidad { get; }
+		abstract public int Capacidad { get; }
 
 		/// <summary>
 		/// Esta propiedad permite obtener la cantidad de elementos guardados en el bloque
@@ -68,7 +68,7 @@ namespace Listas.Bloques {
 		/// <remarks>
 		/// No puede ser mayor que <see cref="Bloque{T}.Capacidad"/>
 		/// </remarks>
-		public int Longitud { get; }
+		abstract public int Longitud { get; }
 
 		/// <summary>
 		/// Añade el elemento al principio del bloque, desplazando el resto
