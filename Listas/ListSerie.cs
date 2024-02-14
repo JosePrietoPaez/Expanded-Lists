@@ -101,7 +101,7 @@ namespace Listas {
 		public ListSerie(ILista<T> lista)
 		{
 			_serie = [];
-			if (lista != null)
+			if (lista is not null)
 			{
 				foreach (T elem in
 					lista)
@@ -114,7 +114,7 @@ namespace Listas {
 
 		public ListSerie(ILista<T> lista, string nombre) : this(lista)
 		{
-			this._nombre = nombre;
+			_nombre = nombre;
 		}
 
 		/// <summary>
@@ -199,7 +199,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public void InsertarInicio(T elem)
+		public void InsertarPrimero(T elem)
 		{
 			_serie.Insert(0,elem);
 		}
@@ -211,7 +211,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public void InsertarFin(T elem)
+		public void InsertarUltimo(T elem)
 		{
 			_serie.Add(elem);
 		}
@@ -227,7 +227,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public T BorrarInicio()
+		public T BorrarPrimero()
 		{
 			T primero = _serie[0];
 			_serie.RemoveAt(0);
@@ -252,7 +252,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public T BorrarFin()
+		public T BorrarUltimo()
 		{
 			T ultimo = _serie[^1];
 			_serie.RemoveAt(_serie.Count - 1);
@@ -386,39 +386,15 @@ namespace Listas {
 		 * @param obj objeto con el que se compara
 		 * @return {@code true} si las lista son iguales
 		 */
-		public override bool Equals(Object? obj)
-		{
-			if (obj == this) return true;
-			bool res = false;
-			if (obj is ILista<T> ser)
-			{
-				res = Longitud == ser.Longitud;
-				if (res)
-				{
-					IEnumerator<T> itSer = ser.GetEnumerator();
-					foreach (T elem in _serie)
-					{
-						itSer.MoveNext();
-						if (elem is null)
-						{
-							if (itSer.Current is null)
-							{
-								res = false;
-								break;
-							}
-						}
-						else if (!elem.Equals(itSer.Current))
-						{
-							res = false;
-							break;
-						}
-						
-					}
+		public override bool Equals(Object? obj) {
+			bool iguales = ReferenceEquals(this,obj);
+			if (!iguales && obj is ILista<T> lista) {
+				iguales = lista.Longitud == Longitud;
+				for (int i = 0; i < Longitud & !iguales; i++) {
+					iguales = Equals(lista[i], this[i]);
 				}
-
-
 			}
-			return res;
+			return iguales;
 		}
 		public override int GetHashCode()
 		{
@@ -441,7 +417,7 @@ namespace Listas {
 				nueva = new(this);
 				//Si se produce OverflowException no es mi problema, la lista no podría contenerlo
 				for (int i = 0; i < _serie.Count*(Math.Abs(factor)-1); i++) { 
-					nueva.InsertarFin(_serie[i%_serie.Count]);
+					nueva.InsertarUltimo(_serie[i%_serie.Count]);
 				}
 				if (factor < 0) {
 					nueva.Invertir();

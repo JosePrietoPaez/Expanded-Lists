@@ -14,8 +14,8 @@ namespace Listas.nUnitTests {
 			_listaConElementos.Vacia = true;
 			_listaConElementosNula.Vacia = true;
 			for (int i = 0; i < 10; i++) {
-				_listaConElementos.InsertarFin(i);
-				_listaConElementosNula.InsertarFin(i);
+				_listaConElementos.InsertarUltimo(i);
+				_listaConElementosNula.InsertarUltimo(i);
 			}
 		}
 
@@ -26,7 +26,7 @@ namespace Listas.nUnitTests {
 			int elem = default(int);
 
 			// Act
-			aListSerie.InsertarInicio(
+			aListSerie.InsertarPrimero(
 				elem);
 
 			// Assert
@@ -40,7 +40,7 @@ namespace Listas.nUnitTests {
 			int? elem = null;
 
 			// Act
-			aListSerie.InsertarInicio(
+			aListSerie.InsertarPrimero(
 				elem);
 
 			// Assert
@@ -82,13 +82,13 @@ namespace Listas.nUnitTests {
 			int elem = default(int);
 
 			// Act
-			aListSerie.InsertarFin(
+			aListSerie.InsertarUltimo(
 				elem);
 
 			// Assert
 			Assert.That(aListSerie.Longitud, Is.EqualTo(1));
 
-			aListSerie.InsertarFin(
+			aListSerie.InsertarUltimo(
 				elem+1);
 
 			Assert.That(aListSerie.UltimoElemento, Is.EqualTo(elem+1));
@@ -106,9 +106,9 @@ namespace Listas.nUnitTests {
 			int pos = 1;
 
 			// Act
-			aListSerie.InsertarInicio(123);
+			aListSerie.InsertarPrimero(123);
 
-			aListSerie.InsertarFin(678);
+			aListSerie.InsertarUltimo(678);
 
 			aListSerie.InsertarVarios(
 				elem,
@@ -136,7 +136,7 @@ namespace Listas.nUnitTests {
 
 			// Act
 			var elementoInicial = aListSerie.PrimerElemento;
-			var result = aListSerie.BorrarInicio();
+			var result = aListSerie.BorrarPrimero();
 
 			// Assert
 			Assert.That(elementoInicial, Is.EqualTo(result));
@@ -185,7 +185,7 @@ namespace Listas.nUnitTests {
 			var aListSerie = new ListSerie<int>();
 
 			// Act
-			var result = aListSerie.BorrarFin();
+			var result = aListSerie.BorrarUltimo();
 
 			// Assert
 			Assert.Fail();

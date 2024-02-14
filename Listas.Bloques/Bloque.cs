@@ -16,7 +16,7 @@ namespace Listas.Bloques {
 	/// </para>
 	/// </remarks>
 	/// <typeparam name="T"></typeparam>
-	public abstract class Bloque<T> : IEnumerable<T> {
+	public abstract class Bloque<T>(in int capacidad) : IEnumerable<T> {
 
 		/// <summary>
 		/// Crea una instancia del mismo tipo que el bloque
@@ -60,7 +60,7 @@ namespace Listas.Bloques {
 		/// <remarks>
 		/// Debe ser positiva
 		/// </remarks>
-		abstract public int Capacidad { get; }
+		public readonly int Capacidad = capacidad;
 
 		/// <summary>
 		/// Esta propiedad permite obtener la cantidad de elementos guardados en el bloque
@@ -79,7 +79,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Elemento en la última posición del bloque o <c>null</c> si no existe
 		/// </returns>
-		abstract public T? InsertarInicio(T elemento);
+		abstract public T? InsertarPrimero(T elemento);
 
 		/// <summary>
 		/// Añade el elemento al bloque en la posición indicada, desplazando el resto
@@ -141,7 +141,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Elemento quitado del bloque
 		/// </returns>
-		abstract public T EliminarInicio();
+		abstract public T EliminarPrimero();
 
 		/// <summary>
 		/// Elimina el elemento de la posición indicada del bloque y lo devuelve

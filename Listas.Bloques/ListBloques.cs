@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Text;
 
 namespace Listas {
 
@@ -131,7 +132,7 @@ namespace Listas {
 				}
 			} else {
 				foreach (var item in col) {
-					InsertarFin(item);
+					InsertarUltimo(item);
 				}
 			}
 			_extensora = extensora;
@@ -163,12 +164,12 @@ namespace Listas {
 				int longitud = Longitud;
 				if (value == longitud) return;
 				while (longitud > value) { //Si se quiere reducir el tamaño
-					BorrarFin();
+					BorrarUltimo();
 					longitud--;
 				}
 				while (longitud < value) { //Si se quiere aumentar el tamaño
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
-					InsertarFin(Generar());
+					InsertarUltimo(Generar());
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
 					longitud++;
 				}
@@ -176,7 +177,7 @@ namespace Listas {
 		}
 		public bool Vacia { get => _bloques[0].Vacio; set {
 				if (value) {
-					_bloques.Clear();
+					BorrarTodos();
 				} else {
 					if (Vacia) {
 						Longitud++;
@@ -225,7 +226,7 @@ namespace Listas {
 			return aux;
 		}
 
-		public E BorrarFin() {
+		public E BorrarUltimo() {
 			Contrato.Requires<InvalidOperationException>(Longitud > 0, Mensajes.VacioLista);
 			B ultimo = _bloques[^1];
 			E aux;
@@ -239,27 +240,26 @@ namespace Listas {
 		}
 
 		// Este método ha sido cambiado al usar un List en lugar de LinkedList como en la versión de Java, antes se iteraba mediante un iterable de _bloques
-		public E BorrarInicio() {
+		public E BorrarPrimero() {
 			Contrato.Requires<InvalidOperationException>(Longitud > 0, Mensajes.VacioLista);
-			E? acarreo = default, acarreo2;
+			object? acarreo = null; // Si dejo que sea E? no permite null, si es default no funciona para los tipos de valor
+			E? acarreo2;
 			B bloque = _bloques[^1];
-			bool borrar = false; // Guarda si se ha borrado el último bloque
-			if (bloque.Vacio) { // Para el último bloque
-				borrar = true; // Si está vacío se borrará al final
-			} else {
-				acarreo = bloque.EliminarInicio();
+			bool borrar = bloque.Vacio; // Guarda si se ha borrado el último bloque
+			if (!bloque.Vacio) { // Para el último bloque
+				acarreo = bloque.EliminarPrimero();
 			}
 			if (_bloques.Count > 1) { // Para el último bloque
 				bloque = _bloques[^2];
-				acarreo2 = bloque.EliminarInicio();
+				acarreo2 = bloque.EliminarPrimero();
 				if (acarreo != null) {
-					bloque.InsertarUltimo(acarreo);
+					bloque.InsertarUltimo((E)acarreo);
 				}
 				acarreo = acarreo2;
-				for (int i = _bloques.Count - 3; i <= 0; i--) {
+				for (int i = _bloques.Count - 3; i >= 0; i--) {
 					bloque = _bloques[i];
-					acarreo2 = bloque.EliminarInicio();
-					bloque.InsertarUltimo(acarreo);
+					acarreo2 = bloque.EliminarPrimero();
+					bloque.InsertarUltimo((E?)acarreo);
 					acarreo = acarreo2;
 				}
 			}
@@ -267,8 +267,8 @@ namespace Listas {
 				_bloques.RemoveAt(_bloques.Count - 1);
 				_posiciones.RemoveAt(_posiciones.Count - 1);
 			}
-			Debug.Assert(acarreo != null);
-			return acarreo;
+			Debug.Assert(acarreo is not null);
+			return (E)acarreo;
 		}
 
 		public void BorrarTodos() {
@@ -285,14 +285,10 @@ namespace Listas {
 			return veces;
 		}
 
-		public void BorrarTodosBloques() {
-			BorrarTodos();
-		}
-
 		public int BorrarUltimos(E elemento) {
 			int borrados = 0;
-			while (!Vacia && (UltimoElemento?.Equals(elemento)??elemento is null)) { // Si el último elemento es nulo, se compara elemento son null
-				BorrarFin();
+			while (!Vacia && Equals(UltimoElemento,elemento)) { // Si el último elemento es nulo, se compara elemento son null
+				BorrarUltimo();
 				borrados++;
 			}
 			return borrados;
@@ -370,7 +366,7 @@ namespace Listas {
 					acarreo = bloque.Eliminar(posicion - _posiciones[^1]);
 					borrado = true;
 				} else {
-					acarreo = bloque.EliminarInicio();
+					acarreo = bloque.EliminarPrimero();
 				}
 			} else {
 				borrar = true;
@@ -381,7 +377,7 @@ namespace Listas {
 					acarreo2 = bloque.Eliminar(posicion - _posiciones[^2]);
 					borrado = true;
 				} else {
-					acarreo2 = bloque.EliminarInicio();
+					acarreo2 = bloque.EliminarPrimero();
 				}
 				if (acarreo != null) { // Si está vacío se elimina porque el último bloque tendrá espacio
 					bloque.InsertarUltimo(acarreo); // No se borra para evitar modificaciones mientras se itera
@@ -394,7 +390,7 @@ namespace Listas {
 				// Coloca el primer elemento de cada bloque al final del anterior hasta llegar al bloque con la posición
 				while (posicion < limiteInfBloque) {
 					bloque = _bloques[numBloque];
-					acarreo2 = bloque.EliminarInicio();
+					acarreo2 = bloque.EliminarPrimero();
 					bloque.InsertarUltimo(acarreo);
 					acarreo = acarreo2;
 					numBloque--;
@@ -447,9 +443,9 @@ namespace Listas {
 			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= Longitud,
 				Mensajes.RangoLista(posicion,Longitud), nameof(posicion));
 			if (posicion == 0) {
-				InsertarInicio(elemento);
+				InsertarPrimero(elemento);
 			} else if (posicion == Longitud) {
-				InsertarFin(elemento);
+				InsertarUltimo(elemento);
 			} else {
 				bool colocado;
 				int posicionBloque = BuscarBloque(posicion);
@@ -460,7 +456,7 @@ namespace Listas {
 					posicionBloque++;
 					Debug.Assert(acarreo != null);
 					elemento = acarreo;
-					acarreo = _bloques[posicionBloque].InsertarInicio(elemento);
+					acarreo = _bloques[posicionBloque].InsertarPrimero(elemento);
 					colocado = acarreo == null;
 					AsegurarEspacio();
 				}
@@ -471,14 +467,14 @@ namespace Listas {
 		/// Inserta el elemento al final de la lista
 		/// </summary>
 		/// <remarks>
-		/// Llama directamente a <see cref="InsertarFin(E)"/>
+		/// Llama directamente a <see cref="InsertarUltimo(E)"/>
 		/// </remarks>
 		/// <param name="elemento"></param>
 		/// <returns>
 		/// Última posición de la lista
 		/// </returns>
 		public int Insertar(E elemento) {
-			InsertarFin(elemento);
+			InsertarUltimo(elemento);
 			return Longitud - 1;
 		}
 
@@ -488,23 +484,28 @@ namespace Listas {
 			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques,
 				Mensajes.RangoLista(posicion,CantidadBloques), nameof(posicion));
 			_bloques.Insert(posicion,bloque);
-			_posiciones.Insert(posicion,_posiciones[posicion]);
-			for (int i = Math.Max(1,posicion); i < _posiciones.Count; i++) { // Se mantienen las longitudes de bloques anteriores
-				_posiciones[i] = _posiciones[i - 1] + bloque.Longitud;
+			if (posicion == 0) {
+				_posiciones.Insert(0, 0);
+			} else {
+				_posiciones.Insert(posicion,_posiciones[posicion] + _bloques[posicion].Capacidad);
+			}
+			
+			for (int i = Math.Max(1,posicion + 1); i < _posiciones.Count; i++) { // Se mantienen las longitudes de bloques anteriores
+				_posiciones[i] = _posiciones[i] + bloque.Longitud;
 			}
 		}
 
-		public void InsertarFin(E elemento) {
+		public void InsertarUltimo(E elemento) {
 			_bloques[^1].InsertarUltimo(elemento);
 			AsegurarEspacio();
 		}
 
-		public void InsertarInicio(E elemento) {
+		public void InsertarPrimero(E elemento) {
 			bool colocado = false;
 			int posicion = 0;
 			E? acarreo;
 			while (!colocado) {
-				acarreo = _bloques[posicion].InsertarInicio(elemento);
+				acarreo = _bloques[posicion].InsertarPrimero(elemento);
 				if (acarreo == null) {
 					colocado = true;
 				} else { //Intenta colocar el acarreo al principio del siguiente bloque
@@ -630,7 +631,7 @@ namespace Listas {
 			foreach (Bloque<E> bloque in _bloques) {
 				for (int j = 0; j < bloque.Longitud; j++) {
 					aux = bloque[j];
-					if (aux?.Equals(elemento) ?? elemento is null) {
+					if (Equals(aux,elemento)) {
 						veces++;
 					}
 				}
@@ -648,7 +649,7 @@ namespace Listas {
 				numBloque++;
 				foreach (var posibleElem in bloque){
 					posicionEnBloque++;
-					encontrado = posibleElem?.Equals(elemento) ?? elemento is null;
+					encontrado = Equals(posibleElem,elemento);
 				}
 			}
 			if (encontrado) {
@@ -707,7 +708,7 @@ namespace Listas {
 
 		public ILista<E> Sumar(E elemento) {
 			ListBloques<E, B> nueva = new(this);
-			nueva.InsertarFin(elemento);
+			nueva.InsertarUltimo(elemento);
 			return nueva;
 		}
 
@@ -734,7 +735,7 @@ namespace Listas {
 		public ILista<E> Unir(ILista<E> segunda) {
 			ListBloques<E,B> nueva = new(this);
 			foreach (var item in segunda) {
-				nueva.InsertarFin(item);
+				nueva.InsertarUltimo(item);
 			}
 			return nueva;
 		}
@@ -753,6 +754,45 @@ namespace Listas {
 
 		IListaBloquesDinamica<E, B> IListaBloquesDinamica<E, B>.Clonar() {
 			return new ListBloques<E, B>(this, FuncionDeExtension, FuncionDeGeneracion);
+		}
+
+		/// <summary>
+		/// Comprueba si <c>obj</c> es una <see cref="ILista{E}"/> con los mismos elementos
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns>
+		/// <c>true</c> si es una <see cref="ILista{E}"/> con los mismos elementos, si no <c>false</c>
+		/// </returns>
+		public override bool Equals(object? obj) {
+			bool iguales = ReferenceEquals(this, obj);
+			if (!iguales && obj is ILista<E> lista) {
+				iguales = lista.Longitud == Longitud;
+				for (int i = 0; i < Longitud & !iguales; i++) {
+					iguales = Equals(lista[i],this[i]);
+				}
+			}
+			return iguales;
+		}
+
+		public override int GetHashCode() {
+			int codigo = Longitud;
+			foreach (var bloque in _bloques) {
+				codigo ^= bloque.GetHashCode();
+			}
+			return codigo;
+		}
+
+		public override string ToString() {
+			StringBuilder stringBuilder = new();
+			stringBuilder.Append('[');
+			for (int i = 0; i < CantidadBloques; i++) {
+				stringBuilder.Append(this[i]);
+				if (i != CantidadBloques - 1) {
+					stringBuilder.Append(',');
+				}
+			}
+			stringBuilder.Append(']');
+			return stringBuilder.ToString();
 		}
 	}
 }

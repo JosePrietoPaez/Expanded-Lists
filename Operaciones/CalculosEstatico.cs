@@ -85,14 +85,14 @@ namespace Operaciones
 				return new ListSerie<long>();
 			}
 			ListSerie<long> serie = new();
-			serie.InsertarFin(2L);
+			serie.InsertarUltimo(2L);
 			if (num == 2) {
 				return serie;
 			}
 			long cont = 3;
 			while (cont <= num) {
 				if (EsPrimo(cont)) {
-					serie.InsertarFin(cont);
+					serie.InsertarUltimo(cont);
 				}
 				cont += 2;
 			}
@@ -256,7 +256,7 @@ namespace Operaciones
 		public static void ReglasDivisibilidad(ISerie<ISerie<long>> reglas, long num, int cantidad, long raiz) {
 			reglas.BorrarTodos(); //Se borra la serie
 			String nombre = reglas.Nombre;
-			reglas.InsertarFin(new ListSerie<long>(nombre, cantidad));
+			reglas.InsertarUltimo(new ListSerie<long>(nombre, cantidad));
 			ReglaDivisibilidadBase(reglas[0], num, cantidad, raiz); //Se calcula la regla de positivos
 			ISerie<long> aux, atajo = reglas[0]; //aux guarda la serie que se añadirá y atajo es un atajo
 			bool[] producto = new bool[cantidad]; //guarda si el elemento i de atajo se le resta num
@@ -264,9 +264,9 @@ namespace Operaciones
 			do {
 				aux = new ListSerie<long>(nombre, cantidad);
 				for (int i = 0; i < atajo.Longitud; i++) {
-					aux.InsertarFin(atajo[i] - (producto[i] ? num : 0)); //Se añade en la serie de regla
+					aux.InsertarUltimo(atajo[i] - (producto[i] ? num : 0)); //Se añade en la serie de regla
 				}
-				reglas.InsertarFin(aux);
+				reglas.InsertarUltimo(aux);
 				OperacionesSeries.IncrementarArray(producto); //Itera el bucle
 			} while (!OperacionesSeries.ArrayFalso(producto));
 		}

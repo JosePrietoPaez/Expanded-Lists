@@ -69,7 +69,7 @@
 		/// Coloca <c>elemento</c> al principio de la lista
 		/// </summary>
 		/// <param name = "elemento">elemento que colocar</param>
-		void InsertarInicio(T elemento);
+		void InsertarPrimero(T elemento);
 
 		/// <summary>
 		/// Coloca a <c>elemento</c> en la posición <c>posicion</c>
@@ -83,7 +83,7 @@
 		/// Coloca <c>elemento</c> al final de la lista
 		/// </summary>
 		/// <param name="elemento">el elemento que colocar</param>
-		void InsertarFin(T elemento);
+		void InsertarUltimo(T elemento);
 
 		/// <summary>
 		/// Coloca el elemento <c>elemento num</c> veces seguidas en la lista, desde la posición <c>posicion</c>
@@ -103,7 +103,7 @@
 		/// Borra el primer elemento de la lista y lo devuelve como resultado
 		/// </summary>
 		/// <returns>El primer elemento de la lista</returns>
-		T BorrarInicio();
+		T BorrarPrimero();
 
 		/// <summary>
 		/// Borra el último elemento de la lista y lo devuelve como resultado
@@ -112,14 +112,14 @@
 		/// La lista no puede estar vacía
 		/// </remarks>
 		/// <returns>El último elemento de la lista</returns>
-		T BorrarFin();
+		T BorrarUltimo();
 
 		/// <summary>
 		/// Borra las últimas ocurrencias de <c>elemento</c> hasta que llega al inicio o encuentra otro elemento
 		/// </summary>
 		/// <param name="elemento">elemento que eliminar del final</param>
 		/// <remarks>
-		/// Pensado para la versión de Java de esta biblioteca, tiene más utilidad en <see cref="IListaDinamica{T}"/>
+		/// Tiene más utilidad en <see cref="IListaDinamica{T}"/>, ya que está pensado para deshacer cambios a <see cref="IListaDinamica{T}.Longitud"/>
 		/// </remarks>
 		/// <returns>Ocurrencias de elemento quitadas</returns>
 		int BorrarUltimos(T elemento);

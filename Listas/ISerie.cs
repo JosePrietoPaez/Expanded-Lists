@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Listas {
+﻿namespace Listas {
+	/// <summary>
+	/// Una serie se representa como una <see cref="IListaDinamica{T}"/> que también es <seealso cref="IListaNombrada{T}"/>
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public interface ISerie<T> : IListaNombrada<T>, IListaDinamica<T> {
 		new ISerie<T> Clonar();
 	}

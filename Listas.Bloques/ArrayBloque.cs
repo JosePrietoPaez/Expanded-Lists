@@ -2,7 +2,7 @@
 using System.Text;
 
 namespace Listas.Bloques {
-	public class ArrayBloque<T>(int capacidad) : Bloque<T> {
+	public class ArrayBloque<T>(int capacidad) : Bloque<T>(capacidad) {
 
 		private readonly T[] _array = new T[capacidad];
 		private int _longitud = 0;
@@ -20,11 +20,9 @@ namespace Listas.Bloques {
 			}
 		}
 
-		public override bool Lleno => _longitud == _array.Length;
+		public override bool Lleno => _longitud == capacidad;
 
 		public override bool Vacio => _longitud == 0;
-
-		public override int Capacidad => _array.Length;
 
 		public override int Longitud => _longitud;
 
@@ -60,7 +58,7 @@ namespace Listas.Bloques {
 			return aux;
 		}
 
-		public override T EliminarInicio() {
+		public override T EliminarPrimero() {
 			return Eliminar(0);
 		}
 
@@ -89,7 +87,7 @@ namespace Listas.Bloques {
 			return ultimo;
 		}
 
-		public override T? InsertarInicio(T elemento) {
+		public override T? InsertarPrimero(T elemento) {
 			return Insertar(elemento, 0);
 		}
 
@@ -135,13 +133,20 @@ namespace Listas.Bloques {
 				iguales = Longitud == otro.Longitud && Capacidad == otro.Capacidad; // Para descartar bloques con distinta longitud o capacidad
 				int contador = 0;
 				while (iguales && contador < Longitud) {
-					iguales = _array[contador]?.Equals(otro[contador]) ?? otro[contador] is null;
+					iguales = Equals(_array[contador],otro[contador]);
 					contador++;
 				}
 			}
 			return iguales;
 		}
 
+		/// <summary>
+		/// Genera un hash basado en la longitud, capacidad y elementos entre 0 y <see cref="Bloque{T}.Capacidad"/>
+		/// </summary>
+		/// <remarks>
+		/// Si se necesita que el bloque esté en una estructura que use su hash, no debería modificarse
+		/// </remarks>
+		/// <returns></returns>
 		public override int GetHashCode() {
 			int codigo = Longitud ^ Capacidad; // Para que se tengan en cuenta como en Equals
 			for (int i = 0; i < _longitud; i++) {

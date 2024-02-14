@@ -74,11 +74,6 @@
 		int BorrarVariosBloques(int num, int posicion);
 
 		/// <summary>
-		/// Elimina todos los bloques con sus elementos de la lista, dejándola vacía
-		/// </summary>
-		void BorrarTodosBloques();
-
-		/// <summary>
 		/// Devuelve la posición del bloque que contiene el elemento en <c>posicion</c>
 		/// </summary>
 		/// <returns>

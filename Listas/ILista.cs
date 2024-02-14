@@ -88,7 +88,7 @@ namespace Listas
 		/// <returns>
 		/// Lista con los elementos de <c>lista</c> sin <c>elemento</c>
 		/// </returns>
-		static ILista<T> operator -(ILista<T> primera, ILista<T> segunda) => primera.Diferencia(segunda);
+		static ILista<T> operator -(ILista<T> minuendo, ILista<T> sustraendo) => minuendo.Diferencia(sustraendo);
 
 		/// <summary>
 		/// Introduce <c>elemento</c> en la lista
