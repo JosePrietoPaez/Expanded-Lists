@@ -24,7 +24,14 @@ namespace Listas.Bloques {
 
 		public override bool Vacio => _longitud == 0;
 
-		public override int Longitud => _longitud;
+		public override int Longitud {
+			get => _longitud;
+			set {
+				Contrato.Requires<ArgumentOutOfRangeException>(value <= _longitud,
+					Mensajes.LongitudNegativa,nameof(value));
+				_longitud = value;
+			}
+		}
 
 		public ArrayBloque(T[] array) : this(array,array.Length) { }
 

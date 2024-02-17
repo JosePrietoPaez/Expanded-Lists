@@ -122,6 +122,9 @@ namespace Listas
 		/// </summary>
 		/// <remarks>
 		/// <c>posicion</c> no puede ser menor que 0 o mayor que el índice del último elemento
+		/// <para>
+		/// Si <c>num</c> no es positivo, no se modificará la lista
+		/// </para>
 		/// </remarks>
 		/// <param name="num">número de elementos que eliminar</param>
 		/// <param name="posicion">posición donde empezar a borrar</param>

@@ -67,8 +67,11 @@ namespace Listas.Bloques {
 		/// </summary>
 		/// <remarks>
 		/// No puede ser mayor que <see cref="Bloque{T}.Capacidad"/>
+		/// <para>
+		/// El setter solo puede reducir la longitud
+		/// </para>
 		/// </remarks>
-		abstract public int Longitud { get; }
+		abstract public int Longitud { get; set; }
 
 		/// <summary>
 		/// Añade el elemento al principio del bloque, desplazando el resto
