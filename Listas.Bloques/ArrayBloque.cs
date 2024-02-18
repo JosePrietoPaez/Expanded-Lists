@@ -2,7 +2,7 @@
 using System.Text;
 
 namespace Listas.Bloques {
-	public class ArrayBloque<T>(int capacidad) : Bloque<T>(capacidad) {
+	public class ArrayBloque<T>(int capacidad) : Bloque<T>(capacidad), IEquatable<ArrayBloque<T>> {
 
 		private readonly T[] _array = new T[capacidad];
 		private int _longitud = 0;
@@ -160,6 +160,19 @@ namespace Listas.Bloques {
 				codigo ^= _array[i]?.GetHashCode() ?? 0;
 			}
 			return codigo;
+		}
+
+		public bool Equals(ArrayBloque<T>? other) {
+			bool iguales = ReferenceEquals(other, this);
+			if (!iguales && other is not null) {
+				iguales = Longitud == other.Longitud && Capacidad == other.Capacidad;
+				int contador = 0;
+				while (iguales && contador < Longitud) {
+					iguales = Equals(_array[contador], other[contador]);
+					contador++;
+				}
+			}
+			return iguales;
 		}
 
 		public static implicit operator ArrayBloque<T>(T[] array) {

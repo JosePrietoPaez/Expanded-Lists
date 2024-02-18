@@ -280,9 +280,11 @@ namespace Listas {
 
 		//Este método podría optimizarse para no tener que buscarlo cada vez
 		public int BorrarTodos(E elemento) {
-			int veces = Ocurrencias(elemento);
-			while (Eliminar(elemento) != -1) ;
-			return veces;
+			int[] indices = Ocurrencias(elemento);
+			foreach (int i in indices) {
+				Eliminar(i);
+			}
+			return indices.Length;
 		}
 
 		public int BorrarUltimos(E elemento) {
@@ -356,7 +358,13 @@ namespace Listas {
 
 		// Como BorrarInicio(), este método ha recibido cambios para aprovechar que se una un List
 		public E Eliminar(int posicion) {
-			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud,
+			E elemento = this[posicion];
+			EliminarVarios(1, posicion);
+			return elemento;
+		}
+
+		private E EliminarArchivado(int posicion) {
+		Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud,
 				Mensajes.RangoLista(posicion, Longitud), nameof(posicion));
 			object? acarreo = null;
 			E? acarreo2;
@@ -409,7 +417,7 @@ namespace Listas {
 			return (E)acarreo;
 		}
 
-		public int EliminarVarios(int num, int posicion) {
+		public int EliminarVarios(int num, int posicion) { // Podría sustituir a Eliminar(int)
 			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud,
 				Mensajes.RangoLista(posicion,Longitud), nameof(posicion));
 			int borrados = 0; // Guarda los elementos que han sido borrados
@@ -419,7 +427,8 @@ namespace Listas {
 					BorrarUltimos(paraBorrar);
 				} else { // Si se quieren borrar menos elementos que los posibles dado posicion
 					while (posicion + borrados + num < Longitud) {
-						this[posicion + borrados] = this[posicion + borrados + num];
+						E movido = this[posicion + borrados + num];
+						this[posicion + borrados] = movido;
 						borrados++;
 					}
 					BorrarUltimos(paraBorrar);
@@ -518,7 +527,7 @@ namespace Listas {
 			if (posicion == 0) {
 				_posiciones.Insert(0, 0);
 			} else {
-				_posiciones.Insert(posicion,_posiciones[posicion] + _bloques[posicion].Capacidad);
+				_posiciones.Insert(posicion,_posiciones[posicion]);
 			}
 			
 			for (int i = Math.Max(1,posicion + 1); i < _posiciones.Count; i++) { // Se mantienen las longitudes de bloques anteriores
@@ -656,16 +665,21 @@ namespace Listas {
 			return listaNueva;
 		}
 
-		public int Ocurrencias(E elemento) {
-			int veces = 0;
+		public int[] Ocurrencias(E elemento) {
+			int veces = 0, indice = 0;
+			int[] ocurrencias = [], cambio;
 			foreach (Bloque<E> bloque in _bloques) {
 				foreach (E elem in bloque) {
 					if (Equals(elem, elemento)) {
-						veces++;
+						cambio = new int[++veces];
+						Array.Copy(ocurrencias, cambio, ocurrencias.Length);
+						cambio[^1] = indice;
+						ocurrencias = cambio;
 					}
+					indice++;
 				}
 			}
-			return veces;
+			return ocurrencias;
 		}
 
 		// Como BorrarInicio() se ha cambiado para aprovechar el uso de List
@@ -756,9 +770,6 @@ namespace Listas {
 			}
 		}
 
-		E IListaArbitraria<E>.PrimerElemento { get => PrimerElemento; set => this[0] = value; }
-		E IListaArbitraria<E>.UltimoElemento { get => UltimoElemento; set => this[Longitud - 1] = value; }
-
 		public ILista<E> Unir(ILista<E> segunda) {
 			ListBloques<E,B> nueva = new(this);
 			foreach (var item in segunda) {
@@ -815,8 +826,8 @@ namespace Listas {
 			int i = 0;
 			foreach (B b in _bloques) {
 				stringBuilder.Append(b);
-				if (i++ != CantidadBloques) {
-					stringBuilder.Append(",");
+				if (i++ < CantidadBloques - 1) {
+					stringBuilder.Append(',');
 				}
 			}
 			stringBuilder.Append(']');

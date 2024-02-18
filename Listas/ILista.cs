@@ -168,11 +168,11 @@ namespace Listas
 		int Posicion(T elemento);
 
 		/// <summary>
-		/// Devuelve el número de veces que está <c>elemento</c> en la lista
+		/// Devuelve las posiciones de todas las ocurrencias de <c>elemento</c> en la lista de menor a mayor
 		/// </summary>
 		/// <param name="elemento">elemento que contar</param>
-		/// <returns>veces que aparece <c>elemento</c></returns>
-		int Ocurrencias(T elemento);
+		/// <returns>Array con los indices que contienen a <c>elemento</c></returns>
+		int[] Ocurrencias(T elemento);
 
 		/// <summary>
 		/// Indica si <c>elemento</c> está en la lista

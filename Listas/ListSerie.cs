@@ -323,21 +323,6 @@ namespace Listas {
 			}
 		}
 
-		T IListaArbitraria<T>.PrimerElemento { 
-			get => PrimerElemento; 
-			set { 
-				Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
-				_serie[0] = value;
-			} 
-		}
-		T IListaArbitraria<T>.UltimoElemento {
-			get => UltimoElemento;
-			set {
-				Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
-				_serie[^1] = value;
-			}
-		}
-
 		///<inheritdoc/>
 		public int Posicion(T elem)
 		{
@@ -345,17 +330,20 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public int Ocurrencias(T elem)
+		public int[] Ocurrencias(T elem)
 		{
-			int num = 0;
+			int num = 0, indice = 0;
+			int[] ocurrencias = [], cambio;
 			foreach (T tipo in _serie) {
-				if (elem is null) {
-					if (tipo is null) {
-						num++;
-					}
-				} else if (elem.Equals(tipo)) num++;
+				if (Equals(elem, tipo)) {
+					cambio = new int[++num];
+					Array.Copy(ocurrencias,cambio,ocurrencias.Length);
+					cambio[^1] = indice;
+					ocurrencias = cambio;
+				}
+				indice++;
 			}
-			return num;
+			return ocurrencias;
 		}
 
 		///<inheritdoc/>
@@ -364,7 +352,7 @@ namespace Listas {
 			return _serie.Contains(elem);
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			return (_nombre == string.Empty ? string.Empty : _nombre + ": ") +  string.Join(',',_serie);
 		}

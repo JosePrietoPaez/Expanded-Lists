@@ -2,6 +2,7 @@
 using Listas.Bloques;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using System;
 
 namespace Listas.nUnitTests {
@@ -216,7 +217,7 @@ namespace Listas.nUnitTests {
 			});
 		}
 
-		//Falla por Eliminar(int)
+		//Falla por Insertar(B,int)
 		[Test]
 		public void BorrarTodos_Elemento_ConOcurrencias() {
 			// Arrange
@@ -442,27 +443,63 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void GetBloques_StateUnderTest_ExpectedBehavior() {
+		public void GetBloques_ConBloques() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new ListBloques<int, ArrayBloque<int>> (n => 10, n => n) {
+				Longitud = 100
+			};
+			int posicion = 0;
 
 			// Act
 			var result = listBloques.GetBloques();
 
 			// Assert
-			Assert.Fail();
+			foreach (var bloque in result) {
+				Assert.That(bloque, Is.EqualTo(listBloques.GetBloque(posicion++)));
+			}
 		}
 
 		[Test]
-		public void GetEnumerator_StateUnderTest_ExpectedBehavior() {
+		public void GetBloques_UnBloque() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n);
+
+			// Act
+			var result = listBloques.GetBloques();
+			var enumerator = result.GetEnumerator();
+
+			// Assert
+			Assert.That(enumerator.MoveNext(), Is.True);
+			Assert.That(enumerator.MoveNext(), Is.False);
+		}
+
+		[Test]
+		public void GetEnumerator_ConElementos() {
+			// Arrange
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(N => 10, N => N) {
+				Longitud = 100
+			};
+			int i = 0;
 
 			// Act
 			var result = listBloques.GetEnumerator();
 
 			// Assert
-			Assert.Fail();
+			while (result.MoveNext()) {
+				Assert.That(result.Current, Is.EqualTo(listBloques[i++]));
+			}
+		}
+
+		[Test]
+		public void GetEnumerator_SinElementos() {
+			// Arrange
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(N => 10, N => N);
+
+			// Act
+			var result = listBloques.GetEnumerator();
+
+			// Assert
+			Assert.That(result.MoveNext(), Is.False);
 		}
 
 		[Test]
@@ -533,6 +570,7 @@ namespace Listas.nUnitTests {
 				Assert.That(listBloques.Vacia, Is.False);
 				Assert.That(listBloques.CantidadBloques, Is.EqualTo(cantidad + 1));
 				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + bloque.Longitud));
+				Assert.DoesNotThrow(() => _ = listBloques[_bloqueConElementos.Longitud]);
 			});
 		}
 
@@ -681,7 +719,8 @@ namespace Listas.nUnitTests {
 			var result = listBloques.Ocurrencias(elemento);
 
 			// Assert
-			Assert.That(result, Is.EqualTo(listBloques.Count(n => n == elemento)));
+			Assert.That(result, Has.Length.EqualTo(listBloques.Count(n => n == elemento)));
+			Assert.That(result, Is.Ordered);
 		}
 
 		[Test]
@@ -700,9 +739,12 @@ namespace Listas.nUnitTests {
 				Assert.Multiple(() => {
 					// Assert
 					Assert.That(result, Is.LessThan(listBloques.Longitud));
-					Assert.That(result == -1, Is.EqualTo(listBloques.Ocurrencias(elemento) == 0));
+					Assert.That(result == -1, Is.EqualTo(listBloques.Ocurrencias(elemento).Length == 0));
 					if (result != -1) {
 						Assert.That(listBloques[result], Is.EqualTo(elemento));
+					}
+					for (int i = 0; i < result; i++) { // Debe ser la primera ocurrencia
+						Assert.That(listBloques[i], Is.Not.EqualTo(elemento));
 					}
 				});
 				listBloques.Vacia = true;
@@ -736,15 +778,28 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void PrimerElemento_StateUnderTest_ExpectedBehavior() {
+		public void PrimerElemento_SinElementos() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+
+			// Act
+
+			// Assert
+			// ToString para que falle al llamar a PrimerElemento
+			Assert.Throws<InvalidOperationException>(() => listBloques.PrimerElemento.ToString()); 
+		}
+
+		[Test]
+		public void PrimerElemento_ConElementos() {
+			// Arrange
+			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			listBloques.Insertar(_bloqueConElementos, 0);
 
 			// Act
 			var result = listBloques.PrimerElemento;
 
 			// Assert
-			Assert.Fail();
+			Assert.That(result, Is.EqualTo(listBloques[0]));
 		}
 
 		[Test]
@@ -820,15 +875,28 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void UltimoElemento_StateUnderTest_ExpectedBehavior() {
+		public void UltimoElemento_ConElementos() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			listBloques.Insertar(_bloqueConElementos, 0);
+			int valor = 100;
 
 			// Act
 			var result = listBloques.UltimoElemento;
 
 			// Assert
-			Assert.Fail();
+			Assert.That(result, Is.EqualTo(listBloques[listBloques.Longitud - 1]));
+		}
+
+		[Test]
+		public void UltimoElemento_SinElementos() {
+			// Arrange
+			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+
+			// Act
+
+			// Assert
+			Assert.Throws<InvalidOperationException>(() => _ = listBloques.UltimoElemento);
 		}
 
 		[Test]
