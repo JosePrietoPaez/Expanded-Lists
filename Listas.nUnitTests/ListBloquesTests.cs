@@ -25,7 +25,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Borrar_Bloque_EnLaLista() {
+		public void Borrar_Bloque_EnLaLista_BorraElBloque() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 
@@ -41,19 +41,24 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Borrar_Bloque_NoEnLaLista() {
+		public void Borrar_Bloque_NoEnLaLista_NoBorraYDevuelveM1() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			int longitud;
 
 			// Act
 			listBloques.Insertar(_bloqueConElementos, 0);
 			listBloques.Insertar(_bloqueVacio, 1);
+			longitud = listBloques.Longitud;
 
 			var result = listBloques.Borrar(
 				_bloqueConMenosElementos);
 
-			// Assert
-			Assert.That(result, Is.EqualTo(-1));
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result, Is.EqualTo(-1));
+				Assert.That(longitud, Is.EqualTo(listBloques.Longitud));
+			});
 		}
 
 		[TestCase(-1)]
@@ -82,7 +87,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarUltimo_ConElementos() {
+		public void BorrarUltimo_ConElementos_DevuelveElElementoYLoBorraYPuedeBorrarElUltimoBloque() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 			var bloque = _bloqueConMenosElementos;
@@ -104,7 +109,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarUltimo_SinElementos() {
+		public void BorrarUltimo_SinElementos_LanzaUnaExcepcion() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 
@@ -113,7 +118,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarPrimero_ConElementos_UnBloque() {
+		public void BorrarPrimero_ConElementos_DosBloques_DevuelveElElementoYLoBorraYPuedeBorrarElUltimoBloque() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 			var bloque = _bloqueConMenosElementos;
@@ -135,7 +140,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarPrimero_ConElementos_VariosBloques() {
+		public void BorrarPrimero_ConElementos_VariosBloques_HaceLoMismoQueConDos() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 			var bloque = _bloqueConMenosElementos;
@@ -159,7 +164,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarPrimero_SinElementos() {
+		public void BorrarPrimero_SinElementos_LanzaUnaExcepcion() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 
@@ -168,7 +173,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarTodos_ConElementos() {
+		public void BorrarTodos_ConElementos_VaciaLaLista() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 			listBloques.InsertarUltimo(1);
@@ -184,7 +189,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarTodos_SinElementos() {
+		public void BorrarTodos_SinElementos_VaciaLaLista() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 
@@ -199,7 +204,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void BorrarTodos_Elemento_SinOcurrencias() {
+		public void BorrarTodos_Elemento_SinOcurrencias_NoBorraNadaYDevuelve0() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 			int elemento = 1234;
@@ -219,7 +224,7 @@ namespace Listas.nUnitTests {
 
 		//Falla por Insertar(B,int)
 		[Test]
-		public void BorrarTodos_Elemento_ConOcurrencias() {
+		public void BorrarTodos_Elemento_ConOcurrencias_LasBorraYDevuelveLaCantidad() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 			int elemento = 1;
@@ -235,37 +240,70 @@ namespace Listas.nUnitTests {
 				// Assert
 				Assert.That(result + listBloques.Longitud, Is.EqualTo(longitud));
 				Assert.That(result, Is.GreaterThan(0));
+				Assert.That(listBloques.Contiene(elemento), Is.False);
 			});
 		}
 
 		[Test]
-		public void BorrarUltimos_StateUnderTest_ExpectedBehavior() {
+		public void BorrarUltimos_SinElElemento_NoBorraNadaYDevuelve0() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default(int);
+			int elemento = 123;
+			listBloques.Insertar(_bloqueConElementos, 0);
+			listBloques.InsertarUltimo(elemento);
 
 			// Act
 			var result = listBloques.BorrarUltimos(
 				elemento);
 
 			// Assert
-			Assert.Fail();
+			Assert.That(result, Is.EqualTo(1));
 		}
 
 		[Test]
-		public void BorrarVariosBloques_StateUnderTest_ExpectedBehavior() {
+		public void BorrarVariosBloques_MasBloquesEnLista_LosBorraYDevuelveLaCantidad() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int num = 0;
-			int posicion = 0;
+			int longitud = 100;
+			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			int num = 3;
+			int posicion = 5;
+			var bloque = listBloques.GetBloque(8);
 
 			// Act
 			var result = listBloques.BorrarVariosBloques(
 				num,
 				posicion);
 
-			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result, Is.EqualTo(num));
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud - 10 * num));
+				Assert.That(listBloques.Posicion(bloque), Is.GreaterThan(-1));
+			});
+		}
+
+		[Test]
+		public void BorrarVariosBloques_SinSuficientesBloques_LosBorraYDevuelveLaCantidad() {
+			// Arrange
+			int longitud = 100;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			int num = 3;
+			int posicion = 8;
+
+			// Act
+			var result = listBloques.BorrarVariosBloques(
+				num,
+				posicion);
+
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result, Is.LessThan(num));
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud - 10 * result));
+			});
 		}
 
 		[Test]
@@ -309,17 +347,35 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Contiene_StateUnderTest_ExpectedBehavior() {
+		public void Contiene_ConElElemento_DevuelveTrue() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default(int);
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = 100
+			};
+			int elemento = 101;
 
 			// Act
 			var result = listBloques.Contiene(
 				elemento);
 
 			// Assert
-			Assert.Fail();
+			Assert.That(result, Is.False);
+		}
+
+		[Test]
+		public void Contiene_SinElElemento_DevuelveFalse() {
+			// Arrange
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = 100
+			};
+			int elemento = 1;
+
+			// Act
+			var result = listBloques.Contiene(
+				elemento);
+
+			// Assert
+			Assert.That(result, Is.True);
 		}
 
 		[Test]
@@ -337,7 +393,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Eliminar_Posicion_EnLista() {
+		public void Eliminar_Posicion_EnLista_BorraElElementoYLoDevuelve() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 			listBloques.Insertar(_bloqueConElementos, 0);
@@ -357,7 +413,7 @@ namespace Listas.nUnitTests {
 
 		[TestCase(-1)]
 		[TestCase(100)]
-		public void Eliminar_Posicion_NoEnLista(int value) {
+		public void Eliminar_Posicion_NoEnLista_LanzaUnaExcepcion(int value) {
 			// Arrange
 			var listBloques = new ListBloques<int?, ArrayBloque<int?>>();
 			listBloques.Insertar(new int?[10] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, 0);
@@ -368,7 +424,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Eliminar_Elemento_EnLista() {
+		public void Eliminar_Elemento_EnLista_BorraElElementoYDevuelveSuPosicion() {
 			// Arrange
 			var listBloques = new ListBloques<int?, ArrayBloque<int?>>();
 			listBloques.Insertar(new int?[5] {1,2,3,4,5}, 0);
@@ -387,21 +443,25 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Eliminar_Elemento_NoEnLaLista() {
+		public void Eliminar_Elemento_NoEnLaLista_NoBorraNadaYDevuelveM1() {
 			// Arrange
 			var listBloques = new ListBloques<int?, ArrayBloque<int?>>();
+			int longitud = 5;
 			listBloques.Insertar(new int?[5] { 1, 2, 3, 4, 5 }, 0);
 			int? elemento = -1;
 
 			// Act
 			var result = listBloques.Eliminar(elemento);
 
-			// Assert
-			Assert.That(result, Is.EqualTo(-1));
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result, Is.EqualTo(-1));
+				Assert.That(longitud, Is.EqualTo(listBloques.Longitud));
+			});
 		}
 
 		[Test]
-		public void EliminarVarios_MitadDeLaLista() {
+		public void EliminarVarios_MitadDeLaLista_BorraLosElementosIndicadosYMantieneElResto() {
 			// Arrange
 			int longitud = 100;
 			static int funcion(int n) => n;
@@ -427,7 +487,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void GetBloque_PosicionValida() {
+		public void GetBloque_PosicionValida_DevuelveElBloque() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 			var bloque = _bloqueConElementos;
@@ -443,7 +503,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void GetBloques_ConBloques() {
+		public void GetBloques_ConBloques_DevuelveLosBloquesDeLaLista() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>> (n => 10, n => n) {
 				Longitud = 100
@@ -460,7 +520,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void GetBloques_UnBloque() {
+		public void GetBloques_UnBloque_TieneUnBloque() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n);
 
@@ -474,7 +534,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void GetEnumerator_ConElementos() {
+		public void GetEnumerator_ConElementos_ContieneLosElementosDeLaLista() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>(N => 10, N => N) {
 				Longitud = 100
@@ -491,7 +551,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void GetEnumerator_SinElementos() {
+		public void GetEnumerator_SinElementos_NoContieneElementos() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>(N => 10, N => N);
 
@@ -533,7 +593,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Insertar_BloqueNoNulo_EnListaVacia() {
+		public void Insertar_BloqueNoNulo_EnListaVacia_InsertaElBloque() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 			ArrayBloque<int> bloque = _bloques[1];
@@ -553,7 +613,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Insertar_BloqueNoNulo_EnListaNoVacia() {
+		public void Insertar_BloqueNoNulo_EnListaNoVacia_InsertaElBloque() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 			ArrayBloque<int> bloque = _bloqueConMenosElementos;
@@ -698,7 +758,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Ocurrencias_ElementoRandomEnLista() {
+		public void Ocurrencias_ElementoRandomEnLista_DevuelveLasOcurrencias() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 			int elemento = new Random().Next(10);
@@ -724,7 +784,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Posicion_Elemento_EnListaRandom() {
+		public void Posicion_Elemento_EnListaRandom_EncuentraLaPrimeraOcurrencia() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => new Random().Next(n));
 			int elemento = 5, longitud = 100;
@@ -753,7 +813,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Posicion_Bloque_EnLista() {
+		public void Posicion_Bloque_EnLista_DevuelveLaPosicionDelBloque() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 5, n => n) {
 				Longitud = 100
@@ -767,7 +827,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Posicion_Bloque_NoEnLista() {
+		public void Posicion_Bloque_NoEnLista_DevuelveM1() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 5, n => n) {
 				Longitud = 100
@@ -778,7 +838,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void PrimerElemento_SinElementos() {
+		public void PrimerElemento_SinElementos_LanzaUnaExcepcion() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 
@@ -790,7 +850,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void PrimerElemento_ConElementos() {
+		public void PrimerElemento_ConElementos_DevuelveElElemento() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 			listBloques.Insertar(_bloqueConElementos, 0);
@@ -875,7 +935,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void UltimoElemento_ConElementos() {
+		public void UltimoElemento_ConElementos_DevuelveElElemento() {
 			// Arrange
 			var listBloques = new ListBloques<int,ArrayBloque<int>>();
 			listBloques.Insertar(_bloqueConElementos, 0);
@@ -889,7 +949,7 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void UltimoElemento_SinElementos() {
+		public void UltimoElemento_SinElementos_LanzaUnaExcepcion() {
 			// Arrange
 			var listBloques = new ListBloques<int, ArrayBloque<int>>();
 

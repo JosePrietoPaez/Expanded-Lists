@@ -281,7 +281,7 @@ namespace Listas {
 		//Este método podría optimizarse para no tener que buscarlo cada vez
 		public int BorrarTodos(E elemento) {
 			int[] indices = Ocurrencias(elemento);
-			foreach (int i in indices) {
+			foreach (int i in indices.Reverse()) { // Si se hace en orden los indices no sirven
 				Eliminar(i);
 			}
 			return indices.Length;
@@ -302,10 +302,11 @@ namespace Listas {
 			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Longitud
 				,Mensajes.RangoLista(posicion,Longitud), nameof(posicion));
 			int contador = 0;
-			while (num + posicion + contador < _bloques.Count) {
-				BorrarBloque(num + posicion + contador);
+			while (posicion + contador < CantidadBloques & contador < num) {
+				BorrarBloque(posicion);
 				contador++;
 			}
+			AsegurarEspacio();
 			return contador;
 		}
 

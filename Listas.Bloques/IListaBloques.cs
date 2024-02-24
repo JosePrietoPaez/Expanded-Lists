@@ -70,7 +70,7 @@
 		/// <param name="num">número de bloques que eliminar</param>
 		/// <param name="posicion">posición donde empezar a borrar</param>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		/// <returns>Número de elementos borrados</returns>
+		/// <returns>Número de bloques borrados</returns>
 		int BorrarVariosBloques(int num, int posicion);
 
 		/// <summary>
