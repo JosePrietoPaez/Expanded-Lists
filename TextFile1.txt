@@ -1,2 +1,0 @@
-El divisor, base y el número de coeficientes deben ser números enteros positivos
-divisor y base deben ser mayor que 1
