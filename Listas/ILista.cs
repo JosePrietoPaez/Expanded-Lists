@@ -132,6 +132,21 @@ namespace Listas
 		int EliminarVarios(int num, int posicion);
 
 		/// <summary>
+		/// Borra el primer elemento de la lista y lo devuelve como resultado
+		/// </summary>
+		/// <returns>El primer elemento de la lista</returns>
+		T BorrarPrimero();
+
+		/// <summary>
+		/// Borra el último elemento de la lista y lo devuelve como resultado
+		/// </summary>
+		/// <remarks>
+		/// La lista no puede estar vacía
+		/// </remarks>
+		/// <returns>El último elemento de la lista</returns>
+		T BorrarUltimo();
+
+		/// <summary>
 		/// Elimina todos los elementos de la lista, dejándola vacía
 		/// </summary>
 		void BorrarTodos();

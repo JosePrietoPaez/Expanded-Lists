@@ -55,12 +55,12 @@ namespace Listas.Bloques {
 		abstract public bool Vacio { get; }
 
 		/// <summary>
-		/// Esta propiedad permite obtener la cantidad de elementos que podrán ser guardados el en bloque
+		/// Este campo permite obtener la cantidad de elementos que podrán ser guardados el en bloque
 		/// </summary>
 		/// <remarks>
 		/// Debe ser positiva
 		/// </remarks>
-		public readonly int Capacidad = capacidad;
+		public readonly int Capacidad = capacidad > 0 ? capacidad : throw new ArgumentOutOfRangeException("Los bloques deben tener capacidad positiva");
 
 		/// <summary>
 		/// Esta propiedad permite obtener la cantidad de elementos guardados en el bloque

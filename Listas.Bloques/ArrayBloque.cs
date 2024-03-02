@@ -2,7 +2,9 @@
 using System.Text;
 
 namespace Listas.Bloques {
+#pragma warning disable CS9107 // El parámetro se captura en el estado del tipo envolvente y su valor también se pasa al constructor base. La clase base también puede capturar el valor.
 	public class ArrayBloque<T>(int capacidad) : Bloque<T>(capacidad), IEquatable<ArrayBloque<T>> {
+#pragma warning restore CS9107 // El parámetro se captura en el estado del tipo envolvente y su valor también se pasa al constructor base. La clase base también puede capturar el valor.
 
 		private readonly T[] _array = new T[capacidad];
 		private int _longitud = 0;
@@ -99,7 +101,7 @@ namespace Listas.Bloques {
 		}
 
 		public override T? InsertarUltimo(T elemento) {
-			T aux = _array[^1];
+			T? aux = Lleno? _array[^1] : default;
 			if (_longitud == _array.Length) { //Si está lleno
 				_array[^1] = elemento;
 			} else {

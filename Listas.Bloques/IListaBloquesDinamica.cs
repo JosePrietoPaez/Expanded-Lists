@@ -57,8 +57,16 @@ namespace Listas.Bloques {
 		/// </summary>
 		IListaBloquesDinamica<E, B> Sumar(B bloque);
 
-		
-		new IListaBloquesDinamica<E, B> Clonar();
+		/// <summary>
+		/// Crea una lista dinámica nueva igual a la llamada, la lista será del mismo tipo
+		/// </summary>
+		/// <remarks>
+		/// Las interfaces que extiendan de <see cref="ILista{T}"/> deberían sobrescribir este método
+		/// </remarks>
+		/// <returns>
+		/// Lista igual a la llamada
+		/// </returns>
+		IListaBloquesDinamica<E, B> ClonarBloquesDinamica();
 
 	}
 }

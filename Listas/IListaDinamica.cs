@@ -73,5 +73,16 @@ namespace Listas
 			return serie;
 		}
 
+		/// <summary>
+		/// Crea una lista dinámica nueva igual a la llamada, la lista será del mismo tipo
+		/// </summary>
+		/// <remarks>
+		/// Las interfaces que extiendan de <see cref="ILista{T}"/> deberían sobrescribir este método
+		/// </remarks>
+		/// <returns>
+		/// Lista igual a la llamada
+		/// </returns>
+		IListaDinamica<T> ClonarDinamica();
+
 	}
 }

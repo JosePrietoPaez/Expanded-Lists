@@ -126,10 +126,11 @@ namespace Listas {
 		/// <param name="extensora"></param>
 		/// <param name="generadora"></param>
 		public ListBloques(IEnumerable<E> col, Func<int, int> extensora, Func<int, E?> generadora) : this() {
-			if (col is IListaBloques<E,B> lista) {
-				foreach (var bloque in lista.GetBloques()) {
-					Insertar(Bloque<E>.CopiarInstancia<B>(bloque),CantidadBloques);
+			if (col is ListBloques<E,B> lista) {
+				for (int i = 0; i < lista.CantidadBloques - 1; i++) {
+					Insertar(Bloque<E>.CopiarInstancia<B>(lista.GetBloque(i)),i);
 				}
+				_bloques[^1] = Bloque<E>.CopiarInstancia<B>(lista.GetBloque(CantidadBloques-1));
 			} else {
 				foreach (var item in col) {
 					InsertarUltimo(item);
@@ -168,9 +169,7 @@ namespace Listas {
 					longitud--;
 				}
 				while (longitud < value) { //Si se quiere aumentar el tamaño
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
 					InsertarUltimo(Generar());
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
 					longitud++;
 				}
 			}
@@ -311,8 +310,7 @@ namespace Listas {
 		}
 
 		public int BuscarBloque(int posicion) {
-			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= Longitud,
-				Mensajes.RangoLista(posicion, Longitud), nameof(posicion));
+			if (posicion < 0 | posicion >= Longitud) return -1;
 			return EncontrarBinarioRecursivo(_posiciones, 0, posicion);
 		}
 
@@ -329,8 +327,8 @@ namespace Listas {
 			return encontrado ? pos : -1;
 		}
 
-		public IListaArbitraria<E> Clonar() {
-			return new ListBloques<E, B>(this);
+		public IListaArbitraria<E> ClonarArbitraria() {
+			return ClonarDinamica();
 		}
 
 		public bool Contiene(E elemento) {
@@ -423,8 +421,8 @@ namespace Listas {
 				Mensajes.RangoLista(posicion,Longitud), nameof(posicion));
 			int borrados = 0; // Guarda los elementos que han sido borrados
 			if (num > 0) {
-				int paraBorrar = Math.Min(num, Longitud - posicion - 1); // Si hay menos de num elementos a partir de posicion, se borran todos
-				if (paraBorrar == Longitud - posicion - 1) {
+				int paraBorrar = Math.Min(num, Longitud - posicion); // Si hay menos de num elementos a partir de posicion, se borran todos
+				if (paraBorrar == Longitud - posicion) {
 					BorrarUltimos(paraBorrar);
 				} else { // Si se quieren borrar menos elementos que los posibles dado posicion
 					while (posicion + borrados + num < Longitud) {
@@ -720,7 +718,7 @@ namespace Listas {
 
 		public ILista<E> Restar(E elemento) {
 			ListBloques<E, B> nueva = new(this);
-			nueva.Eliminar(elemento);
+			nueva.BorrarTodos(elemento);
 			return nueva;
 		}
 
@@ -779,19 +777,19 @@ namespace Listas {
 			return nueva;
 		}
 
-		ILista<E> ILista<E>.Clonar() {
-			return Clonar();
+		public ILista<E> Clonar() {
+			return ClonarArbitraria();
 		}
 
-		IListaBloques<E, B> IListaBloques<E, B>.Clonar() {
-			return new ListBloques<E, B>(this, FuncionDeExtension, FuncionDeGeneracion);
+		public IListaBloques<E, B> ClonarBloques() {
+			return ClonarBloquesDinamica();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
 			return GetEnumerator();
 		}
 
-		IListaBloquesDinamica<E, B> IListaBloquesDinamica<E, B>.Clonar() {
+		public IListaBloquesDinamica<E, B> ClonarBloquesDinamica() {
 			return new ListBloques<E, B>(this, FuncionDeExtension, FuncionDeGeneracion);
 		}
 
@@ -833,6 +831,10 @@ namespace Listas {
 			}
 			stringBuilder.Append(']');
 			return stringBuilder.ToString();
+		}
+
+		public IListaDinamica<E> ClonarDinamica() {
+			return new ListBloques<E,B>(this,FuncionDeExtension,FuncionDeGeneracion);
 		}
 	}
 }

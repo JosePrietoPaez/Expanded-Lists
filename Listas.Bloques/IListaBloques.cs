@@ -104,7 +104,7 @@
 		IListaBloques<E,B> Restar(B bloque);
 
 		/// <summary>
-		/// Crea una lista nueva igual a la llamada, la lista será del mismo tipo
+		/// Crea una lista de bloques nueva igual a la llamada, la lista será del mismo tipo
 		/// </summary>
 		/// <remarks>
 		/// Las interfaces que extiendan de <see cref="ILista{T}"/> deberían sobrescribir este método
@@ -112,7 +112,7 @@
 		/// <returns>
 		/// Lista igual a la llamada
 		/// </returns>
-		new IListaBloques<E, B> Clonar();
+		IListaBloques<E, B> ClonarBloques();
 
 		IEnumerable<B> GetBloques();
 		

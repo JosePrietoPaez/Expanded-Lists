@@ -437,22 +437,22 @@ namespace Listas {
 			return nueva;
 		}
 
-		public IListaArbitraria<T> Clonar() {
-			return Clonar();
+		public IListaArbitraria<T> ClonarArbitraria() {
+			return ClonarSerie();
 		}
 
-		ILista<T> ILista<T>.Clonar() {
-			return Clonar();
+		public ILista<T> Clonar() {
+			return ClonarSerie();
 		}
 
 		public ILista<T> Restar(T elemento) {
-			var nueva = Clonar();
+			var nueva = ClonarArbitraria();
 			nueva.BorrarTodos(elemento);
 			return nueva;
 		}
 
 		public ILista<T> Diferencia(ILista<T> lista) {
-			var nueva = Clonar();
+			var nueva = ClonarArbitraria();
 			foreach (var item in lista) {
 				if (nueva.Contiene(item)) {
 					nueva.BorrarTodos(item);
@@ -461,8 +461,12 @@ namespace Listas {
 			return nueva;
 		}
 
-		ISerie<T> ISerie<T>.Clonar() {
+		public ISerie<T> ClonarSerie() {
 			return new ListSerie<T>(this);
+		}
+
+		public IListaDinamica<T> ClonarDinamica() {
+			return ClonarSerie();
 		}
 	}
 }

@@ -45,7 +45,7 @@
 		/// Necesita que <see cref="ILista{T}.FuncionDeGeneracion"/> no sea nula si la lista no admite elementos nulos
 		/// <returns></returns>
 		static ILista<T> operator +(IListaArbitraria<T> lista, (T, int) tupla) {
-			IListaArbitraria<T> nueva = lista.Clonar();
+			IListaArbitraria<T> nueva = lista.ClonarArbitraria();
 			nueva.Insertar(tupla.Item1, tupla.Item2);
 			return nueva;
 		}
@@ -85,21 +85,6 @@
 		void InsertarVarios(T elemento, int num, int posicion);
 
 		/// <summary>
-		/// Borra el primer elemento de la lista y lo devuelve como resultado
-		/// </summary>
-		/// <returns>El primer elemento de la lista</returns>
-		T BorrarPrimero();
-
-		/// <summary>
-		/// Borra el último elemento de la lista y lo devuelve como resultado
-		/// </summary>
-		/// <remarks>
-		/// La lista no puede estar vacía
-		/// </remarks>
-		/// <returns>El último elemento de la lista</returns>
-		T BorrarUltimo();
-
-		/// <summary>
 		/// Borra las últimas ocurrencias de <c>elemento</c> hasta que llega al inicio o encuentra otro elemento
 		/// </summary>
 		/// <param name="elemento">elemento que eliminar del final</param>
@@ -128,7 +113,7 @@
 		IListaArbitraria<T> Multiplicar(int factor);
 
 		/// <summary>
-		/// Crea una lista nueva igual a la llamada, la lista será del mismo tipo
+		/// Crea una lista arbitraria nueva igual a la llamada, la lista será del mismo tipo
 		/// </summary>
 		/// <remarks>
 		/// Las interfaces que extiendan de <see cref="ILista{T}"/> deberían sobrescribir este método
@@ -136,6 +121,6 @@
 		/// <returns>
 		/// Lista igual a la llamada
 		/// </returns>
-		new IListaArbitraria<T> Clonar();
+		IListaArbitraria<T> ClonarArbitraria();
 	}
 }

@@ -4,6 +4,6 @@
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public interface ISerie<T> : IListaNombrada<T>, IListaDinamica<T> {
-		new ISerie<T> Clonar();
+		ISerie<T> ClonarSerie();
 	}
 }
