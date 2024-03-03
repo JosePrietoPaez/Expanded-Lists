@@ -44,7 +44,7 @@
 		/// </remarks>
 		/// Necesita que <see cref="ILista{T}.FuncionDeGeneracion"/> no sea nula si la lista no admite elementos nulos
 		/// <returns></returns>
-		static ILista<T> operator +(IListaArbitraria<T> lista, (T, int) tupla) {
+		static IListaArbitraria<T> operator +(IListaArbitraria<T> lista, (T, int) tupla) {
 			IListaArbitraria<T> nueva = lista.ClonarArbitraria();
 			nueva.Insertar(tupla.Item1, tupla.Item2);
 			return nueva;

@@ -2,6 +2,7 @@
 using Listas.Bloques;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using NUnit.Framework.Legacy;
 using System;
 
@@ -447,17 +448,25 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void Diferencia_StateUnderTest_ExpectedBehavior() {
+		public void Diferencia_QuitaLosElementosDeSegundaDeUnaNuevaLista() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			ILista<int> lista = null;
+			int lPrimera = 100, lSegunda = 75;
+			ListBloques<int,ArrayBloque<int>> primeraLista = new(n => 10, n => n) { Longitud = lPrimera},
+				segundaLista = new(n => 10, n => 2*n) { Longitud = lSegunda};
 
 			// Act
-			var result = listBloques.Diferencia(
-				lista);
+			var result = primeraLista.Diferencia(
+				segundaLista);
 
 			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				foreach (var item in result) {
+					Assert.That(primeraLista.Contiene(item));
+					Assert.That(segundaLista.Contiene(item), Is.False);
+				}
+				Assert.That(primeraLista.Longitud, Is.EqualTo(lPrimera));
+				Assert.That(segundaLista.Longitud, Is.EqualTo(lSegunda));
+			});
 		}
 
 		[Test]
@@ -631,34 +640,59 @@ namespace Listas.nUnitTests {
 			Assert.That(result.MoveNext(), Is.False);
 		}
 
-		[Test]
-		public void Insertar_StateUnderTest_ExpectedBehavior() {
+		[TestCase(0)]
+		[TestCase(1)]
+		[TestCase(2)]
+		public void Insertar_ElementoPosicion_Valida_InsertaElElemento(int value) {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default(int);
-			int posicion = 0;
+			int longitud = 10;
+			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) { Longitud = longitud };
+			int elemento = 123;
+			int posicion = value;
 
 			// Act
 			listBloques.Insertar(
 				elemento,
 				posicion);
 
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(listBloques[posicion], Is.EqualTo(elemento));
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + 1));
+			});
+		}
+
+		[TestCase(-1)]
+		[TestCase(200)]
+		public void Insertar_ElementoPosicion_NoValida_LanzaExcepcion(int value) {
+			// Arrange
+			int longitud = 10;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) { Longitud = longitud };
+			int elemento = 123;
+			int posicion = value;
+
 			// Assert
-			Assert.Fail();
+			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.Insertar(elemento, posicion));
 		}
 
 		[Test]
-		public void Insertar_StateUnderTest_ExpectedBehavior1() {
+		public void Insertar_Elemento_InsertaElElementoAlFinal() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default;
+			int longitud = 15;
+			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			int elemento = 123;
 
 			// Act
 			var result = listBloques.Insertar(
 				elemento);
 
-			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + 1));
+				Assert.That(listBloques.UltimoElemento, Is.EqualTo(elemento));
+			});
 		}
 
 		[Test]
@@ -704,40 +738,57 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void InsertarFin_StateUnderTest_ExpectedBehavior() {
+		public void InsertarUltimo_InsertaElElementoAlFinal() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default;
+			int longitud = 15;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			int elemento = 123;
 
 			// Act
 			listBloques.InsertarUltimo(
 				elemento);
 
-			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + 1));
+				Assert.That(listBloques.UltimoElemento, Is.EqualTo(elemento));
+			});
 		}
 
 		[Test]
-		public void InsertarInicio_StateUnderTest_ExpectedBehavior() {
+		public void InsertarPrimero_InsertaElElementoAlPrincipio() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default(int);
+			int longitud = 15;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			int elemento = 123;
 
 			// Act
 			listBloques.InsertarPrimero(
 				elemento);
 
-			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + 1));
+				Assert.That(listBloques.PrimerElemento, Is.EqualTo(elemento));
+			});
 		}
 
-		[Test]
-		public void InsertarVarios_StateUnderTest_ExpectedBehavior() {
+		[TestCase(0)]
+		[TestCase(1)]
+		[TestCase(95)]
+		public void InsertarVarios_PosicionValida_ColocaLosElementos(int value) {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default(int);
-			int num = 0;
-			int posicion = 0;
+			int longitud = 100;
+			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			int elemento = 2;
+			int num = 15;
+			int posicion = value;
 
 			// Act
 			listBloques.InsertarVarios(
@@ -746,37 +797,75 @@ namespace Listas.nUnitTests {
 				posicion);
 
 			// Assert
-			Assert.Fail();
+			Assert.That(listBloques.Longitud, Is.EqualTo(longitud + num));
+			for (int i = 0; i < posicion; i++) {
+				Assert.That(listBloques[i], Is.EqualTo(i));
+			}
+			for (int i = posicion; i < posicion + num; i++) {
+				Assert.That(listBloques[i], Is.EqualTo(elemento));
+			}
+			for (int i = posicion + num; i < listBloques.Longitud; i++) {
+				Assert.That(listBloques[i], Is.EqualTo(i - num));
+			}
 		}
 
-		[Test]
-		public void IntercambiarBloques_StateUnderTest_ExpectedBehavior() {
+		[TestCase(0,1)]
+		[TestCase(1,2)]
+		[TestCase(3,7)]
+		public void IntercambiarBloques_PosicionesValidas_CambianLosBloques(int primero, int segundo) {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int primero = 0;
-			int segundo = 0;
+			int longitud = 100;
+			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			ArrayBloque<int> bloquePriemro = listBloques.GetBloque(primero),
+				bloqueSegundo = listBloques.GetBloque(segundo);
 
 			// Act
 			listBloques.IntercambiarBloques(
 				primero,
 				segundo);
 
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(listBloques.GetBloque(primero), Is.EqualTo(bloqueSegundo));
+				Assert.That(listBloques.GetBloque(segundo), Is.EqualTo(bloquePriemro));
+			});
+		}
+
+		[TestCase(-1, 1)]
+		[TestCase(1, 100)]
+		[TestCase(-1, 100)]
+		public void IntercambiarBloques_PosicionesNoValidas_LanzaExcepcion(int primero, int segundo) {
+			// Arrange
+			int longitud = 100;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+
 			// Assert
-			Assert.Fail();
+			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.IntercambiarBloques(primero, segundo));
+		}
+
+		[TestCase(100)]
+		[TestCase(101)]
+		public void Invertir_InvierteElOrdenDeLosElementos(int value) {
+			// Arrange
+			int longitud = value;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			var inversa = listBloques.ClonarBloquesDinamica();
+
+			// Act
+			inversa.Invertir();
+
+			// Assert
+			Assert.That(inversa.Reverse(), Is.EqualTo(listBloques));
 		}
 
 		[Test]
-		public void Invertir_StateUnderTest_ExpectedBehavior() {
-			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-
-			// Act
-			listBloques.Invertir();
-
-			// Assert
-			Assert.Fail();
-		}
-
 		public void Longitud_EntradaNegativa_LanzaExcepcion() {
 			// Arrange
 			static int funcion(int n) => (int)Math.Pow(n, 2);
@@ -818,18 +907,75 @@ namespace Listas.nUnitTests {
 			}
 		}
 
-		[Test]
-		public void Multiplicar_StateUnderTest_ExpectedBehavior() {
+		[TestCase(1)]
+		[TestCase(2)]
+		[TestCase(10)]
+		public void Multiplicar_Positivo_RepiteLosValores(int value) {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			int longitud = 100;
+			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			int factor = value;
+
+			// Act
+			var result = listBloques.Multiplicar(
+				factor);
+
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result.Longitud, Is.EqualTo(longitud * factor));
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+			});
+			for (int i = 0; i < listBloques.Longitud; i++) {
+				Assert.That(result[i], Is.EqualTo(listBloques[i % longitud]));
+			}
+		}
+
+		[Test]
+		public void Multiplicar_Cero_VaciaLaLista() {
+			// Arrange
+			int longitud = 100;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
 			int factor = 0;
 
 			// Act
 			var result = listBloques.Multiplicar(
 				factor);
 
-			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result.Vacia);
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+			});
+		}
+
+		[TestCase(-1)]
+		[TestCase(-2)]
+		[TestCase(-10)]
+		public void Multiplicar_Negativo_RepiteLosValoresYLaInvierte(int value) {
+			// Arrange
+			int longitud = 100;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			int factor = value;
+
+			// Act
+			var result = listBloques.Multiplicar(
+				factor);
+
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result.Longitud, Is.EqualTo(Math.Abs(longitud * factor)));
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+			});
+			result.Invertir();
+			for (int i = 0; i < listBloques.Longitud; i++) {
+				Assert.That(result[i], Is.EqualTo(listBloques[i % longitud]));
+			}
 		}
 
 		[Test]
@@ -920,8 +1066,7 @@ namespace Listas.nUnitTests {
 			// Act
 
 			// Assert
-			// ToString para que falle al llamar a PrimerElemento
-			Assert.Throws<InvalidOperationException>(() => listBloques.PrimerElemento.ToString()); 
+			Assert.Throws<InvalidOperationException>(() => _ = listBloques.PrimerElemento); 
 		}
 
 		[Test]
@@ -981,47 +1126,82 @@ namespace Listas.nUnitTests {
 		}
 
 		[Test]
-		public void SetBloque_StateUnderTest_ExpectedBehavior() {
+		public void SetBloque_PosicionValida_CambiaElBloquePorElNuevo() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			ArrayBloque<int> bloque = null;
-			int posicion = 0;
+			int longitud = 100, lBloque = 20, posicion = 3;
+			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			ArrayBloque<int> bloque = new int[lBloque];
+			for (int i = 0; i < 20; i++) {
+				bloque[i] = i;
+			}
 
 			// Act
 			var result = listBloques.SetBloque(
 				bloque,
 				posicion);
 
-			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(listBloques.GetBloque(posicion), Is.Not.EqualTo(result));
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + lBloque - result.Longitud));
+			});
 		}
 
 		[Test]
-		public void Sumar_StateUnderTest_ExpectedBehavior() {
+		public void SetBloque_PosicionNoValida_LanzaExcepcion() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			int elemento = default(int);
+			int longitud = 100, lBloque = 20, posicion = 15;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			ArrayBloque<int> bloque = new int[lBloque];
+			
+			// Assert
+			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.SetBloque(bloque, posicion));
+		}
+
+		[Test]
+		public void Sumar_Elemento_InsertaElElementoEnNuevaLista() {
+			// Arrange
+			int longitud = 15;
+			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longitud
+			};
+			int elemento = 123;
 
 			// Act
 			var result = listBloques.Sumar(
 				elemento);
 
-			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result.Longitud, Is.EqualTo(longitud + 1));
+				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(result.Contiene(elemento));
+			});
 		}
 
 		[Test]
-		public void Sumar_StateUnderTest_ExpectedBehavior1() {
+		public void Sumar_Bloque_InsertaElBloqueEnNuevaLista() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			ArrayBloque<int> bloque = null;
+			int longLista = 15, longBloque = 10;
+			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
+				Longitud = longLista
+			};
+			ArrayBloque<int> bloque = new int[longBloque];
 
 			// Act
 			var result = listBloques.Sumar(
 				bloque);
 
-			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result.Longitud, Is.EqualTo(longLista + longBloque));
+				Assert.That(result.GetBloques(), Does.Contain(bloque));
+				Assert.That(listBloques.Longitud, Is.EqualTo(longLista));
+			});
 		}
 
 		[Test]
@@ -1052,15 +1232,20 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Unir_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			ILista<int> segunda = null;
+			int lPrimera = 100, lSegunda = 75;
+			ListBloques<int,ArrayBloque<int>> primeraLista = new (n => 10, n => n) { Longitud = lPrimera},
+				segundaLista = new(n => 15, n => n * n + n) { Longitud = lSegunda};
 
 			// Act
-			var result = listBloques.Unir(
-				segunda);
+			var result = primeraLista.Unir(
+				segundaLista);
 
-			// Assert
-			Assert.Fail();
+			Assert.Multiple(() => {
+				// Assert
+				Assert.That(result.Longitud, Is.EqualTo(lPrimera + lSegunda));
+				Assert.That(primeraLista.Longitud, Is.EqualTo(lPrimera));
+				Assert.That(segundaLista.Longitud, Is.EqualTo(lSegunda));
+			});
 		}
 	}
 }

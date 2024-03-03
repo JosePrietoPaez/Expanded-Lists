@@ -412,7 +412,6 @@ namespace Listas {
 				_bloques.RemoveAt(_bloques.Count - 1);
 				_posiciones.RemoveAt(_posiciones.Count - 1);
 			}
-			Debug.Assert(acarreo != null);
 			return (E)acarreo;
 		}
 
@@ -486,17 +485,15 @@ namespace Listas {
 			} else if (posicion == Longitud) {
 				InsertarUltimo(elemento);
 			} else {
-				bool colocado;
 				int posicionBloque = BuscarBloque(posicion);
+				bool colocado = !_bloques[posicionBloque].Lleno;
 				E? acarreo = _bloques[posicionBloque].Insertar(elemento, posicion - _posiciones[posicionBloque]);
-				colocado = acarreo == null;
 				AsegurarEspacio();
 				while (!colocado) {
 					posicionBloque++;
-					Debug.Assert(acarreo != null);
 					elemento = acarreo;
+					colocado = !_bloques[posicionBloque].Lleno;
 					acarreo = _bloques[posicionBloque].InsertarPrimero(elemento);
-					colocado = acarreo == null;
 					AsegurarEspacio();
 				}
 			}
@@ -542,13 +539,12 @@ namespace Listas {
 		public void InsertarPrimero(E elemento) {
 			bool colocado = false;
 			int posicion = 0;
-			E? acarreo;
+			E? acarreo, elementoParaInsertar = elemento;
 			while (!colocado) {
-				acarreo = _bloques[posicion].InsertarPrimero(elemento);
-				if (acarreo == null) {
-					colocado = true;
-				} else { //Intenta colocar el acarreo al principio del siguiente bloque
-					elemento = acarreo;
+				colocado = !_bloques[posicion].Lleno;
+				acarreo = _bloques[posicion].InsertarPrimero(elementoParaInsertar);
+				if (!colocado) { //Intenta colocar el acarreo al principio del siguiente bloque
+					elementoParaInsertar = acarreo;
 					posicion++;
 				}
 				AsegurarEspacio();
@@ -559,46 +555,18 @@ namespace Listas {
 			if (num < 1) return;
 			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= Longitud,
 				Mensajes.RangoLista(posicion,Longitud), nameof(posicion));
-			List<E> acarreo = [];
-			int bloque = BuscarBloque(posicion), inicial = _posiciones[bloque], posEnBloque = posicion - inicial;
-			Bloque<E> actual = _bloques[bloque];
-			for (int i = 0; i < num; i++, posEnBloque++) { //Se colocan los elem
-				E aux;
-				bool habraAcarreo = actual.Lleno;
-				aux = actual.Insertar(elemento, posEnBloque);
-				if (habraAcarreo) {
-					acarreo.Add(aux);
-				}
-				if (posEnBloque == actual.Capacidad - 1) { //Para evitar que coloque en posiciones inválidas
-					posEnBloque = -1;
-					AsegurarEspacio();
-					bloque++;
-					actual = _bloques[bloque];
-				}
+			var temporalFuncion = FuncionDeGeneracion;
+			FuncionDeGeneracion = n => elemento; // Para alargar la lista y poder mover los elementos
+			Longitud += num;
+			FuncionDeGeneracion = temporalFuncion;
+			for (int i = Longitud-1; i >= posicion + num; i--) {
+				this[i] = this[i - num];
 			}
-			while (acarreo.Count > 0) {
-				E? acarreoBloque, elementoInsertar;
-				for (int indiceLista = 0; indiceLista < acarreo.Count; indiceLista++, posEnBloque++) {
-					elementoInsertar = acarreo[indiceLista];
-					acarreoBloque = actual.Insertar(elementoInsertar, posEnBloque);
-					acarreo[indiceLista] = acarreoBloque;
-					if (posEnBloque == actual.Capacidad - 1) {
-						posEnBloque = -1;
-						AsegurarEspacio();
-						bloque++;
-						actual = _bloques[bloque];
-					}
-				}
-				int i = 0;
-				while (i < acarreo.Count) { //Elimina los elementos nulos necesarios
-					if (acarreo[i] == null) {
-						acarreo.RemoveAt(i);
-					} else {
-						i++;
-					}
-				}
+			for (int i = posicion; i < posicion + num; i++) {
+				this[i] = elemento;
 			}
 		}
+
 
 		/// <inheritdoc/>
 		/// <remarks>
@@ -627,7 +595,7 @@ namespace Listas {
 				bloque.Invertir();
 			}
 			if (_bloques[^1].Vacio) {
-				_bloques.Reverse(0,_bloques.Count - 2); // Si el último está vacío se deja al final
+				_bloques.Reverse(0,_bloques.Count - 1); // Si el último está vacío se deja al final
 			} else {
 				_bloques.Reverse();
 				B antiguo = _bloques[0];
@@ -644,21 +612,18 @@ namespace Listas {
 		}
 
 		public IListaArbitraria<E> Multiplicar(int factor) {
-			ListBloques<E, B> listaNueva = new(this);
+			ListBloques<E, B> listaNueva = new(FuncionDeExtension,FuncionDeGeneracion);
 			if (factor == 0) {
 				listaNueva.Vacia = true;
 			} else {
+				IEnumerator<E> enumerable;
+				for (int i = 0; i < Math.Abs(factor); i++) {
+					enumerable = GetEnumerator();
+					while (enumerable.MoveNext())
+						listaNueva.InsertarUltimo(enumerable.Current);
+				}
 				if (factor < 0) {
 					listaNueva.Invertir();
-				} else {
-					B nuevo = CrearInstancia(listaNueva._bloques[^1].Longitud); //Crea un bloque con la longitud justa
-					foreach (var item in listaNueva._bloques[^1]) {
-						nuevo.InsertarUltimo(item);
-					}
-					listaNueva._bloques[^1] = nuevo;
-				}
-				for (int i = 0; i < _bloques.Count * Math.Abs(factor); i++) {
-					listaNueva.Insertar(Clonar(_bloques[i%CantidadBloques]), i);
 				}
 			}
 			return listaNueva;
@@ -733,16 +698,21 @@ namespace Listas {
 		/// En esta clase solo se permite que <c>bloque</c> no este lleno si se cambia por el último
 		/// <para><c>posicion</c> debe ser una posición de bloque válida</para>
 		/// </remarks>
-		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
 		public B SetBloque(B bloque, int posicion) {
 			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques,
 				Mensajes.RangoLista(posicion,CantidadBloques), nameof(posicion));
 			Contrato.Requires<ArgumentNullException>(bloque != null && (bloque.Lleno || posicion == _bloques.Count - 1),
 				Mensajes.BloqueNoLleno, nameof(bloque)); // Si el bloque no está lleno debe cambiarse por el último
-			Debug.Assert(bloque != null);
 			B antiguo = _bloques[posicion];
 			_bloques[posicion] = bloque;
-			AsegurarEspacio();
+			int deltaLongitud = bloque.Longitud - antiguo.Longitud; // Se deben cambiar las posiciones al cambiar el bloque
+			if (deltaLongitud != 0)
+				for (int i = posicion + 1; i < _posiciones.Count; i++) {
+					_posiciones[i] += deltaLongitud;
+				}
+			AsegurarEspacio(); // Seguramente no haga nada aquí
 			return antiguo;
 		}
 

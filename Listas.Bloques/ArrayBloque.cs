@@ -101,7 +101,7 @@ namespace Listas.Bloques {
 		}
 
 		public override T? InsertarUltimo(T elemento) {
-			T? aux = Lleno? _array[^1] : default;
+			T? aux = _array[^1];
 			if (_longitud == _array.Length) { //Si está lleno
 				_array[^1] = elemento;
 			} else {
