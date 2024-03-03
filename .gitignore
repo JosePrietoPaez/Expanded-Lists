@@ -397,5 +397,9 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-#Visual Paradigm
+# Visual Paradigm
 *.vpp.*
+
+# Carpetas de DivCalc
+Operaciones/
+ProgramaDivisibilidadCLI/
