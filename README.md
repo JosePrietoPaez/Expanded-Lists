@@ -1,22 +1,28 @@
 # ListaBloques-Remake
-En _ListaBloques-Remake_ están la recreación y expansión en C# de la biblioteca de listas y sus clases relacionadas para la creación de una aplicación de reglas de divisibilidad que creé el verano de 2023 en Java, una idea en la que he estado trabajando desde 2021.
+_ListaBloques-Remake_ es una biblioteca de estructuras de datos, por ahora solo listas, en C# que ofrecen más métodos que las implementaciones del lenguaje. Intento que mantengan un buen rendimineto, pero aún no he hecho pruebas de redimiento 
 
-## Objetivos
- - Refinar la jerarquía de las interfaces, en la versión de Java, todas las características de las listas se encontraban en dos interfaces
- - Crear una versión más eficiente de _LinkedListaBloques_ de la versión de Java, ha sido renombrada a _ListBloques_
- - Rediseñar y crear una nueva versión de la calculadora de reglas divisibilidad, que por ahora llamaré _DivCalc_
-   - Digo por ahora, pero no creo que lo cambie
-   - Cuando comienze el desarrollo de GUI crearé un nuevo repositorio, moveré el código de _DivCalc_ cuando lo haga
- 
 ## Estado de desarrollo
- - He creado una versión de consola de _DivCalc_, que tiene la capacidad de calcular reglas de divisibilidad dado una base y un divisor
- - Respecto a las estructuras de datos, el diseño de las interfaces está casi finalizado, sólo queda la interfaz para listas ordenadas
-   - Esta no es una prioridad, pero pienso hacerlo una vez acabe con _ListBloques_
- - Para mostrar el uso de estas inerfaces y ofrecer una implementación, las clases C# _ListSerie_ y _ListBloques_
-   - Ambas implementan una interfaz mediante el uso de una _List_ de _System.Collections_
-   - Por ahora, _ListSerie_ está terminada y _ListBloques_ está siendo depurada
-     - A pesar de que _ListBloques_ funcionara en Java, los grandes cambios a las interfaces, cambios en detalles de implementación y errores a pasar el código a C# me obligan a volver a crear pruebas para esta clase
+### Lanzamiento 0.1
+La parte más importante de esta versión, y uno de los motivos para crear este repositorio, es _ListBloques_.
+Una lista que usa arrays y _Bloques<sup>*</sup>_ para ofrecer los beneficios de un array y una lista enlazada.<br/>
+Usa arrays para guardar los bloques y las posiciones que representan en la lista para agilizar el acceso a los elementos respecto a las listas enlazadas y usa los bloques para que la lista esté contenida en trozos de memoria separados como las listas enlazadas
+ - <sup>*</sup>Los Bloques son listas de capacidad fija usadas en la implementación de las listas de bloques
+   - Pueden usarse sin listas, pero no están pensadas para ello
+   - Por ahora la única implementación de Bloque es ArrayBloque
+     - Puede ser usado como una expansión de un array, que incluye una conversión implicita de esta
 
-### Sobre la biblioteca original en Java
-Entiendo que puede ser confuso que haga referencia a una versión en Java sin compartirla.<br/>
-No publicaré la biblioteca orignal, ya que contiene bastantes errores y a estas alturas es muy diferente a la versión actual.
+Tiene una jerarquía de interfaces, permitiendo la creación de listas con más métodos que la lista base.
+
+Además incluye ListSerie, usa un List para implementar la interfaz ISerie, que permite usar funciones para generar nuevos elementos e insertarlos.
+ - ListSerie, no ha sido completamente depurada y puede contener errores, pero será usada en el repositorio [DivClac](https://github.com/JosePrietoPaez/DivCalc)
+
+## Objetivos para versiones futuras
+ - Asegurar la eficiencia de ListBloques
+ - Refinar la jerarquía de interfaces
+ - En el futuro seguramente cambie el idioma de los métodos a inglés, no solo para hacer este repositorio más accesible, también para ofrecer más características que necesitan propiedades en inglés
+   - Téngase esto en cuenta si espera usar versiones futuras de este repositorio
+ - Implementar otra lista, parecida a ListBloques, pero permitiendo que haya huecos en los bloques y que permita que haya bloques vacíos
+   - Estas diferencias permitirán usar esta estructura como una matriz, quizás usar un array de Bloques como una matriz sea más obvio que como una lista
+   - Esto puede requerir cambios en la jerarquía de interfaces
+   - Cuando haga este cambio podría hacer que ILista herede de IList
+ - Hacer algo con las listas ordenadas
