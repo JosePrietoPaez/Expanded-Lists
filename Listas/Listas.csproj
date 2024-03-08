@@ -3,8 +3,38 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Listas</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>jmpp.expanded-lists</PackageId>
+    <Title>Expanded Lists</Title>
+    <Version>0.1.0</Version>
+    <Authors>JosePrietoPaez</Authors>
+    <Description>This package aims to offer a variety of lists with many more methods  and operators than the default implementation.
+This version contains only one actual list, I recommend using Expanded Lists/Blocks for more lists.
+If you are wondering why everything is in Spanish, this wasn't meant to be uploaded yet, I will change the language in future releases.</Description>
+    <Copyright>See the GitHub repository for more details</Copyright>
+    <PackageProjectUrl>https://github.com/JosePrietoPaez/ListaBloques-Remake</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/JosePrietoPaez/ListaBloques-Remake</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>lists;data-structures</PackageTags>
+    <PackageReleaseNotes>See the GitHub for the release notes(in Spanish)
+</PackageReleaseNotes>
+    <NeutralLanguage>es-ES</NeutralLanguage>
+    <AssemblyName>expanded-lists</AssemblyName>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

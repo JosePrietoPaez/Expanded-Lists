@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Listas {
+﻿namespace Listas {
 	public static class Mensajes {
 		public static string RangoLista(int indice, int limite) {
 			return $"La posición indicada no es válida({indice}, con longitud {limite})";

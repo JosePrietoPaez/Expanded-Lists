@@ -1,4 +1,7 @@
-﻿namespace Listas.Bloques {
+﻿using Listas;
+using System.Collections.Generic;
+
+namespace Listas.Bloques {
 
 	/// <summary>
 	/// Las listas de bloques guardan sus elementos en bloques, estos bloques pueden ser obtenidos desde su lista
