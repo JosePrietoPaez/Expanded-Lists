@@ -1,5 +1,5 @@
-# ListaBloques-Remake
-_ListaBloques-Remake_ es una biblioteca de estructuras de datos, por ahora solo listas, en C# que ofrecen más métodos que las implementaciones del lenguaje. Intento que mantengan un buen rendimineto, pero aún no he hecho pruebas de redimiento 
+# Expanded Lists
+_Expanded Lists_, antes _ListaBloques Remake_ es una biblioteca de estructuras de datos, por ahora solo listas, en C# que ofrecen más métodos que las implementaciones del lenguaje. Intento que mantengan un buen rendimineto, pero aún no he hecho pruebas de redimiento 
 
 ## Estado de desarrollo
 ### Lanzamiento 0.1
