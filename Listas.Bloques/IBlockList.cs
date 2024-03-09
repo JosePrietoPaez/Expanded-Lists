@@ -1,7 +1,6 @@
-﻿using Listas;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Listas.Bloques {
+namespace ExpandedLists.Blocks {
 
 	/// <summary>
 	/// Las listas de bloques guardan sus elementos en bloques, estos bloques pueden ser obtenidos desde su lista
@@ -13,7 +12,7 @@ namespace Listas.Bloques {
 	/// <typeparam name="E"/>
 	/// <typeparam name="B">
 	/// </typeparam>
-	public interface IListaBloques<E,B> : ILista<E> where B : Bloque<E> {
+	public interface IBlockList<E,B> : IExList<E> where B : Block<E> {
 
 		/// <summary>
 		/// Esta propiedad permite obtener la cantidad de bloques que se están usando
@@ -27,20 +26,20 @@ namespace Listas.Bloques {
 		/// Devuelve la lista con <c>bloque</c> borrado
 		/// </summary>
 		/// <remarks>
-		/// Equivalente a lista.<see cref="IListaBloques{T, U}.Restar(U)"/>
+		/// Equivalente a lista.<see cref="IBlockList{T, U}.Restar(U)"/>
 		/// </remarks>
 		/// <param name="lista"></param>
 		/// <param name="bloque"></param>
 		/// <returns>
 		/// Nueva lista con sus bloques sin <c>bloque</c>
 		/// </returns>
-		static IListaBloques<E, B> operator -(IListaBloques<E, B> lista, B bloque) => lista.Restar(bloque);
+		static IBlockList<E, B> operator -(IBlockList<E, B> lista, B bloque) => lista.Restar(bloque);
 
 		/// <summary>
 		/// Obtiene el bloque en <c>posicion</c>
 		/// </summary>
 		/// <remarks>
-		/// <c>posicion</c> debe ser no negativo y menor que <see cref="IListaBloques{T, U}.CantidadBloques"/>
+		/// <c>posicion</c> debe ser no negativo y menor que <see cref="IBlockList{T, U}.CantidadBloques"/>
 		/// </remarks>
 		/// <param name="posicion"></param>
 		/// <returns>Bloque en la posición indicada</returns>
@@ -104,7 +103,7 @@ namespace Listas.Bloques {
 		/// <summary>
 		/// Devuelve una lista de bloques como la llamada, sin <c>bloque</c>
 		/// </summary>
-		IListaBloques<E,B> Restar(B bloque);
+		IBlockList<E,B> Restar(B bloque);
 
 		/// <summary>
 		/// Crea una lista de bloques nueva igual a la llamada, la lista será del mismo tipo
@@ -115,7 +114,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Lista igual a la llamada
 		/// </returns>
-		IListaBloques<E, B> ClonarBloques();
+		IBlockList<E, B> ClonarBloques();
 
 		IEnumerable<B> GetBloques();
 		

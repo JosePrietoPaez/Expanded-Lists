@@ -1,11 +1,10 @@
-﻿using Listas;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Listas.Bloques {
+namespace ExpandedLists.Blocks {
 #pragma warning disable CS9107 // El parámetro se captura en el estado del tipo envolvente y su valor también se pasa al constructor base. La clase base también puede capturar el valor.
-	public class ArrayBloque<T>(int capacidad) : Bloque<T>(capacidad), IEquatable<ArrayBloque<T>> {
+	public class ArrayBlock<T>(int capacidad) : Block<T>(capacidad), IEquatable<ArrayBlock<T>> {
 #pragma warning restore CS9107 // El parámetro se captura en el estado del tipo envolvente y su valor también se pasa al constructor base. La clase base también puede capturar el valor.
 
 		private readonly T[] _array = new T[capacidad];
@@ -13,42 +12,42 @@ namespace Listas.Bloques {
 
 		public override T this[int index] {
 			get {
-				Contrato.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
-					Mensajes.RangoLista(index,_longitud));
+				Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
+					Messages.ListRange(index,_longitud));
 				return _array[index];
 			}
 			set {
-				Contrato.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
-					Mensajes.RangoLista(index, _longitud));
+				Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
+					Messages.ListRange(index, _longitud));
 				_array[index] = value;
 			}
 		}
 
-		public override bool Lleno => _longitud == capacidad;
+		public override bool IsFull => _longitud == capacidad;
 
-		public override bool Vacio => _longitud == 0;
+		public override bool IsEmpty => _longitud == 0;
 
-		public override int Longitud {
+		public override int Length {
 			get => _longitud;
 			set {
-				Contrato.Requires<ArgumentOutOfRangeException>(value <= _longitud,
-					Mensajes.LongitudNegativa,nameof(value));
+				Contract.Requires<ArgumentOutOfRangeException>(value <= _longitud,
+					Messages.NegativeLength,nameof(value));
 				_longitud = value;
 			}
 		}
 
-		public ArrayBloque(T[] array) : this(array,array.Length) { }
+		public ArrayBlock(T[] array) : this(array,array.Length) { }
 
-		public ArrayBloque(T[] array, int longitud) : this(array.Length) {
+		public ArrayBlock(T[] array, int longitud) : this(array.Length) {
 			array.CopyTo(_array, 0);
 			_longitud = longitud;
 		}
 
-		public override void BorrarTodos() {
+		public override void Clear() {
 			_longitud = 0;
 		}
 
-		public override bool Contiene(object? elemento) {
+		public override bool Contains(object? elemento) {
 			bool res = false;
 			for (int i = 0; i < _array.Length && !res; i++) {
 				if (elemento == null) {
@@ -60,21 +59,21 @@ namespace Listas.Bloques {
 			return res;
 		}
 
-		public override T Eliminar(int posicion) {
-			Contrato.Requires<IndexOutOfRangeException>(posicion >= 0 && posicion < _longitud,
-				Mensajes.RangoLista(posicion, _longitud));
+		public override T RemoveAt(int posicion) {
+			Contract.Requires<IndexOutOfRangeException>(posicion >= 0 && posicion < _longitud,
+				Messages.ListRange(posicion, _longitud));
 			T aux = _array[posicion];
 			Array.Copy(_array, posicion + 1, _array, posicion, _array.Length - posicion - 1);
 			_longitud--;
 			return aux;
 		}
 
-		public override T EliminarPrimero() {
-			return Eliminar(0);
+		public override T RemoveFirst() {
+			return RemoveAt(0);
 		}
 
-		public override T EliminarUltimo() {
-			Contrato.Requires<InvalidOperationException>(_longitud > 0, Mensajes.VacioBloque);
+		public override T RemoveLast() {
+			Contract.Requires<InvalidOperationException>(_longitud > 0, Messages.EmptyBlock);
 			_longitud--;
 			return _array[_longitud];
 		}
@@ -85,11 +84,11 @@ namespace Listas.Bloques {
 			}
 		}
 
-		public override T? Insertar(T elemento, int posicion) {
-			Contrato.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= _longitud && (posicion != _longitud || _longitud != _array.Length)
-				,Mensajes.RangoLista(posicion,_longitud));
+		public override T? Insert(T elemento, int posicion) {
+			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= _longitud && (posicion != _longitud || _longitud != _array.Length)
+				,Messages.ListRange(posicion,_longitud));
 			if (posicion == _longitud) {
-				return InsertarUltimo(elemento);
+				return InsertLast(elemento);
 			}
 			T ultimo = _array[^1];
 			Array.Copy(_array, posicion, _array, posicion + 1, _array.Length - posicion - 1);
@@ -98,11 +97,11 @@ namespace Listas.Bloques {
 			return ultimo;
 		}
 
-		public override T? InsertarPrimero(T elemento) {
-			return Insertar(elemento, 0);
+		public override T? InsertFirst(T elemento) {
+			return Insert(elemento, 0);
 		}
 
-		public override T? InsertarUltimo(T elemento) {
+		public override T? InsertLast(T elemento) {
 			T? aux = _array[^1];
 			if (_longitud == _array.Length) { //Si está lleno
 				_array[^1] = elemento;
@@ -113,7 +112,7 @@ namespace Listas.Bloques {
 			return aux;
 		}
 
-		public override void Invertir() {
+		public override void Reverse() {
 			T[] arrayCopia = new T[_longitud];
 			Array.Copy(_array, arrayCopia, _longitud);
 			for (int i = 0; i < _longitud; i++) {
@@ -121,9 +120,9 @@ namespace Listas.Bloques {
 			}
 		}
 
-		public override T PrimerElemento => _array[0];
+		public override T First => _array[0];
 
-		public override T UltimoElemento => _array[_longitud - 1];
+		public override T Last => _array[_longitud - 1];
 
 		public override string ToString() {
 			StringBuilder stringBuilder = new();
@@ -140,10 +139,10 @@ namespace Listas.Bloques {
 
 		public override bool Equals(object? obj) {
 			bool iguales = ReferenceEquals(this, obj); // Si son el mismo objeto, trivialmente son iguales
-			if (!iguales && obj is Bloque<T> otro) { // No pueden ser iguales si otro no es un bloque
-				iguales = Longitud == otro.Longitud && Capacidad == otro.Capacidad; // Para descartar bloques con distinta longitud o capacidad
+			if (!iguales && obj is Block<T> otro) { // No pueden ser iguales si otro no es un bloque
+				iguales = Length == otro.Length && Capacity == otro.Capacity; // Para descartar bloques con distinta longitud o capacidad
 				int contador = 0;
-				while (iguales && contador < Longitud) {
+				while (iguales && contador < Length) {
 					iguales = Equals(_array[contador],otro[contador]);
 					contador++;
 				}
@@ -152,26 +151,26 @@ namespace Listas.Bloques {
 		}
 
 		/// <summary>
-		/// Genera un hash basado en la longitud, capacidad y elementos entre 0 y <see cref="Bloque{T}.Capacidad"/>
+		/// Genera un hash basado en la longitud, capacidad y elementos entre 0 y <see cref="Block{T}.Capacity"/>
 		/// </summary>
 		/// <remarks>
 		/// Si se necesita que el bloque esté en una estructura que use su hash, no debería modificarse
 		/// </remarks>
 		/// <returns></returns>
 		public override int GetHashCode() {
-			int codigo = Longitud ^ Capacidad; // Para que se tengan en cuenta como en Equals
+			int codigo = Length ^ Capacity; // Para que se tengan en cuenta como en Equals
 			for (int i = 0; i < _longitud; i++) {
 				codigo ^= _array[i]?.GetHashCode() ?? 0;
 			}
 			return codigo;
 		}
 
-		public bool Equals(ArrayBloque<T>? other) {
+		public bool Equals(ArrayBlock<T>? other) {
 			bool iguales = ReferenceEquals(other, this);
 			if (!iguales && other is not null) {
-				iguales = Longitud == other.Longitud && Capacidad == other.Capacidad;
+				iguales = Length == other.Length && Capacity == other.Capacity;
 				int contador = 0;
-				while (iguales && contador < Longitud) {
+				while (iguales && contador < Length) {
 					iguales = Equals(_array[contador], other[contador]);
 					contador++;
 				}
@@ -179,13 +178,13 @@ namespace Listas.Bloques {
 			return iguales;
 		}
 
-		public static implicit operator ArrayBloque<T>(T[] array) {
-			return new ArrayBloque<T>(array);
+		public static implicit operator ArrayBlock<T>(T[] array) {
+			return new ArrayBlock<T>(array);
 		}
 
-		public static explicit operator T[](ArrayBloque<T> bloque) {
-			T[] nuevo = new T[bloque.Capacidad];
-			for (int i = 0; i < bloque.Longitud; i++) {
+		public static explicit operator T[](ArrayBlock<T> bloque) {
+			T[] nuevo = new T[bloque.Capacity];
+			for (int i = 0; i < bloque.Length; i++) {
 				nuevo[i] = bloque[i];
 			}
 			return nuevo;

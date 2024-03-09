@@ -9,7 +9,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/JosePrietoPaez/ListaBloques-Remake</RepositoryUrl>
     <AssemblyName>expanded-lists-bloques</AssemblyName>
-    <RootNamespace>Listas.Bloques</RootNamespace>
+    <RootNamespace>ExpandedLists.Blocks</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>jmpp.expanded-lists-blocks</PackageId>
     <Title>Expanded Lists/Blocks</Title>

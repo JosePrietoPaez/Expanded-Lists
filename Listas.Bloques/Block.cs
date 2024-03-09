@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Listas.Bloques {
+namespace ExpandedLists.Blocks {
 
 	/// <summary>
 	/// Los bloques son estructuras de datos que almacenan objetos,
@@ -16,21 +16,21 @@ namespace Listas.Bloques {
 	/// </para>
 	/// </remarks>
 	/// <typeparam name="T"></typeparam>
-	public abstract class Bloque<T>(in int capacidad) : IEnumerable<T> {
+	public abstract class Block<T>(in int capacidad) : IEnumerable<T> {
 
 		/// <summary>
 		/// Crea una instancia del mismo tipo que el bloque
 		/// </summary>
 		/// <returns></returns>
-		public static B CrearInstancia<B>(int capacidad) where B : Bloque<T>{
+		public static B CreateInstance<B>(int capacidad) where B : Block<T>{
 			ConstructorInfo? constructor = typeof(B).GetConstructor([typeof(int)]);
 			return constructor?.Invoke([capacidad]) as B?? throw new NotImplementedException("No se ha implementado el constructor con argumento int");
 		}
 
-		public static B CopiarInstancia<B>(Bloque<T> bloque) where B : Bloque<T> {
-			B clon = CrearInstancia<B>(bloque.Capacidad);
+		public static B CopyInstance<B>(Block<T> bloque) where B : Block<T> {
+			B clon = CreateInstance<B>(bloque.Capacity);
 			foreach (var elemento in bloque) {
-				clon.InsertarUltimo(elemento);
+				clon.InsertLast(elemento);
 			}
 			return clon;
 		}
@@ -47,12 +47,12 @@ namespace Listas.Bloques {
 		/// <summary>
 		/// Esta propiedad permite consultar el bloque para ver si queda espacio
 		/// </summary>
-		abstract public bool Lleno { get; }
+		abstract public bool IsFull { get; }
 
 		/// <summary>
 		/// Esta propiedad permite consultar el bloque para ver si hay elementos
 		/// </summary>
-		abstract public bool Vacio { get; }
+		abstract public bool IsEmpty { get; }
 
 		/// <summary>
 		/// Este campo permite obtener la cantidad de elementos que podrán ser guardados el en bloque
@@ -60,18 +60,18 @@ namespace Listas.Bloques {
 		/// <remarks>
 		/// Debe ser positiva
 		/// </remarks>
-		public readonly int Capacidad = capacidad > 0 ? capacidad : throw new ArgumentOutOfRangeException("Los bloques deben tener capacidad positiva");
+		public readonly int Capacity = capacidad > 0 ? capacidad : throw new ArgumentOutOfRangeException("Los bloques deben tener capacidad positiva");
 
 		/// <summary>
 		/// Esta propiedad permite obtener la cantidad de elementos guardados en el bloque
 		/// </summary>
 		/// <remarks>
-		/// No puede ser mayor que <see cref="Bloque{T}.Capacidad"/>
+		/// No puede ser mayor que <see cref="Block{T}.Capacity"/>
 		/// <para>
 		/// El setter solo puede reducir la longitud
 		/// </para>
 		/// </remarks>
-		abstract public int Longitud { get; set; }
+		abstract public int Length { get; set; }
 
 		/// <summary>
 		/// Añade el elemento al principio del bloque, desplazando el resto
@@ -82,7 +82,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Elemento en la última posición del bloque o <c>null</c> si no existe
 		/// </returns>
-		abstract public T? InsertarPrimero(T elemento);
+		abstract public T? InsertFirst(T elemento);
 
 		/// <summary>
 		/// Añade el elemento al bloque en la posición indicada, desplazando el resto
@@ -97,7 +97,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Elemento en la última posición del bloque o <c>null</c> si no existe
 		/// </returns>
-		abstract public T? Insertar(T elemento, int posicion);
+		abstract public T? Insert(T elemento, int posicion);
 
 		/// <summary>
 		/// Añade el elemento al final del bloque en la última posición
@@ -108,7 +108,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Elemento en la última posición del bloque o <c>null</c> si no existe
 		/// </returns>
-		abstract public T? InsertarUltimo(T elemento);
+		abstract public T? InsertLast(T elemento);
 
 		/// <summary>
 		/// Devuelve el primer elemento del bloque, si hay
@@ -120,7 +120,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Primer elemento del bloque
 		/// </returns>
-		abstract public T PrimerElemento { get; }
+		abstract public T First { get; }
 
 		/// <summary>
 		/// Devuelve el último elemento del bloque, si hay
@@ -132,7 +132,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Último elemento del bloque
 		/// </returns>
-		abstract public T UltimoElemento { get; }
+		abstract public T Last { get; }
 
 		/// <summary>
 		/// Elimina el elemento al inicio del bloque y lo devuelve
@@ -144,7 +144,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Elemento quitado del bloque
 		/// </returns>
-		abstract public T EliminarPrimero();
+		abstract public T RemoveFirst();
 
 		/// <summary>
 		/// Elimina el elemento de la posición indicada del bloque y lo devuelve
@@ -156,7 +156,7 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Elemento quitado del bloque
 		/// </returns>
-		abstract public T Eliminar(int posicion);
+		abstract public T RemoveAt(int posicion);
 
 		/// <summary>
 		/// Elimina el elemento al final del bloque y lo devuelve
@@ -168,12 +168,12 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Elemento quitado de la lista
 		/// </returns>
-		abstract public T EliminarUltimo();
+		abstract public T RemoveLast();
 
 		/// <summary>
 		/// Elimina todos los elementos del bloque, dejándolo vacío
 		/// </summary>
-		abstract public void BorrarTodos();
+		abstract public void Clear();
 
 		/// <summary>
 		/// Devuelve <c>true</c> si contiene <c>elemento</c>
@@ -181,12 +181,12 @@ namespace Listas.Bloques {
 		/// <returns>
 		/// Booleano que representa si se tiene el elemento
 		/// </returns>
-		abstract public bool Contiene(object? elemento);
+		abstract public bool Contains(object? elemento);
 
 		/// <summary>
 		/// Invierte el orden de los elementos del bloque
 		/// </summary>
-		abstract public void Invertir();
+		abstract public void Reverse();
 
 		abstract public IEnumerator<T> GetEnumerator();
 

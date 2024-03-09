@@ -1,38 +1,32 @@
-﻿using Listas;
-using Listas.Bloques;
-using Newtonsoft.Json.Linq;
-using NUnit.Framework;
-using NUnit.Framework.Constraints;
-using NUnit.Framework.Legacy;
-using System;
+﻿using ExpandedLists.Blocks;
 
-namespace Listas.nUnitTests {
+namespace ExpandedLists.nUnitTests {
 	[TestFixture]
 	public class ListBloquesTests {
 
-		private static ArrayBloque<int> _bloqueVacio,
+		private static ArrayBlock<int> _bloqueVacio,
 			_bloqueConMenosElementos,
 			_bloqueConElementos;
 
-		private ArrayBloque<int>[] _bloques;
+		private ArrayBlock<int>[] _bloques;
 
 		[SetUp]
 		public void SetUp() {
 			_bloqueConElementos = new int[10] { 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 };
 			_bloqueConMenosElementos = new int[5] { 1, 2, 3, 4, 5 };
 			_bloqueVacio = new int[10];
-			_bloqueVacio.BorrarTodos();
+			_bloqueVacio.Clear();
 			_bloques = [_bloqueVacio, _bloqueConMenosElementos, _bloqueConElementos];
 		}
 
 		[Test]
 		public void Borrar_Bloque_EnLaLista_BorraElBloque() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
 
 			// Act
-			listBloques.Insertar(_bloqueConElementos,0);
-			listBloques.Insertar(_bloqueVacio, 1);
+			listBloques.Insert(_bloqueConElementos,0);
+			listBloques.Insert(_bloqueVacio, 1);
 
 			var result = listBloques.Borrar(
 				_bloqueConElementos);
@@ -44,13 +38,13 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Borrar_Bloque_NoEnLaLista_NoBorraYDevuelveM1() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
 			int longitud;
 
 			// Act
-			listBloques.Insertar(_bloqueConElementos, 0);
-			listBloques.Insertar(_bloqueVacio, 1);
-			longitud = listBloques.Longitud;
+			listBloques.Insert(_bloqueConElementos, 0);
+			listBloques.Insert(_bloqueVacio, 1);
+			longitud = listBloques.Count;
 
 			var result = listBloques.Borrar(
 				_bloqueConMenosElementos);
@@ -58,7 +52,7 @@ namespace Listas.nUnitTests {
 			Assert.Multiple(() => {
 				// Assert
 				Assert.That(result, Is.EqualTo(-1));
-				Assert.That(longitud, Is.EqualTo(listBloques.Longitud));
+				Assert.That(longitud, Is.EqualTo(listBloques.Count));
 			});
 		}
 
@@ -68,10 +62,10 @@ namespace Listas.nUnitTests {
 		[TestCase(2)]
 		public void BorrarBloque_CasosDePrueba(int value) {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
 			int cantidad;
 			for (int i = 0; i < _bloques.Length; i++) {
-				listBloques.Insertar(_bloques[i], i);
+				listBloques.Insert(_bloques[i], i);
 			}
 			cantidad = listBloques.CantidadBloques;
 
@@ -86,10 +80,10 @@ namespace Listas.nUnitTests {
 		[TestCase(10)]
 		public void BorrarBloque_ValoresInvalidos_LanzaExcepcion(int value) {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
 			int cantidad;
 			for (int i = 0; i < _bloques.Length; i++) {
-				listBloques.Insertar(_bloques[i], i);
+				listBloques.Insert(_bloques[i], i);
 			}
 
 			cantidad = listBloques.CantidadBloques;
@@ -101,135 +95,135 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarUltimo_ConElementos_DevuelveElElementoYLoBorraYPuedeBorrarElUltimoBloque() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
 			var bloque = _bloqueConMenosElementos;
-			listBloques.Insertar(_bloqueConMenosElementos, 0);
-			var lleno = bloque.Lleno;
+			listBloques.Insert(_bloqueConMenosElementos, 0);
+			var lleno = bloque.IsFull;
 			var cantidad = listBloques.CantidadBloques;
-			var ultimo = bloque.UltimoElemento;
-			var longitudInicial = bloque.Longitud;
+			var ultimo = bloque.Last;
+			var longitudInicial = bloque.Length;
 
 			// Act
-			var result = listBloques.BorrarUltimo();
+			var result = listBloques.RemoveLast();
 
 			// Assert
 			Assert.Multiple(() => {
 				Assert.That(lleno ^ cantidad == listBloques.CantidadBloques);
 				Assert.That(ultimo, Is.EqualTo(result));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitudInicial - 1));
+				Assert.That(listBloques.Count, Is.EqualTo(longitudInicial - 1));
 			});
 		}
 
 		[Test]
 		public void BorrarUltimo_SinElementos_LanzaUnaExcepcion() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
 
 			// Assert
-			Assert.Throws<InvalidOperationException>(() => listBloques.BorrarUltimo());
+			Assert.Throws<InvalidOperationException>(() => listBloques.RemoveLast());
 		}
 
 		[Test]
 		public void BorrarPrimero_ConElementos_DosBloques_DevuelveElElementoYLoBorraYPuedeBorrarElUltimoBloque() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
 			var bloque = _bloqueConMenosElementos;
-			listBloques.Insertar(_bloqueConMenosElementos, 0);
-			var lleno = bloque.Lleno;
+			listBloques.Insert(_bloqueConMenosElementos, 0);
+			var lleno = bloque.IsFull;
 			var cantidad = listBloques.CantidadBloques;
-			var primero = bloque.PrimerElemento;
-			var longitudInicial = listBloques.Longitud;
+			var primero = bloque.First;
+			var longitudInicial = listBloques.Count;
 
 			// Act
-			var result = listBloques.BorrarPrimero();
+			var result = listBloques.RemoveFirst();
 
 			// Assert
 			Assert.Multiple(() => {
 				Assert.That(lleno ^ cantidad == listBloques.CantidadBloques);
 				Assert.That(primero, Is.EqualTo(result));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitudInicial - 1));
+				Assert.That(listBloques.Count, Is.EqualTo(longitudInicial - 1));
 			});
 		}
 
 		[Test]
 		public void BorrarPrimero_ConElementos_VariosBloques_HaceLoMismoQueConDos() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
 			var bloque = _bloqueConMenosElementos;
-			listBloques.Insertar(_bloqueConMenosElementos, 0);
-			listBloques.Insertar(_bloqueConElementos, 1);
-			listBloques.InsertarUltimo(123);
-			var lleno = listBloques.GetBloque(listBloques.CantidadBloques - 1).Lleno;
+			listBloques.Insert(_bloqueConMenosElementos, 0);
+			listBloques.Insert(_bloqueConElementos, 1);
+			listBloques.InsertLast(123);
+			var lleno = listBloques.GetBloque(listBloques.CantidadBloques - 1).IsFull;
 			var cantidad = listBloques.CantidadBloques;
-			var primero = bloque.PrimerElemento;
-			var longitudInicial = listBloques.Longitud;
+			var primero = bloque.First;
+			var longitudInicial = listBloques.Count;
 
 			// Act
-			var result = listBloques.BorrarPrimero();
+			var result = listBloques.RemoveFirst();
 
 			// Assert
 			Assert.Multiple(() => {
 				Assert.That(lleno ^ cantidad == listBloques.CantidadBloques);
 				Assert.That(primero, Is.EqualTo(result));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitudInicial - 1));
+				Assert.That(listBloques.Count, Is.EqualTo(longitudInicial - 1));
 			});
 		}
 
 		[Test]
 		public void BorrarPrimero_SinElementos_LanzaUnaExcepcion() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
 
 			// Assert
-			Assert.Throws<InvalidOperationException>(() => listBloques.BorrarPrimero());
+			Assert.Throws<InvalidOperationException>(() => listBloques.RemoveFirst());
 		}
 
 		[Test]
 		public void BorrarTodos_ConElementos_VaciaLaLista() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			listBloques.InsertarUltimo(1);
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
+			listBloques.InsertLast(1);
 
 			// Act
-			listBloques.BorrarTodos();
+			listBloques.Clear();
 
 			// Assert
 			Assert.Multiple(() => {
-				Assert.That(listBloques.Vacia);
-				Assert.That(listBloques.Longitud, Is.EqualTo(0));
+				Assert.That(listBloques.IsEmpty);
+				Assert.That(listBloques.Count, Is.EqualTo(0));
 			});
 		}
 
 		[Test]
 		public void BorrarTodos_SinElementos_VaciaLaLista() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
 
 			// Act
-			listBloques.BorrarTodos();
+			listBloques.Clear();
 
 			// Assert
 			Assert.Multiple(() => {
-				Assert.That(listBloques.Vacia);
-				Assert.That(listBloques.Longitud, Is.EqualTo(0));
+				Assert.That(listBloques.IsEmpty);
+				Assert.That(listBloques.Count, Is.EqualTo(0));
 			});
 		}
 
 		[Test]
 		public void BorrarTodos_Elemento_SinOcurrencias_NoBorraNadaYDevuelve0() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
 			int elemento = 1234;
-			listBloques.Insertar(_bloqueConElementos, 0);
-			int longitud = listBloques.Longitud;
+			listBloques.Insert(_bloqueConElementos, 0);
+			int longitud = listBloques.Count;
 
 			// Act
-			var result = listBloques.BorrarTodos(
+			var result = listBloques.Clear(
 				elemento);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(result + listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(result + listBloques.Count, Is.EqualTo(longitud));
 				Assert.That(result, Is.EqualTo(0));
 			});
 		}
@@ -238,34 +232,34 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarTodos_Elemento_ConOcurrencias_LasBorraYDevuelveLaCantidad() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
 			int elemento = 1;
-			listBloques.Insertar(_bloqueConElementos, 0);
-			listBloques.Insertar(_bloqueConMenosElementos, 1);
-			int longitud = listBloques.Longitud;
+			listBloques.Insert(_bloqueConElementos, 0);
+			listBloques.Insert(_bloqueConMenosElementos, 1);
+			int longitud = listBloques.Count;
 
 			// Act
-			var result = listBloques.BorrarTodos(
+			var result = listBloques.Clear(
 				elemento);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(result + listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(result + listBloques.Count, Is.EqualTo(longitud));
 				Assert.That(result, Is.GreaterThan(0));
-				Assert.That(listBloques.Contiene(elemento), Is.False);
+				Assert.That(listBloques.Contains(elemento), Is.False);
 			});
 		}
 
 		[Test]
 		public void BorrarUltimos_SinElElemento_NoBorraNadaYDevuelve0() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
 			int elemento = 123;
-			listBloques.Insertar(_bloqueConElementos, 0);
-			listBloques.InsertarUltimo(elemento);
+			listBloques.Insert(_bloqueConElementos, 0);
+			listBloques.InsertLast(elemento);
 
 			// Act
-			var result = listBloques.BorrarUltimos(
+			var result = listBloques.RemoveLast(
 				elemento);
 
 			// Assert
@@ -276,8 +270,8 @@ namespace Listas.nUnitTests {
 		public void BorrarVariosBloques_MasBloquesEnLista_LosBorraYDevuelveLaCantidad() {
 			// Arrange
 			int longitud = 100;
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int num = 3;
 			int posicion = 5;
@@ -291,7 +285,7 @@ namespace Listas.nUnitTests {
 			Assert.Multiple(() => {
 				// Assert
 				Assert.That(result, Is.EqualTo(num));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud - 10 * num));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud - 10 * num));
 				Assert.That(listBloques.Posicion(bloque), Is.GreaterThan(-1));
 			});
 		}
@@ -300,8 +294,8 @@ namespace Listas.nUnitTests {
 		public void BorrarVariosBloques_SinSuficientesBloques_LosBorraYDevuelveLaCantidad() {
 			// Arrange
 			int longitud = 100;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int num = 3;
 			int posicion = 8;
@@ -314,15 +308,15 @@ namespace Listas.nUnitTests {
 			Assert.Multiple(() => {
 				// Assert
 				Assert.That(result, Is.LessThan(num));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud - 10 * result));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud - 10 * result));
 			});
 		}
 
 		[Test]
 		public void BuscarBloque_Posicion_Valida_DevuelveLaPosicion() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = 100
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = 100
 			};
 			int posicion = 50;
 
@@ -331,15 +325,15 @@ namespace Listas.nUnitTests {
 				posicion);
 
 			// Assert
-			Assert.That(listBloques.GetBloque(result).Contiene(listBloques[posicion]), Is.True);
+			Assert.That(listBloques.GetBloque(result).Contains(listBloques[posicion]), Is.True);
 		}
 
 		[TestCase(-1)]
 		[TestCase(1000)]
 		public void BuscarBloque_Posicion_NoValida_DevuelveM1(int value) {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = 100
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = 100
 			};
 			int posicion = value;
 
@@ -354,8 +348,8 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BuscarBloque_Elemento_EnLaLista_DevuelveLaPosicion() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = 100
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = 100
 			};
 			int elemento = 15;
 
@@ -364,14 +358,14 @@ namespace Listas.nUnitTests {
 				elemento);
 
 			// Assert
-			Assert.That(listBloques.GetBloque(result).Contiene(elemento));
+			Assert.That(listBloques.GetBloque(result).Contains(elemento));
 		}
 
 		[Test]
 		public void BuscarBloque_Elemento_NoEnLaLista_DevuelveLaPosicion() {
 			// Arrange
-			var listBloques = new ListBloques<int?, ArrayBloque<int?>>(n => 10, n => 10) {
-				Longitud = 100
+			var listBloques = new BlockList<int?, ArrayBlock<int?>>(n => 10, n => 10) {
+				Count = 100
 			};
 			int? elemento = 15;
 
@@ -386,10 +380,10 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Clonar_Vacia_DevuelveListaIgual() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
 
 			// Act
-			var result = listBloques.ClonarBloquesDinamica();
+			var result = listBloques.CloneDynamicBlocks();
 
 			Assert.Multiple(() => {
 				// Assert
@@ -401,12 +395,12 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Clonar_ConElementos_DevuelveListaIgual() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = 100
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = 100
 			};
 
 			// Act
-			var result = listBloques.ClonarBloquesDinamica();
+			var result = listBloques.CloneDynamicBlocks();
 
 			Assert.Multiple(() => {
 				// Assert
@@ -418,13 +412,13 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Contiene_ConElElemento_DevuelveTrue() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = 100
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = 100
 			};
 			int elemento = 101;
 
 			// Act
-			var result = listBloques.Contiene(
+			var result = listBloques.Contains(
 				elemento);
 
 			// Assert
@@ -434,13 +428,13 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Contiene_SinElElemento_DevuelveFalse() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = 100
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = 100
 			};
 			int elemento = 1;
 
 			// Act
-			var result = listBloques.Contiene(
+			var result = listBloques.Contains(
 				elemento);
 
 			// Assert
@@ -451,40 +445,40 @@ namespace Listas.nUnitTests {
 		public void Diferencia_QuitaLosElementosDeSegundaDeUnaNuevaLista() {
 			// Arrange
 			int lPrimera = 100, lSegunda = 75;
-			ListBloques<int,ArrayBloque<int>> primeraLista = new(n => 10, n => n) { Longitud = lPrimera},
-				segundaLista = new(n => 10, n => 2*n) { Longitud = lSegunda};
+			BlockList<int,ArrayBlock<int>> primeraLista = new(n => 10, n => n) { Count = lPrimera},
+				segundaLista = new(n => 10, n => 2*n) { Count = lSegunda};
 
 			// Act
-			var result = primeraLista.Diferencia(
+			var result = primeraLista.Difference(
 				segundaLista);
 
 			// Assert
 			Assert.Multiple(() => {
 				foreach (var item in result) {
-					Assert.That(primeraLista.Contiene(item));
-					Assert.That(segundaLista.Contiene(item), Is.False);
+					Assert.That(primeraLista.Contains(item));
+					Assert.That(segundaLista.Contains(item), Is.False);
 				}
-				Assert.That(primeraLista.Longitud, Is.EqualTo(lPrimera));
-				Assert.That(segundaLista.Longitud, Is.EqualTo(lSegunda));
+				Assert.That(primeraLista.Count, Is.EqualTo(lPrimera));
+				Assert.That(segundaLista.Count, Is.EqualTo(lSegunda));
 			});
 		}
 
 		[Test]
 		public void Eliminar_Posicion_EnLista_BorraElElementoYLoDevuelve() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			listBloques.Insertar(_bloqueConElementos, 0);
-			int posicion = new Random().Next(10), longitud = listBloques.Longitud;
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
+			listBloques.Insert(_bloqueConElementos, 0);
+			int posicion = new Random().Next(10), longitud = listBloques.Count;
 			int elemento = listBloques[posicion];
 
 			// Act
-			var result = listBloques.Eliminar(
+			var result = listBloques.Remove(
 				posicion);
 
 			Assert.Multiple(() => {
 				// Assert
 				Assert.That(result, Is.EqualTo(elemento));
-				Assert.That(longitud, Is.EqualTo(listBloques.Longitud + 1));
+				Assert.That(longitud, Is.EqualTo(listBloques.Count + 1));
 			});
 		}
 
@@ -492,49 +486,49 @@ namespace Listas.nUnitTests {
 		[TestCase(100)]
 		public void Eliminar_Posicion_NoEnLista_LanzaUnaExcepcion(int value) {
 			// Arrange
-			var listBloques = new ListBloques<int?, ArrayBloque<int?>>();
-			listBloques.Insertar(new int?[10] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, 0);
-			int posicion = value, longitud = listBloques.Longitud;
+			var listBloques = new BlockList<int?, ArrayBlock<int?>>();
+			listBloques.Insert(new int?[10] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, 0);
+			int posicion = value, longitud = listBloques.Count;
 
 			// Act
-			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.Eliminar(posicion));
+			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.Remove(posicion));
 		}
 
 		[Test]
 		public void Eliminar_Elemento_EnLista_BorraElElementoYDevuelveSuPosicion() {
 			// Arrange
-			var listBloques = new ListBloques<int?, ArrayBloque<int?>>();
-			listBloques.Insertar(new int?[5] {1,2,3,4,5}, 0);
-			int posicion = 3, longitud = listBloques.Longitud;
+			var listBloques = new BlockList<int?, ArrayBlock<int?>>();
+			listBloques.Insert(new int?[5] {1,2,3,4,5}, 0);
+			int posicion = 3, longitud = listBloques.Count;
 			int? elemento = listBloques[posicion];
 
 			// Act
-			var result = listBloques.Eliminar(
+			var result = listBloques.Remove(
 				elemento);
 
 			Assert.Multiple(() => {
 				// Assert
 				Assert.That(result, Is.EqualTo(posicion));
-				Assert.That(longitud, Is.EqualTo(listBloques.Longitud + 1));
-				Assert.That(listBloques.Contiene(elemento), Is.False);
+				Assert.That(longitud, Is.EqualTo(listBloques.Count + 1));
+				Assert.That(listBloques.Contains(elemento), Is.False);
 			});
 		}
 
 		[Test]
 		public void Eliminar_Elemento_NoEnLaLista_NoBorraNadaYDevuelveM1() {
 			// Arrange
-			var listBloques = new ListBloques<int?, ArrayBloque<int?>>();
+			var listBloques = new BlockList<int?, ArrayBlock<int?>>();
 			int longitud = 5;
-			listBloques.Insertar(new int?[5] { 1, 2, 3, 4, 5 }, 0);
+			listBloques.Insert(new int?[5] { 1, 2, 3, 4, 5 }, 0);
 			int? elemento = -1;
 
 			// Act
-			var result = listBloques.Eliminar(elemento);
+			var result = listBloques.Remove(elemento);
 
 			Assert.Multiple(() => {
 				// Assert
 				Assert.That(result, Is.EqualTo(-1));
-				Assert.That(longitud, Is.EqualTo(listBloques.Longitud));
+				Assert.That(longitud, Is.EqualTo(listBloques.Count));
 			});
 		}
 
@@ -543,23 +537,23 @@ namespace Listas.nUnitTests {
 			// Arrange
 			int longitud = 100;
 			static int funcion(int n) => n;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, funcion) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, funcion) {
+				Count = longitud
 			};
 			int num = 10;
 			int posicion = 30;
 
 			// Act
-			var result = listBloques.EliminarVarios(
+			var result = listBloques.RemoveMultiple(
 				num,
 				posicion);
 
 			// Assert
-			Assert.That(longitud, Is.EqualTo(listBloques.Longitud + num));
+			Assert.That(longitud, Is.EqualTo(listBloques.Count + num));
 			for (int i = 0; i < posicion; i++) {
 				Assert.That(listBloques[i], Is.EqualTo(funcion(i)));
 			}
-			for (int i = posicion; i < listBloques.Longitud; i++) {
+			for (int i = posicion; i < listBloques.Count; i++) {
 				Assert.That(listBloques[i], Is.EqualTo(funcion(i + num)));
 			}
 		}
@@ -567,9 +561,9 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void GetBloque_PosicionValida_DevuelveElBloque() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
 			var bloque = _bloqueConElementos;
-			listBloques.Insertar(bloque, 0);
+			listBloques.Insert(bloque, 0);
 			int posicion = 0;
 
 			// Act
@@ -583,8 +577,8 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void GetBloques_ConBloques_DevuelveLosBloquesDeLaLista() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>> (n => 10, n => n) {
-				Longitud = 100
+			var listBloques = new BlockList<int, ArrayBlock<int>> (n => 10, n => n) {
+				Count = 100
 			};
 			int posicion = 0;
 
@@ -600,7 +594,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void GetBloques_UnBloque_TieneUnBloque() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n);
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n);
 
 			// Act
 			var result = listBloques.GetBloques();
@@ -614,8 +608,8 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void GetEnumerator_ConElementos_ContieneLosElementosDeLaLista() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(N => 10, N => N) {
-				Longitud = 100
+			var listBloques = new BlockList<int, ArrayBlock<int>>(N => 10, N => N) {
+				Count = 100
 			};
 			int i = 0;
 
@@ -631,7 +625,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void GetEnumerator_SinElementos_NoContieneElementos() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(N => 10, N => N);
+			var listBloques = new BlockList<int, ArrayBlock<int>>(N => 10, N => N);
 
 			// Act
 			var result = listBloques.GetEnumerator();
@@ -646,19 +640,19 @@ namespace Listas.nUnitTests {
 		public void Insertar_ElementoPosicion_Valida_InsertaElElemento(int value) {
 			// Arrange
 			int longitud = 10;
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) { Longitud = longitud };
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) { Count = longitud };
 			int elemento = 123;
 			int posicion = value;
 
 			// Act
-			listBloques.Insertar(
+			listBloques.InsertAt(
 				elemento,
 				posicion);
 
 			Assert.Multiple(() => {
 				// Assert
 				Assert.That(listBloques[posicion], Is.EqualTo(elemento));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + 1));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud + 1));
 			});
 		}
 
@@ -667,73 +661,73 @@ namespace Listas.nUnitTests {
 		public void Insertar_ElementoPosicion_NoValida_LanzaExcepcion(int value) {
 			// Arrange
 			int longitud = 10;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) { Longitud = longitud };
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) { Count = longitud };
 			int elemento = 123;
 			int posicion = value;
 
 			// Assert
-			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.Insertar(elemento, posicion));
+			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.InsertAt(elemento, posicion));
 		}
 
 		[Test]
 		public void Insertar_Elemento_InsertaElElementoAlFinal() {
 			// Arrange
 			int longitud = 15;
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int elemento = 123;
 
 			// Act
-			var result = listBloques.Insertar(
+			var result = listBloques.Add(
 				elemento);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + 1));
-				Assert.That(listBloques.UltimoElemento, Is.EqualTo(elemento));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud + 1));
+				Assert.That(listBloques.Last, Is.EqualTo(elemento));
 			});
 		}
 
 		[Test]
 		public void Insertar_BloqueNoNulo_EnListaVacia_InsertaElBloque() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			ArrayBloque<int> bloque = _bloques[1];
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
+			ArrayBlock<int> bloque = _bloques[1];
 			int posicion = 0;
 
 			// Act
-			listBloques.Insertar(
+			listBloques.Insert(
 				bloque,
 				posicion);
 
 			// Assert
 			Assert.Multiple(() => {
-				Assert.That(listBloques.Vacia, Is.False);
+				Assert.That(listBloques.IsEmpty, Is.False);
 				Assert.That(listBloques.CantidadBloques, Is.EqualTo(2));
-				Assert.That(listBloques.Longitud, Is.EqualTo(_bloques[1].Longitud));
+				Assert.That(listBloques.Count, Is.EqualTo(_bloques[1].Length));
 			});
 		}
 
 		[Test]
 		public void Insertar_BloqueNoNulo_EnListaNoVacia_InsertaElBloque() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
-			ArrayBloque<int> bloque = _bloqueConMenosElementos;
-			listBloques.Insertar(_bloqueConElementos, 0);
-			int posicion = 1, cantidad = listBloques.CantidadBloques, longitud = listBloques.Longitud;
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
+			ArrayBlock<int> bloque = _bloqueConMenosElementos;
+			listBloques.Insert(_bloqueConElementos, 0);
+			int posicion = 1, cantidad = listBloques.CantidadBloques, longitud = listBloques.Count;
 
 			// Act
-			listBloques.Insertar(
+			listBloques.Insert(
 				bloque,
 				posicion);
 
 			// Assert
 			Assert.Multiple(() => {
-				Assert.That(listBloques.Vacia, Is.False);
+				Assert.That(listBloques.IsEmpty, Is.False);
 				Assert.That(listBloques.CantidadBloques, Is.EqualTo(cantidad + 1));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + bloque.Longitud));
-				Assert.DoesNotThrow(() => _ = listBloques[_bloqueConElementos.Longitud]);
+				Assert.That(listBloques.Count, Is.EqualTo(longitud + bloque.Length));
+				Assert.DoesNotThrow(() => _ = listBloques[_bloqueConElementos.Length]);
 			});
 		}
 
@@ -741,19 +735,19 @@ namespace Listas.nUnitTests {
 		public void InsertarUltimo_InsertaElElementoAlFinal() {
 			// Arrange
 			int longitud = 15;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int elemento = 123;
 
 			// Act
-			listBloques.InsertarUltimo(
+			listBloques.InsertLast(
 				elemento);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + 1));
-				Assert.That(listBloques.UltimoElemento, Is.EqualTo(elemento));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud + 1));
+				Assert.That(listBloques.Last, Is.EqualTo(elemento));
 			});
 		}
 
@@ -761,19 +755,19 @@ namespace Listas.nUnitTests {
 		public void InsertarPrimero_InsertaElElementoAlPrincipio() {
 			// Arrange
 			int longitud = 15;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int elemento = 123;
 
 			// Act
-			listBloques.InsertarPrimero(
+			listBloques.InsertFirst(
 				elemento);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + 1));
-				Assert.That(listBloques.PrimerElemento, Is.EqualTo(elemento));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud + 1));
+				Assert.That(listBloques.First, Is.EqualTo(elemento));
 			});
 		}
 
@@ -783,28 +777,28 @@ namespace Listas.nUnitTests {
 		public void InsertarVarios_PosicionValida_ColocaLosElementos(int value) {
 			// Arrange
 			int longitud = 100;
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int elemento = 2;
 			int num = 15;
 			int posicion = value;
 
 			// Act
-			listBloques.InsertarVarios(
+			listBloques.InsertMultiple(
 				elemento,
 				num,
 				posicion);
 
 			// Assert
-			Assert.That(listBloques.Longitud, Is.EqualTo(longitud + num));
+			Assert.That(listBloques.Count, Is.EqualTo(longitud + num));
 			for (int i = 0; i < posicion; i++) {
 				Assert.That(listBloques[i], Is.EqualTo(i));
 			}
 			for (int i = posicion; i < posicion + num; i++) {
 				Assert.That(listBloques[i], Is.EqualTo(elemento));
 			}
-			for (int i = posicion + num; i < listBloques.Longitud; i++) {
+			for (int i = posicion + num; i < listBloques.Count; i++) {
 				Assert.That(listBloques[i], Is.EqualTo(i - num));
 			}
 		}
@@ -815,20 +809,20 @@ namespace Listas.nUnitTests {
 		public void IntercambiarBloques_PosicionesValidas_CambianLosBloques(int primero, int segundo) {
 			// Arrange
 			int longitud = 100;
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
-			ArrayBloque<int> bloquePriemro = listBloques.GetBloque(primero),
+			ArrayBlock<int> bloquePriemro = listBloques.GetBloque(primero),
 				bloqueSegundo = listBloques.GetBloque(segundo);
 
 			// Act
-			listBloques.IntercambiarBloques(
+			listBloques.SwapBlock(
 				primero,
 				segundo);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud));
 				Assert.That(listBloques.GetBloque(primero), Is.EqualTo(bloqueSegundo));
 				Assert.That(listBloques.GetBloque(segundo), Is.EqualTo(bloquePriemro));
 			});
@@ -840,12 +834,12 @@ namespace Listas.nUnitTests {
 		public void IntercambiarBloques_PosicionesNoValidas_LanzaExcepcion(int primero, int segundo) {
 			// Arrange
 			int longitud = 100;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 
 			// Assert
-			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.IntercambiarBloques(primero, segundo));
+			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.SwapBlock(primero, segundo));
 		}
 
 		[TestCase(100)]
@@ -853,28 +847,28 @@ namespace Listas.nUnitTests {
 		public void Invertir_InvierteElOrdenDeLosElementos(int value) {
 			// Arrange
 			int longitud = value;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
-			var inversa = listBloques.ClonarBloquesDinamica();
+			var inversa = listBloques.CloneDynamicBlocks();
 
 			// Act
-			inversa.Invertir();
+			inversa.Reverse();
 
 			// Assert
-			Assert.That(inversa.Reverse(), Is.EqualTo(listBloques));
+			Assert.That(Enumerable.Reverse(inversa), Is.EqualTo(listBloques));
 		}
 
 		[Test]
 		public void Longitud_EntradaNegativa_LanzaExcepcion() {
 			// Arrange
 			static int funcion(int n) => (int)Math.Pow(n, 2);
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, funcion);
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, funcion);
 			int ejemplo = 1234;
-			listBloques.InsertarUltimo(ejemplo);
+			listBloques.InsertLast(ejemplo);
 
 			// Assert
-			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.Longitud = -1);
+			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.Count = -1);
 		}
 
 		[TestCase(0)]
@@ -884,18 +878,18 @@ namespace Listas.nUnitTests {
 		public void Longitud_EntradaNoNegativa_CambiaALaLongitud(int value) {
 			// Arrange
 			static int funcion(int n) => (int)Math.Pow(n, 2);
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, funcion);
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, funcion);
 			int ejemplo = 1234;
-			listBloques.InsertarUltimo(ejemplo);
-			listBloques.InsertarUltimo(ejemplo);
-			listBloques.InsertarUltimo(ejemplo);
-			var longitud = listBloques.Longitud;
+			listBloques.InsertLast(ejemplo);
+			listBloques.InsertLast(ejemplo);
+			listBloques.InsertLast(ejemplo);
+			var longitud = listBloques.Count;
 
 			// Act
-			listBloques.Longitud = value;
+			listBloques.Count = value;
 
 			// Assert
-			Assert.That(listBloques.Longitud, Is.EqualTo(value));
+			Assert.That(listBloques.Count, Is.EqualTo(value));
 			if (value <= longitud) {
 				foreach (var item in listBloques) {
 					Assert.That(item, Is.EqualTo(ejemplo));
@@ -913,21 +907,21 @@ namespace Listas.nUnitTests {
 		public void Multiplicar_Positivo_RepiteLosValores(int value) {
 			// Arrange
 			int longitud = 100;
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int factor = value;
 
 			// Act
-			var result = listBloques.Multiplicar(
+			var result = listBloques.Multiply(
 				factor);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(result.Longitud, Is.EqualTo(longitud * factor));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(result.Count, Is.EqualTo(longitud * factor));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud));
 			});
-			for (int i = 0; i < listBloques.Longitud; i++) {
+			for (int i = 0; i < listBloques.Count; i++) {
 				Assert.That(result[i], Is.EqualTo(listBloques[i % longitud]));
 			}
 		}
@@ -936,19 +930,19 @@ namespace Listas.nUnitTests {
 		public void Multiplicar_Cero_VaciaLaLista() {
 			// Arrange
 			int longitud = 100;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int factor = 0;
 
 			// Act
-			var result = listBloques.Multiplicar(
+			var result = listBloques.Multiply(
 				factor);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(result.Vacia);
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(result.IsEmpty);
+				Assert.That(listBloques.Count, Is.EqualTo(longitud));
 			});
 		}
 
@@ -958,22 +952,22 @@ namespace Listas.nUnitTests {
 		public void Multiplicar_Negativo_RepiteLosValoresYLaInvierte(int value) {
 			// Arrange
 			int longitud = 100;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int factor = value;
 
 			// Act
-			var result = listBloques.Multiplicar(
+			var result = listBloques.Multiply(
 				factor);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(result.Longitud, Is.EqualTo(Math.Abs(longitud * factor)));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(result.Count, Is.EqualTo(Math.Abs(longitud * factor)));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud));
 			});
-			result.Invertir();
-			for (int i = 0; i < listBloques.Longitud; i++) {
+			result.Reverse();
+			for (int i = 0; i < listBloques.Count; i++) {
 				Assert.That(result[i], Is.EqualTo(listBloques[i % longitud]));
 			}
 		}
@@ -981,23 +975,23 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Ocurrencias_ElementoRandomEnLista_DevuelveLasOcurrencias() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
 			int elemento = new Random().Next(10);
 			for (int i = 0; i < elemento; i++) {
-				listBloques.InsertarUltimo(0);
-				listBloques.InsertarUltimo(1);
-				listBloques.InsertarUltimo(2);
-				listBloques.InsertarUltimo(3);
-				listBloques.InsertarUltimo(4);
-				listBloques.InsertarUltimo(5);
-				listBloques.InsertarUltimo(6);
-				listBloques.InsertarUltimo(7);
-				listBloques.InsertarUltimo(8);
-				listBloques.InsertarUltimo(9);
+				listBloques.InsertLast(0);
+				listBloques.InsertLast(1);
+				listBloques.InsertLast(2);
+				listBloques.InsertLast(3);
+				listBloques.InsertLast(4);
+				listBloques.InsertLast(5);
+				listBloques.InsertLast(6);
+				listBloques.InsertLast(7);
+				listBloques.InsertLast(8);
+				listBloques.InsertLast(9);
 			}
 
 			// Act
-			var result = listBloques.Ocurrencias(elemento);
+			var result = listBloques.Appareances(elemento);
 
 			// Assert
 			Assert.That(result, Has.Length.EqualTo(listBloques.Count(n => n == elemento)));
@@ -1007,20 +1001,20 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Posicion_Elemento_EnListaRandom_EncuentraLaPrimeraOcurrencia() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => new Random(1337).Next(n));
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => new Random(1337).Next(n));
 			int elemento = 5, longitud = 100;
 			for (int i = 0; i < 10; i++) {
-				listBloques.Longitud = longitud;
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+				listBloques.Count = longitud;
+				Assert.That(listBloques.Count, Is.EqualTo(longitud));
 
 				// Act
-				var result = listBloques.Posicion(
+				var result = listBloques.Position(
 					elemento);
 
 				Assert.Multiple(() => {
 					// Assert
-					Assert.That(result, Is.LessThan(listBloques.Longitud));
-					Assert.That(result == -1, Is.EqualTo(listBloques.Ocurrencias(elemento).Length == 0));
+					Assert.That(result, Is.LessThan(listBloques.Count));
+					Assert.That(result == -1, Is.EqualTo(listBloques.Appareances(elemento).Length == 0));
 					if (result != -1) {
 						Assert.That(listBloques[result], Is.EqualTo(elemento));
 					}
@@ -1028,7 +1022,7 @@ namespace Listas.nUnitTests {
 						Assert.That(listBloques[i], Is.Not.EqualTo(elemento));
 					}
 				});
-				listBloques.Vacia = true;
+				listBloques.IsEmpty = true;
 			}
 			
 		}
@@ -1036,10 +1030,10 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Posicion_Bloque_EnLista_DevuelveLaPosicionDelBloque() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 5, n => n) {
-				Longitud = 100
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 5, n => n) {
+				Count = 100
 			};
-			ArrayBloque<int> bloque;
+			ArrayBlock<int> bloque;
 
 			for (int i = 0; i < listBloques.CantidadBloques; i++) {
 				bloque = listBloques.GetBloque(i);
@@ -1050,10 +1044,10 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Posicion_Bloque_NoEnLista_DevuelveM1() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 5, n => n) {
-				Longitud = 100
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 5, n => n) {
+				Count = 100
 			};
-			ArrayBloque<int> bloque = _bloqueVacio;
+			ArrayBlock<int> bloque = _bloqueVacio;
 
 			Assert.That(listBloques.Posicion(bloque), Is.EqualTo(-1));
 		}
@@ -1061,22 +1055,22 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void PrimerElemento_SinElementos_LanzaUnaExcepcion() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
 
 			// Act
 
 			// Assert
-			Assert.Throws<InvalidOperationException>(() => _ = listBloques.PrimerElemento); 
+			Assert.Throws<InvalidOperationException>(() => _ = listBloques.First); 
 		}
 
 		[Test]
 		public void PrimerElemento_ConElementos_DevuelveElElemento() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
-			listBloques.Insertar(_bloqueConElementos, 0);
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
+			listBloques.Insert(_bloqueConElementos, 0);
 
 			// Act
-			var result = listBloques.PrimerElemento;
+			var result = listBloques.First;
 
 			// Assert
 			Assert.That(result, Is.EqualTo(listBloques[0]));
@@ -1087,20 +1081,20 @@ namespace Listas.nUnitTests {
 			// Arrange
 			static int funcion(int n) => n % 10;
 			int elemento = 5, longitud = 100;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, funcion) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, funcion) {
+				Count = longitud
 			};
-			int ocurrencias = listBloques.Ocurrencias(elemento).Length;
+			int ocurrencias = listBloques.Appareances(elemento).Length;
 
 			// Act
-			var result = listBloques.Restar(
+			var result = listBloques.Substract(
 				elemento);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(result.Longitud, Is.EqualTo(longitud - ocurrencias));
-				Assert.That(result.Contiene(elemento), Is.False);
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(result.Count, Is.EqualTo(longitud - ocurrencias));
+				Assert.That(result.Contains(elemento), Is.False);
+				Assert.That(listBloques.Count, Is.EqualTo(longitud));
 			});
 		}
 
@@ -1108,10 +1102,10 @@ namespace Listas.nUnitTests {
 		public void Restar_Bloque_BorraElBloqueEnNuevaLista() {
 			// Arrange
 			int longitud = 100, posicion = 5;
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
-			ArrayBloque<int> bloque = listBloques.GetBloque(posicion);
+			ArrayBlock<int> bloque = listBloques.GetBloque(posicion);
 
 			// Act
 			var result = listBloques.Restar(
@@ -1120,8 +1114,8 @@ namespace Listas.nUnitTests {
 			Assert.Multiple(() => {
 				// Assert
 				Assert.That(result.GetBloque(posicion), Is.Not.EqualTo(bloque));
-				Assert.That(result.Longitud, Is.EqualTo(longitud - bloque.Longitud));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
+				Assert.That(result.Count, Is.EqualTo(longitud - bloque.Length));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud));
 			});
 		}
 
@@ -1129,23 +1123,23 @@ namespace Listas.nUnitTests {
 		public void SetBloque_PosicionValida_CambiaElBloquePorElNuevo() {
 			// Arrange
 			int longitud = 100, lBloque = 20, posicion = 3;
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
-			ArrayBloque<int> bloque = new int[lBloque];
+			ArrayBlock<int> bloque = new int[lBloque];
 			for (int i = 0; i < 20; i++) {
 				bloque[i] = i;
 			}
 
 			// Act
-			var result = listBloques.SetBloque(
+			var result = listBloques.SetBlock(
 				bloque,
 				posicion);
 
 			Assert.Multiple(() => {
 				// Assert
 				Assert.That(listBloques.GetBloque(posicion), Is.Not.EqualTo(result));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud + lBloque - result.Longitud));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud + lBloque - result.Length));
 			});
 		}
 
@@ -1153,33 +1147,33 @@ namespace Listas.nUnitTests {
 		public void SetBloque_PosicionNoValida_LanzaExcepcion() {
 			// Arrange
 			int longitud = 100, lBloque = 20, posicion = 15;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
-			ArrayBloque<int> bloque = new int[lBloque];
+			ArrayBlock<int> bloque = new int[lBloque];
 			
 			// Assert
-			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.SetBloque(bloque, posicion));
+			Assert.Throws<ArgumentOutOfRangeException>(() => listBloques.SetBlock(bloque, posicion));
 		}
 
 		[Test]
 		public void Sumar_Elemento_InsertaElElementoEnNuevaLista() {
 			// Arrange
 			int longitud = 15;
-			var listBloques = new ListBloques<int,ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longitud
+			var listBloques = new BlockList<int,ArrayBlock<int>>(n => 10, n => n) {
+				Count = longitud
 			};
 			int elemento = 123;
 
 			// Act
-			var result = listBloques.Sumar(
+			var result = listBloques.Add(
 				elemento);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(result.Longitud, Is.EqualTo(longitud + 1));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longitud));
-				Assert.That(result.Contiene(elemento));
+				Assert.That(result.Count, Is.EqualTo(longitud + 1));
+				Assert.That(listBloques.Count, Is.EqualTo(longitud));
+				Assert.That(result.Contains(elemento));
 			});
 		}
 
@@ -1187,64 +1181,64 @@ namespace Listas.nUnitTests {
 		public void Sumar_Bloque_InsertaElBloqueEnNuevaLista() {
 			// Arrange
 			int longLista = 15, longBloque = 10;
-			var listBloques = new ListBloques<int, ArrayBloque<int>>(n => 10, n => n) {
-				Longitud = longLista
+			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
+				Count = longLista
 			};
-			ArrayBloque<int> bloque = new int[longBloque];
+			ArrayBlock<int> bloque = new int[longBloque];
 
 			// Act
-			var result = listBloques.Sumar(
+			var result = listBloques.Add(
 				bloque);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(result.Longitud, Is.EqualTo(longLista + longBloque));
+				Assert.That(result.Count, Is.EqualTo(longLista + longBloque));
 				Assert.That(result.GetBloques(), Does.Contain(bloque));
-				Assert.That(listBloques.Longitud, Is.EqualTo(longLista));
+				Assert.That(listBloques.Count, Is.EqualTo(longLista));
 			});
 		}
 
 		[Test]
 		public void UltimoElemento_ConElementos_DevuelveElElemento() {
 			// Arrange
-			var listBloques = new ListBloques<int,ArrayBloque<int>>();
-			listBloques.Insertar(_bloqueConElementos, 0);
+			var listBloques = new BlockList<int,ArrayBlock<int>>();
+			listBloques.Insert(_bloqueConElementos, 0);
 			int valor = 100;
 
 			// Act
-			var result = listBloques.UltimoElemento;
+			var result = listBloques.Last;
 
 			// Assert
-			Assert.That(result, Is.EqualTo(listBloques[listBloques.Longitud - 1]));
+			Assert.That(result, Is.EqualTo(listBloques[listBloques.Count - 1]));
 		}
 
 		[Test]
 		public void UltimoElemento_SinElementos_LanzaUnaExcepcion() {
 			// Arrange
-			var listBloques = new ListBloques<int, ArrayBloque<int>>();
+			var listBloques = new BlockList<int, ArrayBlock<int>>();
 
 			// Act
 
 			// Assert
-			Assert.Throws<InvalidOperationException>(() => _ = listBloques.UltimoElemento);
+			Assert.Throws<InvalidOperationException>(() => _ = listBloques.Last);
 		}
 
 		[Test]
 		public void Unir_StateUnderTest_ExpectedBehavior() {
 			// Arrange
 			int lPrimera = 100, lSegunda = 75;
-			ListBloques<int,ArrayBloque<int>> primeraLista = new (n => 10, n => n) { Longitud = lPrimera},
-				segundaLista = new(n => 15, n => n * n + n) { Longitud = lSegunda};
+			BlockList<int,ArrayBlock<int>> primeraLista = new (n => 10, n => n) { Count = lPrimera},
+				segundaLista = new(n => 15, n => n * n + n) { Count = lSegunda};
 
 			// Act
-			var result = primeraLista.Unir(
+			var result = primeraLista.Join(
 				segundaLista);
 
 			Assert.Multiple(() => {
 				// Assert
-				Assert.That(result.Longitud, Is.EqualTo(lPrimera + lSegunda));
-				Assert.That(primeraLista.Longitud, Is.EqualTo(lPrimera));
-				Assert.That(segundaLista.Longitud, Is.EqualTo(lSegunda));
+				Assert.That(result.Count, Is.EqualTo(lPrimera + lSegunda));
+				Assert.That(primeraLista.Count, Is.EqualTo(lPrimera));
+				Assert.That(segundaLista.Count, Is.EqualTo(lSegunda));
 			});
 		}
 	}

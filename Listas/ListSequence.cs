@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Listas {
+namespace ExpandedLists {
 	/// <summary>
-	/// Implementa la interfaz <see cref="ISerie{T}"/> delegando los métodos a una instancia de <see cref="List{T}"/> y una <see cref="Func{T, TResult}"/>
+	/// Implementa la interfaz <see cref="ISequence{T}"/> delegando los métodos a una instancia de <see cref="List{T}"/> y una <see cref="Func{T, TResult}"/>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class ListSerie<T> : ISerie<T>
+	public class ListSequence<T> : ISequence<T>
 	{
 		private string _nombre;
 		private List<T> _serie;
@@ -18,7 +18,7 @@ namespace Listas {
 		}
 
 		/// <inheritdoc/>
-		public string Nombre
+		public string Name
 		{
 			get => _nombre;
 
@@ -26,7 +26,7 @@ namespace Listas {
 		}
 
 		/// <inheritdoc/>
-		public bool Vacia
+		public bool IsEmpty
 		{
 			get => _serie.Count == 0;
 			set
@@ -35,18 +35,18 @@ namespace Listas {
 					_serie.Clear();
 				else if (_serie.Count == 0)
 				{
-					Longitud++;
+					Count++;
 				}
 			}
 		}
 
 		/// <inheritdoc/>
-		public int Longitud
+		public int Count
 		{
 			get => _serie.Count;
 			set
 			{
-				Contrato.Requires<ArgumentOutOfRangeException>(value >= 0, Mensajes.LongitudNegativa);
+				Contract.Requires<ArgumentOutOfRangeException>(value >= 0, Messages.NegativeLength);
 				int siz = _serie.Count;
 				if (value == 0) _serie.Clear();
 				else if (value < siz)
@@ -57,8 +57,8 @@ namespace Listas {
 				{
 					while (value > siz)
 					{
-						Contrato.Requires<InvalidOperationException>(ILista<T>.CompatibleEnLista(Generar()),
-							Mensajes.GeneracionNula);
+						Contract.Requires<InvalidOperationException>(IExList<T>.CompatibleEnLista(Generar()),
+							Messages.NullGeneration);
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 						_serie.Add(Generar()); //Ignorar el warning
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
@@ -69,7 +69,7 @@ namespace Listas {
 		}
 
 		/// <inheritdoc/>
-		public Func<int,T?> FuncionDeGeneracion
+		public Func<int,T?> GeneratorFunction
 		{
 			get => _generadora;
 			set => _generadora = value;
@@ -89,8 +89,8 @@ namespace Listas {
 		/// La serie tendrá todos los elementos de la lista y su función generadora
 		/// </remarks>
 		/// <param name="lista">lista que copiar</param>
-		public ListSerie(IListaDinamica<T> lista) : this(lista as ILista<T>){
-			_generadora = lista?.FuncionDeGeneracion ?? (num => default);
+		public ListSequence(IDynamicList<T> lista) : this(lista as IExList<T>){
+			_generadora = lista?.GeneratorFunction ?? (num => default);
 		}
 
 		/// <summary>
@@ -100,7 +100,7 @@ namespace Listas {
 		/// La serie tendrá todos los elementos de la lista y su función generadora
 		/// </remarks>
 		/// <param name="lista">lista que copiar</param>
-		public ListSerie(ILista<T> lista)
+		public ListSequence(IExList<T> lista)
 		{
 			_serie = [];
 			if (lista is not null)
@@ -114,122 +114,122 @@ namespace Listas {
 			_nombre = string.Empty;
 		}
 
-		public ListSerie(ILista<T> lista, string nombre) : this(lista)
+		public ListSequence(IExList<T> lista, string nombre) : this(lista)
 		{
 			_nombre = nombre;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/>
+		/// Crea un objeto <see cref="ListSequence{T}"/>
 		/// vacío con nombre <c>nombre</c> y capacidad inicial <c>capacidad</c>
 		/// </summary>
-		public ListSerie(string nombre, int capacidad)
+		public ListSequence(string nombre, int capacidad)
 		{
 			this._nombre = nombre;
 			_serie = new List<T>(capacidad);
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/>
+		/// Crea un objeto <see cref="ListSequence{T}"/>
 		/// vacío con nombre <c>nombre</c> y capacidad inicial <c>capacidad</c>
 		/// </summary>
-		public ListSerie(string nombre, int capacidad, Func<int,T?> generadora) : this(nombre,capacidad) {
+		public ListSequence(string nombre, int capacidad, Func<int,T?> generadora) : this(nombre,capacidad) {
 			_generadora = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/> vacío con nombre <c>nombre</c> y capacidad inicial 10
+		/// Crea un objeto <see cref="ListSequence{T}"/> vacío con nombre <c>nombre</c> y capacidad inicial 10
 		/// </summary>
-		public ListSerie(string nombre) : this(nombre, 10) { }
+		public ListSequence(string nombre) : this(nombre, 10) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/> vacío con el nombre vacío y capacidad inicial <c>cap</c>
+		/// Crea un objeto <see cref="ListSequence{T}"/> vacío con el nombre vacío y capacidad inicial <c>cap</c>
 		/// </summary>
-		public ListSerie(int cap) : this("", cap) { }
+		public ListSequence(int cap) : this("", cap) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/>
+		/// Crea un objeto <see cref="ListSequence{T}"/>
 		/// vacío con el nombre vacío, capacidad inicial <c>cap</c> y la función generadora proporcionada
 		/// </summary>
-		public ListSerie(int cap, Func<int,T?> generadora) : this("", cap) {
+		public ListSequence(int cap, Func<int,T?> generadora) : this("", cap) {
 			_generadora = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/> vacío con el nombre vacío y capacidad inicial 10
+		/// Crea un objeto <see cref="ListSequence{T}"/> vacío con el nombre vacío y capacidad inicial 10
 		/// </summary>
-		public ListSerie() : this("", 10) { }
+		public ListSequence() : this("", 10) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/>
+		/// Crea un objeto <see cref="ListSequence{T}"/>
 		/// vacío con el nombre vacío, capacidad inicial 10 y la función generadora proporcionada
 		/// </summary>
-		public ListSerie(Func<int,T?> generadora) : this("", 10) {
+		public ListSequence(Func<int,T?> generadora) : this("", 10) {
 			_generadora = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/>
+		/// Crea un objeto <see cref="ListSequence{T}"/>
 		/// vacío con nombre <c>nombre</c> y los elementos de <c>col</c>
 		/// </summary>
-		public ListSerie(string nombre, ICollection<T> col)
+		public ListSequence(string nombre, ICollection<T> col)
 		{
 			this._nombre = nombre;
 			_serie = new List<T>(col);
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/>
+		/// Crea un objeto <see cref="ListSequence{T}"/>
 		/// vacío con el nombre vacío y los elementos de <c>col</c>
 		/// </summary>
-		public ListSerie(ICollection<T> col) : this("", col) { }
+		public ListSequence(ICollection<T> col) : this("", col) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/>
+		/// Crea un objeto <see cref="ListSequence{T}"/>
 		/// vacío con el nombre vacío, los elementos de <c>col</c> y la función generadora proporcionada
 		/// </summary>
-		public ListSerie(ICollection<T> col, Func<int,T?> generadora) : this("", col) {
+		public ListSequence(ICollection<T> col, Func<int,T?> generadora) : this("", col) {
 			_generadora = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSerie{T}"/>
+		/// Crea un objeto <see cref="ListSequence{T}"/>
 		/// vacío con el nombre vacío, los elementos de <c>col</c> y la función generadora proporcionada
 		/// </summary>
-		public ListSerie(ICollection<T> col, string nombre, Func<int, T?> generadora) : this(nombre, col) {
+		public ListSequence(ICollection<T> col, string nombre, Func<int, T?> generadora) : this(nombre, col) {
 			_generadora = generadora;
 		}
 
 		///<inheritdoc/>
-		public void InsertarPrimero(T elem)
+		public void InsertFirst(T elem)
 		{
 			_serie.Insert(0,elem);
 		}
 
 		///<inheritdoc/>
-		public void Insertar(T elem, int pos)
+		public void InsertAt(T elem, int pos)
 		{
 			_serie.Insert(pos, elem);
 		}
 
 		///<inheritdoc/>
-		public void InsertarUltimo(T elem)
+		public void InsertLast(T elem)
 		{
 			_serie.Add(elem);
 		}
 
 		///<inheritdoc/>
-		public void InsertarVarios(T elem, int num, int pos)
+		public void InsertMultiple(T elem, int num, int pos)
 		{
 			while (num > 0)
 			{
-				Insertar(elem, pos);
+				InsertAt(elem, pos);
 				num--;
 			}
 		}
 
 		///<inheritdoc/>
-		public T BorrarPrimero()
+		public T RemoveFirst()
 		{
 			T primero = _serie[0];
 			_serie.RemoveAt(0);
@@ -237,7 +237,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public int Eliminar(T elem)
+		public int Remove(T elem)
 		{
 			int pos = _serie.IndexOf(elem);
 			if (pos != -1)
@@ -246,7 +246,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public T Eliminar(int pos)
+		public T Remove(int pos)
 		{
 			T elemento = _serie[pos];
 			_serie.RemoveAt(pos);
@@ -254,7 +254,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public T BorrarUltimo()
+		public T RemoveLast()
 		{
 			T ultimo = _serie[^1];
 			_serie.RemoveAt(_serie.Count - 1);
@@ -262,7 +262,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public int EliminarVarios(int num, int pos)
+		public int RemoveMultiple(int num, int pos)
 		{
 			int real = 0;
 			while (real < num && pos < _serie.Count)
@@ -274,7 +274,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public int BorrarUltimos(T elem)
+		public int RemoveLast(T elem)
 		{
 			int res = 0;
 			Func<T, bool> condicion;
@@ -292,12 +292,12 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public void BorrarTodos()
+		public void Clear()
 		{
 			_serie.Clear();
 		}
 
-		public int BorrarTodos(T elemento) {
+		public int Clear(T elemento) {
 			int res = 0;
 			for (int i = _serie.Count - 1; i >= 0; i--)
 			{
@@ -310,29 +310,29 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public T PrimerElemento {
+		public T First {
 			get {
-				Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
+				Contract.Requires<InvalidOperationException>(_serie.Count > 0, Messages.EmptySequence);
 				return _serie[0];
 			}
 		}
 
 		///<inheritdoc/>
-		public T UltimoElemento {
+		public T Last {
 			get {
-				Contrato.Requires<InvalidOperationException>(_serie.Count > 0, Mensajes.VacioSerie);
+				Contract.Requires<InvalidOperationException>(_serie.Count > 0, Messages.EmptySequence);
 				return _serie[^1];
 			}
 		}
 
 		///<inheritdoc/>
-		public int Posicion(T elem)
+		public int Position(T elem)
 		{
 			return _serie.IndexOf(elem);
 		}
 
 		///<inheritdoc/>
-		public int[] Ocurrencias(T elem)
+		public int[] Appareances(T elem)
 		{
 			int num = 0, indice = 0;
 			int[] ocurrencias = [], cambio;
@@ -349,7 +349,7 @@ namespace Listas {
 		}
 
 		///<inheritdoc/>
-		public bool Contiene(T elem)
+		public bool Contains(T elem)
 		{
 			return _serie.Contains(elem);
 		}
@@ -378,9 +378,9 @@ namespace Listas {
 		 */
 		public override bool Equals(Object? obj) {
 			bool iguales = ReferenceEquals(this,obj);
-			if (!iguales && obj is ILista<T> lista) {
-				iguales = lista.Longitud == Longitud;
-				for (int i = 0; i < Longitud & !iguales; i++) {
+			if (!iguales && obj is IExList<T> lista) {
+				iguales = lista.Count == Count;
+				for (int i = 0; i < Count & !iguales; i++) {
 					iguales = Equals(lista[i], this[i]);
 				}
 			}
@@ -391,7 +391,7 @@ namespace Listas {
 			return _serie.GetHashCode() ^ _nombre.GetHashCode();
 		}
 
-		string IListaNombrada<T>.ToStringInverso()
+		string INamedList<T>.ReverseToString()
 		{
 			_serie.Reverse();
 			string? inverso = ToString();
@@ -399,76 +399,76 @@ namespace Listas {
 			return inverso??"";
 		}
 
-		public IListaArbitraria<T> Multiplicar(int factor) {
-			ListSerie<T> nueva;
+		public IUnsortedList<T> Multiply(int factor) {
+			ListSequence<T> nueva;
 			if (factor == 0 || _serie.Count == 0) { //Multiplicar por 0 da cero
-				nueva = new ListSerie<T>();
+				nueva = new ListSequence<T>();
 			} else {
 				nueva = new(this);
 				//Si se produce OverflowException no es mi problema, la lista no podría contenerlo
 				for (int i = 0; i < _serie.Count*(Math.Abs(factor)-1); i++) { 
-					nueva.InsertarUltimo(_serie[i%_serie.Count]);
+					nueva.InsertLast(_serie[i%_serie.Count]);
 				}
 				if (factor < 0) {
-					nueva.Invertir();
+					nueva.Reverse();
 				}
 			}
 			return nueva;
 		}
 
-		public void Invertir() {
+		public void Reverse() {
 			_serie.Reverse();
 		}
 
-		public int Insertar(T elemento) {
+		public int Add(T elemento) {
 			_serie.Add(elemento);
 			return _serie.Count-1;
 		}
 
-		public ILista<T> Sumar(T elemento) {
-			var nueva = new ListSerie<T>(this);
-			nueva.Insertar(elemento);
+		public IExList<T> Add(T elemento) {
+			var nueva = new ListSequence<T>(this);
+			nueva.Add(elemento);
 			return nueva;
 		}
 
-		public ILista<T> Unir(ILista<T> segunda) {
-			var nueva = new ListSerie<T>(this);
+		public IExList<T> Join(IExList<T> segunda) {
+			var nueva = new ListSequence<T>(this);
 			foreach (var item in segunda) {
-				nueva.Insertar(item);
+				nueva.Add(item);
 			}
 			return nueva;
 		}
 
-		public IListaArbitraria<T> ClonarArbitraria() {
-			return ClonarSerie();
+		public IUnsortedList<T> CloneUnsorted() {
+			return CloneSequence();
 		}
 
-		public ILista<T> Clonar() {
-			return ClonarSerie();
+		public IExList<T> Clone() {
+			return CloneSequence();
 		}
 
-		public ILista<T> Restar(T elemento) {
-			var nueva = ClonarArbitraria();
-			nueva.BorrarTodos(elemento);
+		public IExList<T> Substract(T elemento) {
+			var nueva = CloneUnsorted();
+			nueva.Clear(elemento);
 			return nueva;
 		}
 
-		public ILista<T> Diferencia(ILista<T> lista) {
-			var nueva = ClonarArbitraria();
+		public IExList<T> Difference(IExList<T> lista) {
+			var nueva = CloneUnsorted();
 			foreach (var item in lista) {
-				if (nueva.Contiene(item)) {
-					nueva.BorrarTodos(item);
+				if (nueva.Contains(item)) {
+					nueva.Clear(item);
 				}
 			}
 			return nueva;
 		}
 
-		public ISerie<T> ClonarSerie() {
-			return new ListSerie<T>(this);
+		public ISequence<T> CloneSequence() {
+			return new ListSequence<T>(this);
 		}
 
-		public IListaDinamica<T> ClonarDinamica() {
-			return ClonarSerie();
+		public IDynamicList<T> CloneDynamic() {
+			return CloneSequence();
 		}
 	}
 }
