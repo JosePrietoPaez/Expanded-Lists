@@ -27,7 +27,7 @@ namespace ExpandedLists.Blocks {
 
 		public override bool IsEmpty => _longitud == 0;
 
-		public override int Length {
+		public override int Count {
 			get => _longitud;
 			set {
 				Contract.Requires<ArgumentOutOfRangeException>(value <= _longitud,
@@ -140,9 +140,9 @@ namespace ExpandedLists.Blocks {
 		public override bool Equals(object? obj) {
 			bool iguales = ReferenceEquals(this, obj); // Si son el mismo objeto, trivialmente son iguales
 			if (!iguales && obj is Block<T> otro) { // No pueden ser iguales si otro no es un bloque
-				iguales = Length == otro.Length && Capacity == otro.Capacity; // Para descartar bloques con distinta longitud o capacidad
+				iguales = Count == otro.Count && Capacity == otro.Capacity; // Para descartar bloques con distinta longitud o capacidad
 				int contador = 0;
-				while (iguales && contador < Length) {
+				while (iguales && contador < Count) {
 					iguales = Equals(_array[contador],otro[contador]);
 					contador++;
 				}
@@ -151,14 +151,14 @@ namespace ExpandedLists.Blocks {
 		}
 
 		/// <summary>
-		/// Genera un hash basado en la longitud, capacidad y elementos entre 0 y <see cref="Block{T}.Capacity"/>
+		/// Generates a hash based on <see cref="Count"/>, <see cref="Block{T}.Capacity"/> and its elements between 0 and <see cref="Block{T}.Capacity"/>
 		/// </summary>
 		/// <remarks>
-		/// Si se necesita que el bloque esté en una estructura que use su hash, no debería modificarse
+		/// A block should not be modified while it or a list containing it is inside a hash list
 		/// </remarks>
 		/// <returns></returns>
 		public override int GetHashCode() {
-			int codigo = Length ^ Capacity; // Para que se tengan en cuenta como en Equals
+			int codigo = Count ^ Capacity; // Para que se tengan en cuenta como en Equals
 			for (int i = 0; i < _longitud; i++) {
 				codigo ^= _array[i]?.GetHashCode() ?? 0;
 			}
@@ -168,9 +168,9 @@ namespace ExpandedLists.Blocks {
 		public bool Equals(ArrayBlock<T>? other) {
 			bool iguales = ReferenceEquals(other, this);
 			if (!iguales && other is not null) {
-				iguales = Length == other.Length && Capacity == other.Capacity;
+				iguales = Count == other.Count && Capacity == other.Capacity;
 				int contador = 0;
-				while (iguales && contador < Length) {
+				while (iguales && contador < Count) {
 					iguales = Equals(_array[contador], other[contador]);
 					contador++;
 				}
@@ -184,7 +184,7 @@ namespace ExpandedLists.Blocks {
 
 		public static explicit operator T[](ArrayBlock<T> bloque) {
 			T[] nuevo = new T[bloque.Capacity];
-			for (int i = 0; i < bloque.Length; i++) {
+			for (int i = 0; i < bloque.Count; i++) {
 				nuevo[i] = bloque[i];
 			}
 			return nuevo;

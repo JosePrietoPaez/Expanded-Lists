@@ -1,8 +1,11 @@
 ﻿using System;
 
 namespace ExpandedLists {
-	public interface INamedList<T> : IExList<T> {
+	public interface INamedList<T> : IExpandedList<T> {
 
+		/// <summary>
+		/// Represents the name of the sequence, can be set and read
+		/// </summary>
 		string Name { get; set; }
 
 		/// <summary>

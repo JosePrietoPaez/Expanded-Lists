@@ -1,47 +1,53 @@
-﻿namespace ExpandedLists {
+﻿using System;
+
+namespace ExpandedLists {
 	/// <summary>
-	/// <see cref="IExList{T}"/> cuyos elementos solo se identifican por su posición y no un orden
+	/// <see cref="IExpandedList{T}"/> whose elements may not be contained following any order.
 	/// </summary>
+	/// <remarks>
+	/// Offers a wider variety of methods using the lack of order.
+	/// </remarks>
 	/// <typeparam name="T"></typeparam>
-	public interface IUnsortedList<T> : IExList<T> {
+	public interface IUnsortedList<T> : IExpandedList<T> {
 
 		/// <summary>
-		/// Obtiene el element en la posición <c>position</c>
+		/// Gets or sets th element at <c>position</c>.
 		/// </summary>
 		/// <remarks>
-		/// <para>Permite lectura y escritura</para>
-		/// Equivalente a 
-		/// <see cref="IExList{T}.Elemento(int)"/>
+		/// Read and write overwrite of <see cref="IExpandedList{T}"/>'s indexer.
 		/// </remarks>
-		/// <param name="position"></param>
-		/// <returns></returns>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <returns>
+		/// Element at <c>position</c>.
+		/// </returns>
 		new T this[int position] { get; set; }
 
 		/// <summary>
-		/// Devuelve una list con los mismos elementos que <c>list</c> repetidos <c>factor</c> veces
+		/// Returns a new list with the elements from <c>list</c> repeated <c>factor</c> times.
 		/// </summary>
 		/// <remarks>
-		/// Los elementos se repiten una vez que se alcanza el último element
+		/// The elements are repeated when the last element is reached.
 		/// <para>
-		/// Para más detalles véase <see cref="IExList{T}.Multiplicar(int)"/>
+		/// Equivalent to <see cref="Multiply(int)"/>.
 		/// </para>
 		/// </remarks>
 		/// <returns>
-		/// Nueva list con los elementos repetidos
+		/// New list with the elements from <c>list</c> repeated.
 		/// </returns>
 		static IUnsortedList<T> operator *(IUnsortedList<T> list,int factor) {
 			return list.Multiply(factor);
 		}
 
 		/// <summary>
-		/// Inserta el element en la list
+		/// Inserts the element in the tuple into a new list in the position in it.
 		/// </summary>
 		/// <remarks>
-		/// Equivalente a 
-		/// <see cref="IExList{T}.Add(T)"/>
+		/// Equivalent to 
+		/// <see cref="IUnsortedList{T}.InsertAt(T, int)"/>.
 		/// </remarks>
-		/// Necesita que <see cref="IExList{T}.FuncionDeGeneracion"/> no sea nula si la list no admite elementos nulos
-		/// <returns></returns>
+		/// <returns>
+		/// New list with the elements of <c>list</c> and the element in the tuple.
+		/// </returns>
 		static IUnsortedList<T> operator +(IUnsortedList<T> list, (T, int) tuple) {
 			IUnsortedList<T> nueva = list.CloneUnsorted();
 			nueva.InsertAt(tuple.Item1, tuple.Item2);
@@ -49,75 +55,73 @@
 		}
 
 		/// <summary>
-		/// Coloca <c>element</c> al principio de la list
+		/// Inserts <c>element</c> at the start of the list.
 		/// </summary>
-		/// <param name = "element">element que colocar</param>
 		void InsertFirst(T element);
 
 		/// <summary>
-		/// Coloca a <c>element</c> en la posición <c>position</c>
+		/// Inserts <c>element</c> at <c>position</c>.
 		/// </summary>
-		/// <remarks><c>position</c> no puede ser menor que 0 o mayor que el índice del último element</remarks>
-		/// <param name="element">element que colocar</param>
-		/// <param name="position">posición donde colocar <c>element</c></param>
+		/// <remarks>
+		/// <c>position</c> must not be negative and must be lesser than <see cref="IExpandedList{T}.Count"/>.
+		/// </remarks>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		void InsertAt(T element, int position);
 
 		/// <summary>
-		/// Coloca <c>element</c> al final de la list
+		/// Inserts <c>element</c> at the start of the list.
 		/// </summary>
-		/// <param name="element">el element que colocar</param>
 		void InsertLast(T element);
 
 		/// <summary>
-		/// Coloca el element <c>element num</c> veces seguidas en la list, desde la posición <c>position</c>
+		/// Inserts <c>element amount</c> times in a row in the list, starting at <c>position</c>.
 		/// </summary>
 		/// <remarks>
-		/// <c>position</c> no puede ser menor que 0 o mayor que el índice del último element
+		/// <c>position</c> must not be negative and must be lesser than <see cref="IExpandedList{T}.Count"/>.
 		/// <para>
-		/// Si <c>num</c> no es positivo, el método no hará nada
+		/// If <c>amount</c> is negative, the list will not be modified.
 		/// </para>
 		/// </remarks>
-		/// <param name="element">element el element que colocar</param>
-		/// <param name="num">num la cantidad de veces que se pondrá</param>
-		/// <param name="position">posición por la que se empieza a poner</param>
-		void InsertMultiple(T element, int num, int position);
+		void InsertMultiple(T element, int amount, int position);
 
 		/// <summary>
-		/// Borra las últimas ocurrencias de <c>element</c> hasta que llega al inicio o encuentra otro element
+		/// Removes the appearances of <c>element</c> at the end of the list until the start or a different element is reached.
 		/// </summary>
-		/// <param name="element">element que eliminar del final</param>
 		/// <remarks>
-		/// Tiene más utilidad en <see cref="IDynamicList{T}"/>, ya que está pensado para deshacer cambios a <see cref="IDynamicList{T}.Count"/>
+		/// The changes in the design of this library have made this method pointless.
 		/// </remarks>
-		/// <returns>Ocurrencias de element quitadas</returns>
+		/// <returns>
+		/// Number of elements removed.
+		/// </returns>
 		int RemoveLast(T element);
 
 		/// <summary>
-		/// Devuelve una list con los mismos elementos que <c>list</c> repetidos <c>factor</c> veces
+		/// Returns a list with the elements from this list repeated <c>factor</c> times.
 		/// </summary>
 		/// <remarks>
-		/// Los elementos se repiten una vez que se alcanza el último element
+		/// The elements are repeated once the last element is reached.
 		/// <para>
-		/// Por ejemplo para <c>list == [1,2,3]</c>, haciendo <c>list.Multiplicar(2)</c> obtenemos <c>list == [1,2,3,1,2,3]</c>
+		/// In the following example <c>list</c> would be equal to <c>new UnsortedList([1,2,3,1,2,3])</c>:
+		/// <code>
+		/// list = new UnsortedList([1,2,3]);
+		/// list.Multiply(2);
+		/// </code>
 		/// </para>
-		/// Multiplicar por un número negativo realiza la misma operación, pero invirtiendo la list
+		/// Multiplying by a negative int does the same operation, but also reverses the list.
 		/// <para>
-		/// Multiplicar por 0 hace que se vacíe la list
+		/// Multiplying by 0 clears the list.
 		/// </para>
 		/// </remarks>
 		/// <returns>
-		/// Nueva list con los elementos repetidos
+		/// New list with repeated elements.
 		/// </returns>
 		IUnsortedList<T> Multiply(int factor);
 
 		/// <summary>
-		/// Crea una list arbitraria nueva igual a la llamada, la list será del mismo tipo
+		/// Creates a clone of this list, with the same type.
 		/// </summary>
-		/// <remarks>
-		/// Las interfaces que extiendan de <see cref="IExList{T}"/> deberían sobrescribir este método
-		/// </remarks>
 		/// <returns>
-		/// Lista igual a la llamada
+		/// New list equal to this list.
 		/// </returns>
 		IUnsortedList<T> CloneUnsorted();
 	}

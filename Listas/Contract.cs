@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace ExpandedLists {
 	/// <summary>
-	/// Resulta que CodeContracts está muerto, así que, para no volver a poner todos los ifs he creado esta clase
+	/// Because CodeContracts is dead, I made this class to replace it
 	/// </summary>
 	public static class Contract {
 		

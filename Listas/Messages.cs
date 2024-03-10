@@ -1,4 +1,8 @@
 ﻿namespace ExpandedLists {
+
+	/// <summary>
+	/// Contains a variety of error messages used in this library.
+	/// </summary>
 	public static class Messages {
 		public static string ListRange(int index, int limit) {
 			return $"Indexed position is invalid({index}, on length {limit})";

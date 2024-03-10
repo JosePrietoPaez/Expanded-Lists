@@ -57,7 +57,7 @@ namespace ExpandedLists {
 				{
 					while (value > siz)
 					{
-						Contract.Requires<InvalidOperationException>(IExList<T>.CompatibleEnLista(Generar()),
+						Contract.Requires<InvalidOperationException>(IExpandedList<T>.CompatibleEnLista(Generar()),
 							Messages.NullGeneration);
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 						_serie.Add(Generar()); //Ignorar el warning
@@ -89,7 +89,7 @@ namespace ExpandedLists {
 		/// La serie tendrá todos los elementos de la lista y su función generadora
 		/// </remarks>
 		/// <param name="lista">lista que copiar</param>
-		public ListSequence(IDynamicList<T> lista) : this(lista as IExList<T>){
+		public ListSequence(IDynamicList<T> lista) : this(lista as IExpandedList<T>){
 			_generadora = lista?.GeneratorFunction ?? (num => default);
 		}
 
@@ -100,7 +100,7 @@ namespace ExpandedLists {
 		/// La serie tendrá todos los elementos de la lista y su función generadora
 		/// </remarks>
 		/// <param name="lista">lista que copiar</param>
-		public ListSequence(IExList<T> lista)
+		public ListSequence(IExpandedList<T> lista)
 		{
 			_serie = [];
 			if (lista is not null)
@@ -114,7 +114,7 @@ namespace ExpandedLists {
 			_nombre = string.Empty;
 		}
 
-		public ListSequence(IExList<T> lista, string nombre) : this(lista)
+		public ListSequence(IExpandedList<T> lista, string nombre) : this(lista)
 		{
 			_nombre = nombre;
 		}
@@ -246,7 +246,7 @@ namespace ExpandedLists {
 		}
 
 		///<inheritdoc/>
-		public T Remove(int pos)
+		public T RemoveAt(int pos)
 		{
 			T elemento = _serie[pos];
 			_serie.RemoveAt(pos);
@@ -378,7 +378,7 @@ namespace ExpandedLists {
 		 */
 		public override bool Equals(Object? obj) {
 			bool iguales = ReferenceEquals(this,obj);
-			if (!iguales && obj is IExList<T> lista) {
+			if (!iguales && obj is IExpandedList<T> lista) {
 				iguales = lista.Count == Count;
 				for (int i = 0; i < Count & !iguales; i++) {
 					iguales = Equals(lista[i], this[i]);
@@ -425,13 +425,13 @@ namespace ExpandedLists {
 			return _serie.Count-1;
 		}
 
-		public IExList<T> Add(T elemento) {
+		public IExpandedList<T> AddNew(T elemento) {
 			var nueva = new ListSequence<T>(this);
-			nueva.Add(elemento);
+			nueva.AddNew(elemento);
 			return nueva;
 		}
 
-		public IExList<T> Join(IExList<T> segunda) {
+		public IExpandedList<T> Join(IExpandedList<T> segunda) {
 			var nueva = new ListSequence<T>(this);
 			foreach (var item in segunda) {
 				nueva.Add(item);
@@ -443,17 +443,17 @@ namespace ExpandedLists {
 			return CloneSequence();
 		}
 
-		public IExList<T> Clone() {
+		public IExpandedList<T> Clone() {
 			return CloneSequence();
 		}
 
-		public IExList<T> Substract(T elemento) {
+		public IExpandedList<T> Subtract(T elemento) {
 			var nueva = CloneUnsorted();
 			nueva.Clear(elemento);
 			return nueva;
 		}
 
-		public IExList<T> Difference(IExList<T> lista) {
+		public IExpandedList<T> Difference(IExpandedList<T> lista) {
 			var nueva = CloneUnsorted();
 			foreach (var item in lista) {
 				if (nueva.Contains(item)) {

@@ -172,7 +172,7 @@ namespace ExpandedLists.nUnitTests {
 			int pos = 0;
 
 			// Act
-			var result = aListSerie.Remove(
+			var result = aListSerie.RemoveAt(
 				pos);
 
 			// Assert

@@ -54,7 +54,7 @@ namespace ExpandedLists.Blocks {
 
 		private E? Generar() {
 			E? generado = _generadora.Invoke(Count);
-			Contract.Requires<InvalidOperationException>(IExList<E>.CompatibleEnLista(generado),Messages.NullGeneration);
+			Contract.Requires<InvalidOperationException>(IExpandedList<E>.CompatibleEnLista(generado),Messages.NullGeneration);
 			return generado;
 		}
 
@@ -128,10 +128,10 @@ namespace ExpandedLists.Blocks {
 		/// <param name="generadora"></param>
 		public BlockList(IEnumerable<E> col, Func<int, int> extensora, Func<int, E?> generadora) : this() {
 			if (col is BlockList<E,B> lista) {
-				for (int i = 0; i < lista.CantidadBloques - 1; i++) {
-					Insert(Block<E>.CopyInstance<B>(lista.GetBloque(i)),i);
+				for (int i = 0; i < lista.BlockCount - 1; i++) {
+					Insert(Block<E>.CopyInstance<B>(lista.GetBlock(i)),i);
 				}
-				_bloques[^1] = Block<E>.CopyInstance<B>(lista.GetBloque(CantidadBloques-1));
+				_bloques[^1] = Block<E>.CopyInstance<B>(lista.GetBlock(BlockCount-1));
 			} else {
 				foreach (var item in col) {
 					InsertLast(item);
@@ -145,21 +145,21 @@ namespace ExpandedLists.Blocks {
 			get {
 				Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Count,
 					Messages.ListRange(posicion,Count), nameof(posicion));
-				int bloque = BuscarBloque(posicion);
+				int bloque = GetBlockContainingPosition(posicion);
 				return _bloques[bloque][posicion - _posiciones[bloque]];
 			}
 			set {
 				Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Count,
 					Messages.ListRange(posicion, Count),nameof(posicion));
-				int bloque = BuscarBloque(posicion);
+				int bloque = GetBlockContainingPosition(posicion);
 				_bloques[bloque][posicion - _posiciones[bloque]] = value;
 			}
 		}
 
-		E IExList<E>.this[int posicion] => this[posicion];
+		E IExpandedList<E>.this[int posicion] => this[posicion];
 
 		public Func<int, E?> GeneratorFunction { get => _generadora; set => _generadora = value; }
-		public int Count { get => _posiciones[^1] + _bloques[^1].Length;
+		public int Count { get => _posiciones[^1] + _bloques[^1].Count;
 			set {
 				Contract.Requires<ArgumentOutOfRangeException>(value >= 0, Messages.NegativeArgument,
 					nameof(value));
@@ -187,30 +187,30 @@ namespace ExpandedLists.Blocks {
 		}
 		public Func<int, int> FuncionDeExtension { get => _extensora; set => _extensora = value; }
 
-		public int CantidadBloques => _bloques.Count;
+		public int BlockCount => _bloques.Count;
 
-		bool IExList<E>.IsEmpty => IsEmpty;
+		bool IExpandedList<E>.IsEmpty => IsEmpty;
 
-		int IExList<E>.Count => Count;
+		int IExpandedList<E>.Count => Count;
 
-		public int Borrar(B bloque) {
+		public int Remove(B bloque) {
 			int i = 0; bool encontrado = false;
 			while (i < _bloques.Count && !(encontrado = _bloques[i].Equals(bloque))) {
 				i++;
 			}
 			if (encontrado) {
-				BorrarBloque(i); //Lo borra si está
+				RemoveBlockAt(i); //Lo borra si está
 			} else {
 				i = -1;
 			}
 			return i;
 		}
 
-		public B BorrarBloque(int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques,
-				Messages.ListRange(posicion,CantidadBloques), nameof(posicion));
+		public B RemoveBlockAt(int posicion) {
+			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < BlockCount,
+				Messages.ListRange(posicion,BlockCount), nameof(posicion));
 			B aux;
-			if (posicion == CantidadBloques - 1) {
+			if (posicion == BlockCount - 1) {
 				aux = _bloques[^1];
 				_bloques[posicion] = CrearInstancia(_extensora(posicion));
 			} else {
@@ -282,7 +282,7 @@ namespace ExpandedLists.Blocks {
 		public int Clear(E elemento) {
 			int[] indices = Appareances(elemento);
 			foreach (int i in indices.Reverse()) { // Si se hace en orden los indices no sirven
-				Remove(i);
+				RemoveAt(i);
 			}
 			return indices.Length;
 		}
@@ -296,26 +296,26 @@ namespace ExpandedLists.Blocks {
 			return borrados;
 		}
 
-		public int BorrarVariosBloques(int num, int posicion) {
+		public int RemoveMultipleBlocks(int num, int posicion) {
 			Contract.Requires<ArgumentOutOfRangeException>(num >= 0,Messages.NegativeArgument,
 				nameof(num));
 			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < Count
 				,Messages.ListRange(posicion,Count), nameof(posicion));
 			int contador = 0;
-			while (posicion + contador < CantidadBloques & contador < num) {
-				BorrarBloque(posicion);
+			while (posicion + contador < BlockCount & contador < num) {
+				RemoveBlockAt(posicion);
 				contador++;
 			}
 			AsegurarEspacio();
 			return contador;
 		}
 
-		public int BuscarBloque(int posicion) {
+		public int GetBlockContainingPosition(int posicion) {
 			if (posicion < 0 | posicion >= Count) return -1;
 			return EncontrarBinarioRecursivo(_posiciones, 0, posicion);
 		}
 
-		public int BuscarBloque(E elemento) {
+		public int GetBlockContainingElement(E elemento) {
 			int pos = 0;
 			bool encontrado = false;
 			foreach (Block<E> bloque in _bloques) {
@@ -340,7 +340,7 @@ namespace ExpandedLists.Blocks {
 			return esta;
 		}
 
-		public IExList<E> Difference(IExList<E> lista) {
+		public IExpandedList<E> Difference(IExpandedList<E> lista) {
 			BlockList<E, B> nueva = new(this);
 			foreach (var item in lista) {
 				nueva.Clear(item);
@@ -351,13 +351,13 @@ namespace ExpandedLists.Blocks {
 		public int Remove(E elemento) {
 			int pos = Position(elemento);
 			if (pos != -1) {
-				Remove(pos);
+				RemoveAt(pos);
 			}
 			return pos;
 		}
 
 		// Como BorrarInicio(), este método ha recibido cambios para aprovechar que se una un List
-		public E Remove(int posicion) {
+		public E RemoveAt(int posicion) {
 			E elemento = this[posicion];
 			RemoveMultiple(1, posicion);
 			return elemento;
@@ -442,31 +442,31 @@ namespace ExpandedLists.Blocks {
 		/// </summary>
 		/// <param name="cantidad"></param>
 		private void BorrarUltimos(int cantidad) {
-			int bloqueBorrable = CantidadBloques - (_bloques[^1].IsEmpty ? 2 : 1), borrados = 0;
+			int bloqueBorrable = BlockCount - (_bloques[^1].IsEmpty ? 2 : 1), borrados = 0;
 			bool borradoUltimo = _bloques[^1].IsEmpty;
-			while (cantidad - borrados >= _bloques[bloqueBorrable].Length) { // Borramos bloques ya que no hay que mover elementos
-				borrados += _bloques[bloqueBorrable].Length;
-				BorrarBloque(bloqueBorrable--);
+			while (cantidad - borrados >= _bloques[bloqueBorrable].Count) { // Borramos bloques ya que no hay que mover elementos
+				borrados += _bloques[bloqueBorrable].Count;
+				RemoveBlockAt(bloqueBorrable--);
 				if (!borradoUltimo) {
 					borradoUltimo = true;
 					bloqueBorrable--;
 				}
 			}
 			if (borradoUltimo) { // Si se ha borrado alguno o el último estaba vacío, los elementos por borrar deben estar en el penúltimo
-				_bloques[^2].Length -= cantidad - borrados;
+				_bloques[^2].Count -= cantidad - borrados;
 			} else { // Es posible que no se haya borrado ningún bloque
-				_bloques[^1].Length -= cantidad;
+				_bloques[^1].Count -= cantidad;
 			}
 			AsegurarEspacio();
 		}
 
-		public B GetBloque(int posicion) {
+		public B GetBlock(int posicion) {
 			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < _bloques.Count,
 				Messages.ListRange(posicion,Count), nameof(posicion));
 			return _bloques[posicion];
 		}
 
-		public IEnumerable<B> GetBloques() {
+		public IEnumerable<B> GetBlockEnumerable() {
 			return _bloques.AsEnumerable();
 		}
 
@@ -486,7 +486,7 @@ namespace ExpandedLists.Blocks {
 			} else if (posicion == Count) {
 				InsertLast(elemento);
 			} else {
-				int posicionBloque = BuscarBloque(posicion);
+				int posicionBloque = GetBlockContainingPosition(posicion);
 				bool colocado = !_bloques[posicionBloque].IsFull;
 				E? acarreo = _bloques[posicionBloque].Insert(elemento, posicion - _posiciones[posicionBloque]);
 				AsegurarEspacio();
@@ -518,8 +518,8 @@ namespace ExpandedLists.Blocks {
 		public void Insert(B bloque, int posicion) {
 			Contract.Requires<ArgumentNullException>(bloque is not null, Messages.NullBlock, nameof(bloque));
 			Debug.Assert(bloque is not null);
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques,
-				Messages.ListRange(posicion,CantidadBloques), nameof(posicion));
+			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < BlockCount,
+				Messages.ListRange(posicion,BlockCount), nameof(posicion));
 			_bloques.Insert(posicion,bloque);
 			if (posicion == 0) {
 				_posiciones.Insert(0, 0);
@@ -528,7 +528,7 @@ namespace ExpandedLists.Blocks {
 			}
 			
 			for (int i = Math.Max(1,posicion + 1); i < _posiciones.Count; i++) { // Se mantienen las longitudes de bloques anteriores
-				_posiciones[i] = _posiciones[i] + bloque.Length;
+				_posiciones[i] = _posiciones[i] + bloque.Count;
 			}
 		}
 
@@ -580,7 +580,7 @@ namespace ExpandedLists.Blocks {
 			Contract.Requires<ArgumentOutOfRangeException>(segundo >= 0 && segundo < _posiciones.Count,
 				Messages.ListRange(segundo,Count), nameof(segundo));
 			(_bloques[segundo], _bloques[primero]) = (_bloques[primero], _bloques[segundo]);
-			int deltaL = _bloques[primero].Length - _bloques[segundo].Length;
+			int deltaL = _bloques[primero].Count - _bloques[segundo].Count;
 			for (int i = primero + 1; i <= segundo; i++) {
 				_posiciones[i] = _posiciones[i] + deltaL;
 			}
@@ -600,14 +600,14 @@ namespace ExpandedLists.Blocks {
 			} else {
 				_bloques.Reverse();
 				B antiguo = _bloques[0];
-				_bloques[0] = CrearInstancia(antiguo.Length);
+				_bloques[0] = CrearInstancia(antiguo.Count);
 				foreach (var item in antiguo) {
 					_bloques[0].InsertLast(item);
 				}
 			} // Después de este if, se ha invertido la lista, pero se deben recalcular las longitudes
 			_posiciones[0] = 0;
 			for (int i = 1; i < _bloques.Count; i++) {
-				_posiciones[i] = _posiciones[i-1] + _bloques[i-1].Length;
+				_posiciones[i] = _posiciones[i-1] + _bloques[i-1].Count;
 			}
 			AsegurarEspacio();
 		}
@@ -665,7 +665,7 @@ namespace ExpandedLists.Blocks {
 			}
 		}
 
-		public int Posicion(B bloque) {
+		public int Position(B bloque) {
 			int posicion = -1;
 			for (int i = 0; i < _bloques.Count && posicion < 0; i++) {
 				if (bloque.Equals(_bloques[i])) {
@@ -682,15 +682,15 @@ namespace ExpandedLists.Blocks {
 			}
 		}
 
-		public IExList<E> Substract(E elemento) {
+		public IExpandedList<E> Subtract(E elemento) {
 			BlockList<E, B> nueva = new(this);
 			nueva.Clear(elemento);
 			return nueva;
 		}
 
-		public IBlockList<E, B> Restar(B bloque) {
+		public IBlockList<E, B> Subtract(B bloque) {
 			BlockList<E,B> nueva = new(this);
-			nueva.BorrarBloque(nueva.Posicion(bloque));
+			nueva.RemoveBlockAt(nueva.Position(bloque));
 			return nueva;
 		}
 
@@ -702,13 +702,13 @@ namespace ExpandedLists.Blocks {
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		/// <exception cref="ArgumentNullException"></exception>
 		public B SetBlock(B bloque, int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < CantidadBloques,
-				Messages.ListRange(posicion,CantidadBloques), nameof(posicion));
+			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion < BlockCount,
+				Messages.ListRange(posicion,BlockCount), nameof(posicion));
 			Contract.Requires<ArgumentNullException>(bloque != null && (bloque.IsFull || posicion == _bloques.Count - 1),
 				Messages.NonFullBlock, nameof(bloque)); // Si el bloque no está lleno debe cambiarse por el último
 			B antiguo = _bloques[posicion];
 			_bloques[posicion] = bloque;
-			int deltaLongitud = bloque.Length - antiguo.Length; // Se deben cambiar las posiciones al cambiar el bloque
+			int deltaLongitud = bloque.Count - antiguo.Count; // Se deben cambiar las posiciones al cambiar el bloque
 			if (deltaLongitud != 0)
 				for (int i = posicion + 1; i < _posiciones.Count; i++) {
 					_posiciones[i] += deltaLongitud;
@@ -717,7 +717,7 @@ namespace ExpandedLists.Blocks {
 			return antiguo;
 		}
 
-		public IExList<E> Add(E elemento) {
+		public IExpandedList<E> AddNew(E elemento) {
 			BlockList<E, B> nueva = new(this);
 			nueva.InsertLast(elemento);
 			return nueva;
@@ -725,7 +725,7 @@ namespace ExpandedLists.Blocks {
 
 		public IDynamicBlockList<E, B> Add(B bloque) {
 			BlockList<E, B> nueva = new(this);
-			nueva.Insert(bloque,nueva.CantidadBloques-1);
+			nueva.Insert(bloque,nueva.BlockCount-1);
 			return nueva;
 		}
 
@@ -740,7 +740,7 @@ namespace ExpandedLists.Blocks {
 			}
 		}
 
-		public IExList<E> Join(IExList<E> segunda) {
+		public IExpandedList<E> Join(IExpandedList<E> segunda) {
 			BlockList<E,B> nueva = new(this);
 			foreach (var item in segunda) {
 				nueva.InsertLast(item);
@@ -748,11 +748,11 @@ namespace ExpandedLists.Blocks {
 			return nueva;
 		}
 
-		public IExList<E> Clone() {
+		public IExpandedList<E> Clone() {
 			return CloneUnsorted();
 		}
 
-		public IBlockList<E, B> ClonarBloques() {
+		public IBlockList<E, B> CloneBlock() {
 			return CloneDynamicBlocks();
 		}
 
@@ -765,15 +765,15 @@ namespace ExpandedLists.Blocks {
 		}
 
 		/// <summary>
-		/// Comprueba si <c>obj</c> es una <see cref="IExList{E}"/> con los mismos elementos
+		/// Comprueba si <c>obj</c> es una <see cref="IExpandedList{E}"/> con los mismos elementos
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns>
-		/// <c>true</c> si es una <see cref="IExList{E}"/> con los mismos elementos, si no <c>false</c>
+		/// <c>true</c> si es una <see cref="IExpandedList{E}"/> con los mismos elementos, si no <c>false</c>
 		/// </returns>
 		public override bool Equals(object? obj) {
 			bool iguales = ReferenceEquals(this, obj);
-			if (!iguales && obj is IExList<E> lista) {
+			if (!iguales && obj is IExpandedList<E> lista) {
 				iguales = lista.Count == Count;
 				for (int i = 0; i < Count & !iguales; i++) {
 					iguales = Equals(lista[i],this[i]);
@@ -796,7 +796,7 @@ namespace ExpandedLists.Blocks {
 			int i = 0;
 			foreach (B b in _bloques) {
 				stringBuilder.Append(b);
-				if (i++ < CantidadBloques - 1) {
+				if (i++ < BlockCount - 1) {
 					stringBuilder.Append(',');
 				}
 			}

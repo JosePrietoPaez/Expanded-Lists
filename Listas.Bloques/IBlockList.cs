@@ -1,122 +1,117 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace ExpandedLists.Blocks {
 
 	/// <summary>
-	/// Las listas de bloques guardan sus elementos en bloques, estos bloques pueden ser obtenidos desde su lista
+	/// Block lists use <see cref="Block{T}"/> to store their elements, these blocks may be retrieved from its list.
 	/// </summary>
 	/// <remarks>
-	/// <see cref="E"/> es el tipo de los elementos, <see cref="B"/> es el tipo de los bloques
-	/// <para>Se recomienda no modificar directamente los bloques obtenidos si siguen en la lista</para>
+	/// <see cref="E"/> is the elements' type, <see cref="B"/> is the blocks' type.
+	/// <para>It is recommended not to insert or remove elements from blocks being used by a block list.</para>
 	/// </remarks>
-	/// <typeparam name="E"/>
-	/// <typeparam name="B">
-	/// </typeparam>
-	public interface IBlockList<E,B> : IExList<E> where B : Block<E> {
+	public interface IBlockList<E,B> : IExpandedList<E> where B : Block<E> {
 
 		/// <summary>
-		/// Esta propiedad permite obtener la cantidad de bloques que se están usando
+		/// Gets the amount of block used by the list.
 		/// </summary>
 		/// <remarks>
-		/// No se podrán acceder a bloques con índices no menores que este
+		/// Only blocks with an index smaller than this may be accessed.
 		/// </remarks>
-		int CantidadBloques { get; }
+		int BlockCount { get; }
 
 		/// <summary>
-		/// Devuelve la lista con <c>bloque</c> borrado
+		/// Returns a new list equal to <c>list</c> without <c>block</c>.
 		/// </summary>
 		/// <remarks>
-		/// Equivalente a lista.<see cref="IBlockList{T, U}.Restar(U)"/>
+		/// Equivalent to <see cref="Subtract(B)"/>.
 		/// </remarks>
-		/// <param name="lista"></param>
-		/// <param name="bloque"></param>
 		/// <returns>
-		/// Nueva lista con sus bloques sin <c>bloque</c>
+		/// New list like <c>list</c> without <c>block</c>.
 		/// </returns>
-		static IBlockList<E, B> operator -(IBlockList<E, B> lista, B bloque) => lista.Restar(bloque);
+		static IBlockList<E, B> operator -(IBlockList<E, B> list, B block) => list.Subtract(block);
 
 		/// <summary>
-		/// Obtiene el bloque en <c>posicion</c>
+		/// Gets the block at <c>position</c>.
 		/// </summary>
 		/// <remarks>
-		/// <c>posicion</c> debe ser no negativo y menor que <see cref="IBlockList{T, U}.CantidadBloques"/>
+		/// <c>position</c> must not be negative and must be lesser than <see cref="IBlockList{T, U}.BlockCount"/>.
 		/// </remarks>
-		/// <param name="posicion"></param>
-		/// <returns>Bloque en la posición indicada</returns>
-		B GetBloque(int posicion);
+		/// <returns>
+		/// Block at <c>position</c>.
+		/// </returns>
+		B GetBlock(int position);
 
 		/// <summary>
-		/// Borra el bloque de la lista si está
+		/// Removes <c>block</c> from the list if its contained.
 		/// </summary>
-		/// <param name="bloque"></param>
-		/// <returns>La posición en la que estaba o -1 si no estaba</returns>
-		int Borrar(B bloque);
+		/// <returns>
+		/// The position that contained <c>block</c> or <c>-1</c> if it was not in the list.
+		/// </returns>
+		int Remove(B block);
 
 		/// <summary>
-		/// Borra el bloque indicado
-		/// </summary>
-		/// <remarks>
-		/// <c>posicion</c> debe ser no negativo y menor que la cantidad de bloques
-		/// </remarks>
-		/// <param name="posicion"></param>
-		/// <returns>El bloque eliminado</returns>
-		B BorrarBloque(int posicion);
-
-		/// <summary>
-		/// Borra <c>num</c> bloques desde <c>posicion</c>, o hasta que no haya más
+		/// Removes the block at <c>position</c>.
 		/// </summary>
 		/// <remarks>
-		/// <c>posicion</c> no puede ser menor que 0 o mayor que el índice del último bloque
-		/// <para><c>num</c> debería ser mayor que 0, pero si es 0, el método no hará nada con la lista</para>
+		/// <c>position</c> must not be negative and must be lesser than <see cref="IBlockList{T, U}.BlockCount"/>.
 		/// </remarks>
-		/// <param name="num">número de bloques que eliminar</param>
-		/// <param name="posicion">posición donde empezar a borrar</param>
+		/// <returns>
+		/// The block at <c>position</c>.
+		/// </returns>
+		B RemoveBlockAt(int position);
+
+		/// <summary>
+		/// Removes <c>amount</c> blocks starting at <c>position</c>, or until the end of the list is reached.
+		/// </summary>
+		/// <remarks>
+		/// <c>position</c> must not be negative and must be lesser than <see cref="IBlockList{T, U}.BlockCount"/>.
+		/// <para><c>amount</c> should be positive, but if not the list will not be altered.</para>
+		/// </remarks>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		/// <returns>Número de bloques borrados</returns>
-		int BorrarVariosBloques(int num, int posicion);
+		/// <returns>
+		/// Number of blocks removed.
+		/// </returns>
+		int RemoveMultipleBlocks(int amount, int position);
 
 		/// <summary>
-		/// Devuelve la posición del bloque que contiene el elemento en <c>posicion</c>
+		/// Gets the block containing the element at <c>position</c>.
 		/// </summary>
 		/// <returns>
-		/// Bloque que contiene a pos o -1 si no está en la lista
+		/// Block containing <c>position</c> or <c>-1</c> if <c>position</c> is not in the list.
 		/// </returns>
-		int BuscarBloque(int posicion);
+		int GetBlockContainingPosition(int position);
 
 		/// <summary>
-		/// Devuelve la posición del primer bloque que contiene a un elemento igual a <c>elemento</c>
+		/// Gets the first block containing an object equal to<c>element</c>.
 		/// </summary>
 		/// <returns>
-		/// Bloque que contiene a pos o -1 si no está en la lista
+		/// Block containing <c>element</c> or <c>-1</c> if <c>element</c> is not in the list.
 		/// </returns>
-		int BuscarBloque(E elemento);
+		int GetBlockContainingElement(E element);
 
 		/// <summary>
-		/// Devuelve la posición en la que se encuentra <c>bloque</c>
+		/// Gets the position of <c>block</c>.
 		/// </summary>
-		/// <param name="bloque"></param>
 		/// <returns>
-		/// La posición de <c>bloque</c> en la lista o -1 si no está
+		/// The position of <c>block</c> in the list or <c>-1</c> if <c>block</c> is not in the list.
 		/// </returns>
-		int Posicion(B bloque);
+		int Position(B block);
 
 		/// <summary>
-		/// Devuelve una lista de bloques como la llamada, sin <c>bloque</c>
+		/// Returns a list like <c>this</c>, without <c>block</c>.
 		/// </summary>
-		IBlockList<E,B> Restar(B bloque);
+		IBlockList<E,B> Subtract(B block);
 
 		/// <summary>
-		/// Crea una lista de bloques nueva igual a la llamada, la lista será del mismo tipo
+		/// Creates a block list equal to <c>this</c>, with the same type.
 		/// </summary>
-		/// <remarks>
-		/// Las interfaces que extiendan de <see cref="ILista{T}"/> deberían sobrescribir este método
-		/// </remarks>
 		/// <returns>
-		/// Lista igual a la llamada
+		/// List equal to <c>this</c>.
 		/// </returns>
-		IBlockList<E, B> ClonarBloques();
+		IBlockList<E, B> CloneBlock();
 
-		IEnumerable<B> GetBloques();
+		IEnumerable<B> GetBlockEnumerable();
 		
 	}
 }

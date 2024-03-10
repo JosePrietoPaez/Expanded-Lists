@@ -1,5 +1,5 @@
 ﻿namespace ExpandedLists {
-	public interface ISortedList<T> : IExList<T> {
+	public interface ISortedList<T> : IExpandedList<T> {
 		
 	}
 }

@@ -5,6 +5,13 @@
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public interface ISequence<T> : INamedList<T>, IDynamicList<T> {
+
+		/// <summary>
+		/// Creates a clone of this sequence, with the same type
+		/// </summary>
+		/// <returns>
+		/// New sequence equal to this sequence
+		/// </returns>
 		ISequence<T> CloneSequence();
 	}
 }

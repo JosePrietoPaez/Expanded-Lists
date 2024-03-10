@@ -6,20 +6,20 @@ using System.Reflection;
 namespace ExpandedLists.Blocks {
 
 	/// <summary>
-	/// Los bloques son estructuras de datos que almacenan objetos,
-	/// las listas de bloques delegan les delegan las operaciones de búsqueda al no saber como se implementan
+	/// Blocks are data structures like arrays,
+	/// block lists delegate many operations to their blocks to ensure efficiency
 	/// </summary>
 	/// <remarks>
-	/// Todos los tipos de bloques deben tener un constructor de un argumento int para especificar su capacidad
+	/// Blocks have a fixed capacity, and their insertion methods return their last element
 	/// <para>
-	/// Se espera que la capacidad de un bloque no cambie desde su creación
+	/// All block types must have a constructor taking an <c>int</c>
 	/// </para>
 	/// </remarks>
 	/// <typeparam name="T"></typeparam>
 	public abstract class Block<T>(in int capacidad) : IEnumerable<T> {
 
 		/// <summary>
-		/// Crea una instancia del mismo tipo que el bloque
+		/// Creates an instance of the specified type of block with the given length
 		/// </summary>
 		/// <returns></returns>
 		public static B CreateInstance<B>(int capacidad) where B : Block<T>{
@@ -27,164 +27,173 @@ namespace ExpandedLists.Blocks {
 			return constructor?.Invoke([capacidad]) as B?? throw new NotImplementedException("No se ha implementado el constructor con argumento int");
 		}
 
+		/// <summary>
+		/// Creates an instance of the specified type of block
+		/// and inserts the elements of <c>bloque</c>
+		/// </summary>
 		public static B CopyInstance<B>(Block<T> bloque) where B : Block<T> {
 			B clon = CreateInstance<B>(bloque.Capacity);
-			foreach (var elemento in bloque) {
-				clon.InsertLast(elemento);
+			foreach (var element in bloque) {
+				clon.InsertLast(element);
 			}
 			return clon;
 		}
 
 		/// <summary>
-		/// Permite obtener o cambiar el elemento en la posición indicada, no permite la inserción de elementos
+		/// Gets or sets the element at <c>index</c>
 		/// </summary>
-		/// <param name="index"></param>
 		/// <returns>
-		/// Elemento del bloque en la posición indicada
+		/// Element at <c>index</c>
 		/// </returns>
 		abstract public T this[int index] { get; set; }
 
 		/// <summary>
-		/// Esta propiedad permite consultar el bloque para ver si queda espacio
+		/// Determines whether the block is full
 		/// </summary>
 		abstract public bool IsFull { get; }
 
 		/// <summary>
-		/// Esta propiedad permite consultar el bloque para ver si hay elementos
+		/// Determines whether the block is empty
 		/// </summary>
 		abstract public bool IsEmpty { get; }
 
 		/// <summary>
-		/// Este campo permite obtener la cantidad de elementos que podrán ser guardados el en bloque
+		/// Gets the capacity of this block
 		/// </summary>
 		/// <remarks>
-		/// Debe ser positiva
+		/// Must be positive
 		/// </remarks>
-		public readonly int Capacity = capacidad > 0 ? capacidad : throw new ArgumentOutOfRangeException("Los bloques deben tener capacidad positiva");
+		public readonly int Capacity = capacidad > 0 ? capacidad : throw new ArgumentOutOfRangeException("Blocks must have a positive capacity");
 
 		/// <summary>
-		/// Esta propiedad permite obtener la cantidad de elementos guardados en el bloque
+		/// Gets or sets the amount of elements in the block
 		/// </summary>
 		/// <remarks>
-		/// No puede ser mayor que <see cref="Block{T}.Capacity"/>
+		/// Not greater than <see cref="Block{T}.Capacity"/>
 		/// <para>
-		/// El setter solo puede reducir la longitud
+		/// Can only set to a lower value
 		/// </para>
 		/// </remarks>
-		abstract public int Length { get; set; }
+		abstract public int Count { get; set; }
 
 		/// <summary>
-		/// Añade el elemento al principio del bloque, desplazando el resto
+		/// Inserts <c>element</c> at the start of the block
 		/// </summary>
 		/// <remarks>
-		/// Si el bloque está lleno se quitará el último elemento y se devolverá
+		/// If the block is full the last element is removed and returned,
+		/// it is recommended to check <see cref="IsFull"/> before using the returned element
 		/// </remarks>
 		/// <returns>
-		/// Elemento en la última posición del bloque o <c>null</c> si no existe
+		/// Last element if block is full, otherwise unspecified, might be null
 		/// </returns>
-		abstract public T? InsertFirst(T elemento);
+		abstract public T? InsertFirst(T element);
 
 		/// <summary>
-		/// Añade el elemento al bloque en la posición indicada, desplazando el resto
+		/// Inserts <c>element</c> at <c>position</c>
 		/// </summary>
 		/// <remarks>
-		/// Si el bloque está lleno se quitará el último elemento y se devolverá
+		/// If the block is full the last element is removed and returned,
+		/// it is recommended to check <see cref="IsFull"/> before using the returned element
 		/// <para>
-		/// <c>posicion</c> debe ser no negativo y no mayor que la longitud, o menor que esta si el bloque está lleno
+		/// <c>position</c> must not be negative and must be lesser than <see cref="Count"/>
 		/// </para>
 		/// </remarks>
+		/// <returns>
+		/// Last element if block is full, otherwise unspecified, might be null
+		/// </returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		/// <returns>
-		/// Elemento en la última posición del bloque o <c>null</c> si no existe
-		/// </returns>
-		abstract public T? Insert(T elemento, int posicion);
+		abstract public T? Insert(T element, int position);
 
 		/// <summary>
-		/// Añade el elemento al final del bloque en la última posición
+		/// Inserts <c>element</c> at the end of the block
 		/// </summary>
 		/// <remarks>
-		/// Si el bloque está lleno se cambiará el último elemento por <c>elemento</c>
+		/// If the block is full, the last element will be swapped for <c>element</c>
+		/// <para>
+		/// If the block is full the last element is removed and returned,
+		/// it is recommended to check <see cref="IsFull"/> before using the returned element
+		/// </para>
 		/// </remarks>
 		/// <returns>
-		/// Elemento en la última posición del bloque o <c>null</c> si no existe
+		/// Last element if the block is full, otherwise unspecified, might be null
 		/// </returns>
-		abstract public T? InsertLast(T elemento);
+		abstract public T? InsertLast(T element);
 
 		/// <summary>
-		/// Devuelve el primer elemento del bloque, si hay
+		/// Gets the first element of the block, if it has any
 		/// </summary>
 		/// <remarks>
-		/// Debe haber elementos para usar este método
+		/// The block must have elements
 		/// </remarks>
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <returns>
-		/// Primer elemento del bloque
+		/// First element of the block
 		/// </returns>
 		abstract public T First { get; }
 
 		/// <summary>
-		/// Devuelve el último elemento del bloque, si hay
+		/// Gets the last element of the block, if it has any
 		/// </summary>
 		/// <remarks>
-		/// Debe haber elementos para usar este método
+		/// The block must have elements
 		/// </remarks>
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <returns>
-		/// Último elemento del bloque
+		/// Last element of the block
 		/// </returns>
 		abstract public T Last { get; }
 
 		/// <summary>
-		/// Elimina el elemento al inicio del bloque y lo devuelve
+		/// Removes the first element of the block
 		/// </summary>
 		/// <remarks>
-		/// Debe haber elementos para usar este método
+		/// The block must have elements
 		/// </remarks>
 		/// <exception cref="IndexOutOfRangeException"></exception>
 		/// <returns>
-		/// Elemento quitado del bloque
+		/// First element of the block
 		/// </returns>
 		abstract public T RemoveFirst();
 
 		/// <summary>
-		/// Elimina el elemento de la posición indicada del bloque y lo devuelve
+		/// Removes the element at <c>position</c>
 		/// </summary>
 		/// <remarks>
-		/// El bloque debe tener elementos y <c>posicion</c> debe ser no negativa y menor que la longitud del bloque
+		/// The block must have elements and <c>position</c> must not be negative and must be lesser than <see cref="Count"/>
 		/// </remarks>
 		/// <exception cref="IndexOutOfRangeException"></exception>
 		/// <returns>
-		/// Elemento quitado del bloque
+		/// Element removed from the block
 		/// </returns>
-		abstract public T RemoveAt(int posicion);
+		abstract public T RemoveAt(int position);
 
 		/// <summary>
-		/// Elimina el elemento al final del bloque y lo devuelve
+		/// Removes the last element of the block
 		/// </summary>
 		/// <remarks>
-		/// La lista debe tener elementos para usar este método
+		/// The block must have elements
 		/// </remarks>
-		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="IndexOutOfRangeException"></exception>
 		/// <returns>
-		/// Elemento quitado de la lista
+		/// Last element of the block
 		/// </returns>
 		abstract public T RemoveLast();
 
 		/// <summary>
-		/// Elimina todos los elementos del bloque, dejándolo vacío
+		/// Removes all the elements from the block
 		/// </summary>
 		abstract public void Clear();
 
 		/// <summary>
-		/// Devuelve <c>true</c> si contiene <c>elemento</c>
+		/// Determines whether the block contains <c>element</c>
 		/// </summary>
 		/// <returns>
-		/// Booleano que representa si se tiene el elemento
+		/// <c>true</c> if <c>element</c> is contained in the block, otherwise <c>false</c>
 		/// </returns>
-		abstract public bool Contains(object? elemento);
+		abstract public bool Contains(object? element);
 
 		/// <summary>
-		/// Invierte el orden de los elementos del bloque
+		/// Reverses the order of the elements in the block
 		/// </summary>
 		abstract public void Reverse();
 
