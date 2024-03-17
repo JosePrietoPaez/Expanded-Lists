@@ -15,7 +15,7 @@ namespace ExpandedLists {
 		/// <remarks>
 		/// The argument used for the function will be the size of the list at the time of invocation.
 		/// <para>
-		/// By default it generates the default instance of the class, so it is recommended to instantiate it in the constructor or by using this property.
+		/// If not set it generates the default instance of the class, so it is recommended to instantiate it in the constructor or by using this property.
 		/// </para>
 		/// </remarks>
 		Func<int,T?> GeneratorFunction { get; set; }
@@ -49,7 +49,7 @@ namespace ExpandedLists {
 		/// Equivalent to
 		/// <see cref="IDynamicList{T}.Count"/><c>++</c>.
 		/// <para>
-		/// Needs <see cref="IDynamicList{T}.GeneratorFunction"/> not to generate null elements if not allowed</para>.
+		/// Needs <see cref="IDynamicList{T}.GeneratorFunction"/> not to generate null elements if not allowed.</para>
 		/// </remarks>
 		/// <returns>
 		/// A new list like <c>list</c> with one more element.

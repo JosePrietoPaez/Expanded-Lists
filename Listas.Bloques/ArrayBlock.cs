@@ -8,31 +8,31 @@ namespace ExpandedLists.Blocks {
 #pragma warning restore CS9107 // El parámetro se captura en el estado del tipo envolvente y su valor también se pasa al constructor base. La clase base también puede capturar el valor.
 
 		private readonly T[] _array = new T[capacidad];
-		private int _longitud = 0;
+		private int _length = 0;
 
 		public override T this[int index] {
 			get {
-				Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
-					Messages.ListRange(index,_longitud));
+				Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _length,
+					Messages.ListRange(index,_length));
 				return _array[index];
 			}
 			set {
-				Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _longitud,
-					Messages.ListRange(index, _longitud));
+				Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < _length,
+					Messages.ListRange(index, _length));
 				_array[index] = value;
 			}
 		}
 
-		public override bool IsFull => _longitud == capacidad;
+		public override bool IsFull => _length == capacidad;
 
-		public override bool IsEmpty => _longitud == 0;
+		public override bool IsEmpty => _length == 0;
 
 		public override int Count {
-			get => _longitud;
+			get => _length;
 			set {
-				Contract.Requires<ArgumentOutOfRangeException>(value <= _longitud,
+				Contract.Requires<ArgumentOutOfRangeException>(value <= _length,
 					Messages.NegativeLength,nameof(value));
-				_longitud = value;
+				_length = value;
 			}
 		}
 
@@ -40,11 +40,11 @@ namespace ExpandedLists.Blocks {
 
 		public ArrayBlock(T[] array, int longitud) : this(array.Length) {
 			array.CopyTo(_array, 0);
-			_longitud = longitud;
+			_length = longitud;
 		}
 
 		public override void Clear() {
-			_longitud = 0;
+			_length = 0;
 		}
 
 		public override bool Contains(object? elemento) {
@@ -60,11 +60,11 @@ namespace ExpandedLists.Blocks {
 		}
 
 		public override T RemoveAt(int posicion) {
-			Contract.Requires<IndexOutOfRangeException>(posicion >= 0 && posicion < _longitud,
-				Messages.ListRange(posicion, _longitud));
+			Contract.Requires<IndexOutOfRangeException>(posicion >= 0 && posicion < _length,
+				Messages.ListRange(posicion, _length));
 			T aux = _array[posicion];
 			Array.Copy(_array, posicion + 1, _array, posicion, _array.Length - posicion - 1);
-			_longitud--;
+			_length--;
 			return aux;
 		}
 
@@ -73,27 +73,27 @@ namespace ExpandedLists.Blocks {
 		}
 
 		public override T RemoveLast() {
-			Contract.Requires<InvalidOperationException>(_longitud > 0, Messages.EmptyBlock);
-			_longitud--;
-			return _array[_longitud];
+			Contract.Requires<InvalidOperationException>(_length > 0, Messages.EmptyBlock);
+			_length--;
+			return _array[_length];
 		}
 
 		public override IEnumerator<T> GetEnumerator() {
-			for (int i = 0; i < _longitud; i++) {
+			for (int i = 0; i < _length; i++) {
 				yield return _array[i];
 			}
 		}
 
 		public override T? Insert(T elemento, int posicion) {
-			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= _longitud && (posicion != _longitud || _longitud != _array.Length)
-				,Messages.ListRange(posicion,_longitud));
-			if (posicion == _longitud) {
+			Contract.Requires<ArgumentOutOfRangeException>(posicion >= 0 && posicion <= _length && (posicion != _length || _length != _array.Length)
+				,Messages.ListRange(posicion,_length));
+			if (posicion == _length) {
 				return InsertLast(elemento);
 			}
 			T ultimo = _array[^1];
 			Array.Copy(_array, posicion, _array, posicion + 1, _array.Length - posicion - 1);
 			_array[posicion] = elemento;
-			_longitud += _longitud == _array.Length ? 0 : 1; //Si el bloque está lleno no se aumenta la capacidad
+			_length += _length == _array.Length ? 0 : 1; //Si el bloque está lleno no se aumenta la capacidad
 			return ultimo;
 		}
 
@@ -103,33 +103,33 @@ namespace ExpandedLists.Blocks {
 
 		public override T? InsertLast(T elemento) {
 			T? aux = _array[^1];
-			if (_longitud == _array.Length) { //Si está lleno
+			if (_length == _array.Length) { //Si está lleno
 				_array[^1] = elemento;
 			} else {
-				_array[_longitud] = elemento;
-				_longitud++;
+				_array[_length] = elemento;
+				_length++;
 			}
 			return aux;
 		}
 
 		public override void Reverse() {
-			T[] arrayCopia = new T[_longitud];
-			Array.Copy(_array, arrayCopia, _longitud);
-			for (int i = 0; i < _longitud; i++) {
-				_array[i] = arrayCopia[_longitud - i - 1];
+			T[] arrayCopia = new T[_length];
+			Array.Copy(_array, arrayCopia, _length);
+			for (int i = 0; i < _length; i++) {
+				_array[i] = arrayCopia[_length - i - 1];
 			}
 		}
 
 		public override T First => _array[0];
 
-		public override T Last => _array[_longitud - 1];
+		public override T Last => _array[_length - 1];
 
 		public override string ToString() {
 			StringBuilder stringBuilder = new();
 			stringBuilder.Append('[');
-			for (int i = 0; i < _longitud; i++) {
+			for (int i = 0; i < _length; i++) {
 				stringBuilder.Append(_array[i]);
-				if (i != _longitud - 1) {
+				if (i != _length - 1) {
 					stringBuilder.Append(',');
 				}
 			}
@@ -159,7 +159,7 @@ namespace ExpandedLists.Blocks {
 		/// <returns></returns>
 		public override int GetHashCode() {
 			int codigo = Count ^ Capacity; // Para que se tengan en cuenta como en Equals
-			for (int i = 0; i < _longitud; i++) {
+			for (int i = 0; i < _length; i++) {
 				codigo ^= _array[i]?.GetHashCode() ?? 0;
 			}
 			return codigo;

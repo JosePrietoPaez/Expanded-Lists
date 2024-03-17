@@ -410,6 +410,25 @@ namespace ExpandedLists.nUnitTests {
 		}
 
 		[Test]
+		public void Constructor_ColeccionExtensoraGeneradora_GuardaLosElementosEnBloqueConLaCapacidadIndicada() {
+			// Arrange
+			List<int> elementos = [];
+			for (int i = 0; i < 100; i++) {
+				elementos.Add(i);
+			}
+
+			// Act
+			var listBloques = new BlockList<int, ArrayBlock<int>>(elementos,n => 10, n => n);
+
+			// Assert
+			Assert.That(elementos, Is.EqualTo(listBloques));
+			int posicionBloque = 0;
+			foreach (Block<int> bloque in listBloques.GetBlockEnumerable()) {
+				Assert.That(bloque.Capacity, Is.EqualTo(listBloques.ExtenderFunction(posicionBloque)));
+			}
+		}
+
+		[Test]
 		public void Contiene_ConElElemento_DevuelveTrue() {
 			// Arrange
 			var listBloques = new BlockList<int, ArrayBlock<int>>(n => 10, n => n) {
@@ -1166,7 +1185,7 @@ namespace ExpandedLists.nUnitTests {
 			int elemento = 123;
 
 			// Act
-			var result = listBloques.Add(
+			var result = listBloques.AddNew(
 				elemento);
 
 			Assert.Multiple(() => {

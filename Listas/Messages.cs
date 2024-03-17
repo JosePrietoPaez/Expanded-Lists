@@ -14,7 +14,7 @@
 
 		public static string EmptySequence => "Sequence is empty";
 
-		public static string NullGeneration => "Generator function returned null";
+		public static string NullGenerated => "Generator function returned null";
 
 		public static string NegativeLength => "Length is negative";
 

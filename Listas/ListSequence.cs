@@ -4,36 +4,35 @@ using System.Collections.Generic;
 
 namespace ExpandedLists {
 	/// <summary>
-	/// Implementa la interfaz <see cref="ISequence{T}"/> delegando los métodos a una instancia de <see cref="List{T}"/> y una <see cref="Func{T, TResult}"/>
+	/// Implements <see cref="ISequence{T}"/> using an instance of <see cref="List{T}"/> to store its elements and a <see cref="Func{T, TResult}"/> to generate new elements.
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
 	public class ListSequence<T> : ISequence<T>
 	{
-		private string _nombre;
-		private List<T> _serie;
-		private Func<int,T?> _generadora = num=>default;
+		private string _name;
+		private List<T> _sequence;
+		private Func<int,T?> _generator = num=>default;
 
 		private T? Generar() {
-			return _generadora.Invoke(_serie.Count);
+			return _generator.Invoke(_sequence.Count);
 		}
 
 		/// <inheritdoc/>
 		public string Name
 		{
-			get => _nombre;
+			get => _name;
 
-			set => _nombre = value;
+			set => _name = value;
 		}
 
 		/// <inheritdoc/>
 		public bool IsEmpty
 		{
-			get => _serie.Count == 0;
+			get => _sequence.Count == 0;
 			set
 			{
 				if (value)
-					_serie.Clear();
-				else if (_serie.Count == 0)
+					_sequence.Clear();
+				else if (_sequence.Count == 0)
 				{
 					Count++;
 				}
@@ -43,24 +42,24 @@ namespace ExpandedLists {
 		/// <inheritdoc/>
 		public int Count
 		{
-			get => _serie.Count;
+			get => _sequence.Count;
 			set
 			{
 				Contract.Requires<ArgumentOutOfRangeException>(value >= 0, Messages.NegativeLength);
-				int siz = _serie.Count;
-				if (value == 0) _serie.Clear();
+				int siz = _sequence.Count;
+				if (value == 0) _sequence.Clear();
 				else if (value < siz)
 				{
-					_serie = new List<T>(_serie.GetRange(0, value));
+					_sequence = new List<T>(_sequence.GetRange(0, value));
 				}
 				else if (value != siz)
 				{
 					while (value > siz)
 					{
 						Contract.Requires<InvalidOperationException>(IExpandedList<T>.CompatibleEnLista(Generar()),
-							Messages.NullGeneration);
+							Messages.NullGenerated);
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
-						_serie.Add(Generar()); //Ignorar el warning
+						_sequence.Add(Generar()); //Ignorar el warning
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
 						siz++;
 					}
@@ -71,151 +70,138 @@ namespace ExpandedLists {
 		/// <inheritdoc/>
 		public Func<int,T?> GeneratorFunction
 		{
-			get => _generadora;
-			set => _generadora = value;
+			get => _generator;
+			set => _generator = value;
 		}
 
 		/// <inheritdoc/>
 		public T this[int posicion]
 		{
-			get => _serie[posicion];
-			set => _serie[posicion] = value;
+			get => _sequence[posicion];
+			set => _sequence[posicion] = value;
 		}
 
 		/// <summary>
-		/// Crea una serie a partir de otra lista con el nombre vacío
+		/// Creates a sequence with the elements from <c>list</c> and its generator function.
 		/// </summary>
-		/// <remarks>
-		/// La serie tendrá todos los elementos de la lista y su función generadora
-		/// </remarks>
-		/// <param name="lista">lista que copiar</param>
-		public ListSequence(IDynamicList<T> lista) : this(lista as IExpandedList<T>){
-			_generadora = lista?.GeneratorFunction ?? (num => default);
+		public ListSequence(IDynamicList<T> list) : this(list as IExpandedList<T>){
+			_generator = list?.GeneratorFunction ?? (num => default);
 		}
 
 		/// <summary>
-		/// Crea una serie a partir de otra lista con el nombre vacío
+		/// Creates a sequence with the elements from <c>list</c> and an empty name.
 		/// </summary>
-		/// <remarks>
-		/// La serie tendrá todos los elementos de la lista y su función generadora
-		/// </remarks>
-		/// <param name="lista">lista que copiar</param>
-		public ListSequence(IExpandedList<T> lista)
+		public ListSequence(IExpandedList<T> list)
 		{
-			_serie = [];
-			if (lista is not null)
+			_sequence = [];
+			if (list is not null)
 			{
 				foreach (T elem in
-					lista)
+					list)
 				{
-					_serie.Add(elem);
+					_sequence.Add(elem);
 				}
 			}
-			_nombre = string.Empty;
-		}
-
-		public ListSequence(IExpandedList<T> lista, string nombre) : this(lista)
-		{
-			_nombre = nombre;
+			_name = string.Empty;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/>
-		/// vacío con nombre <c>nombre</c> y capacidad inicial <c>capacidad</c>
+		/// Creates a sequence with the elements from <c>list</c> with this name.
 		/// </summary>
-		public ListSequence(string nombre, int capacidad)
+		public ListSequence(IExpandedList<T> list, string name) : this(list)
 		{
-			this._nombre = nombre;
-			_serie = new List<T>(capacidad);
+			_name = name;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/>
-		/// vacío con nombre <c>nombre</c> y capacidad inicial <c>capacidad</c>
+		/// Creates an empty sequence with this name and initial capacity.
+		/// </summary>
+		public ListSequence(string name, int capacity)
+		{
+			_name = name;
+			_sequence = new List<T>(capacity);
+		}
+
+		/// <summary>
+		/// Creates an empty sequence with this name, initial capacity and generator function.
 		/// </summary>
 		public ListSequence(string nombre, int capacidad, Func<int,T?> generadora) : this(nombre,capacidad) {
-			_generadora = generadora;
+			_generator = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/> vacío con nombre <c>nombre</c> y capacidad inicial 10
+		/// Creates an empty sequence with this name and an initial capacity for ten elements.
 		/// </summary>
 		public ListSequence(string nombre) : this(nombre, 10) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/> vacío con el nombre vacío y capacidad inicial <c>cap</c>
+		/// Creates an empty sequence with this initial capacity and an empty name.
 		/// </summary>
 		public ListSequence(int cap) : this("", cap) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/>
-		/// vacío con el nombre vacío, capacidad inicial <c>cap</c> y la función generadora proporcionada
+		/// Create an empty sequence with this capacity and generator function and an empty name.
 		/// </summary>
 		public ListSequence(int cap, Func<int,T?> generadora) : this("", cap) {
-			_generadora = generadora;
+			_generator = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/> vacío con el nombre vacío y capacidad inicial 10
+		/// Create an empty sequence with this capacity, initial capacity for ten elements and an empty name.
 		/// </summary>
 		public ListSequence() : this("", 10) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/>
-		/// vacío con el nombre vacío, capacidad inicial 10 y la función generadora proporcionada
+		/// Create an empty sequence with this generator function, an empty name and initial capacity for ten elements.
 		/// </summary>
 		public ListSequence(Func<int,T?> generadora) : this("", 10) {
-			_generadora = generadora;
+			_generator = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/>
-		/// vacío con nombre <c>nombre</c> y los elementos de <c>col</c>
+		/// Create a sequence with this name and the elements from <c>col</c>.
 		/// </summary>
 		public ListSequence(string nombre, ICollection<T> col)
 		{
-			this._nombre = nombre;
-			_serie = new List<T>(col);
+			_name = nombre;
+			_sequence = new List<T>(col);
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/>
-		/// vacío con el nombre vacío y los elementos de <c>col</c>
+		/// Create a sequence with the elements from <c>col</c> and an empty name.
 		/// </summary>
 		public ListSequence(ICollection<T> col) : this("", col) { }
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/>
-		/// vacío con el nombre vacío, los elementos de <c>col</c> y la función generadora proporcionada
+		/// Create a sequence with this generator function and the elements from <c>col</c>.
 		/// </summary>
 		public ListSequence(ICollection<T> col, Func<int,T?> generadora) : this("", col) {
-			_generadora = generadora;
+			_generator = generadora;
 		}
 
 		/// <summary>
-		/// Crea un objeto <see cref="ListSequence{T}"/>
-		/// vacío con el nombre vacío, los elementos de <c>col</c> y la función generadora proporcionada
+		/// Create a sequence with this name and generator function with the elements from <c>col</c>.
 		/// </summary>
 		public ListSequence(ICollection<T> col, string nombre, Func<int, T?> generadora) : this(nombre, col) {
-			_generadora = generadora;
+			_generator = generadora;
 		}
 
 		///<inheritdoc/>
 		public void InsertFirst(T elem)
 		{
-			_serie.Insert(0,elem);
+			_sequence.Insert(0,elem);
 		}
 
 		///<inheritdoc/>
 		public void InsertAt(T elem, int pos)
 		{
-			_serie.Insert(pos, elem);
+			_sequence.Insert(pos, elem);
 		}
 
 		///<inheritdoc/>
 		public void InsertLast(T elem)
 		{
-			_serie.Add(elem);
+			_sequence.Add(elem);
 		}
 
 		///<inheritdoc/>
@@ -231,33 +217,33 @@ namespace ExpandedLists {
 		///<inheritdoc/>
 		public T RemoveFirst()
 		{
-			T primero = _serie[0];
-			_serie.RemoveAt(0);
+			T primero = _sequence[0];
+			_sequence.RemoveAt(0);
 			return primero;
 		}
 
 		///<inheritdoc/>
 		public int Remove(T elem)
 		{
-			int pos = _serie.IndexOf(elem);
+			int pos = _sequence.IndexOf(elem);
 			if (pos != -1)
-				_serie.RemoveAt(pos);
+				_sequence.RemoveAt(pos);
 			return pos;
 		}
 
 		///<inheritdoc/>
 		public T RemoveAt(int pos)
 		{
-			T elemento = _serie[pos];
-			_serie.RemoveAt(pos);
+			T elemento = _sequence[pos];
+			_sequence.RemoveAt(pos);
 			return elemento;
 		}
 
 		///<inheritdoc/>
 		public T RemoveLast()
 		{
-			T ultimo = _serie[^1];
-			_serie.RemoveAt(_serie.Count - 1);
+			T ultimo = _sequence[^1];
+			_sequence.RemoveAt(_sequence.Count - 1);
 			return ultimo;
 		}
 
@@ -265,9 +251,9 @@ namespace ExpandedLists {
 		public int RemoveMultiple(int num, int pos)
 		{
 			int real = 0;
-			while (real < num && pos < _serie.Count)
+			while (real < num && pos < _sequence.Count)
 			{
-				_serie.RemoveAt(pos);
+				_sequence.RemoveAt(pos);
 				real++;
 			}
 			return real;
@@ -283,9 +269,9 @@ namespace ExpandedLists {
 			} else {
 				condicion = (t => elem.Equals(t));
 			}
-			while (condicion(_serie[^1]))
+			while (condicion(_sequence[^1]))
 			{
-				_serie.RemoveAt(_serie.Count - 1);
+				_sequence.RemoveAt(_sequence.Count - 1);
 				res++;
 			}
 			return res;
@@ -294,16 +280,16 @@ namespace ExpandedLists {
 		///<inheritdoc/>
 		public void Clear()
 		{
-			_serie.Clear();
+			_sequence.Clear();
 		}
 
 		public int Clear(T elemento) {
 			int res = 0;
-			for (int i = _serie.Count - 1; i >= 0; i--)
+			for (int i = _sequence.Count - 1; i >= 0; i--)
 			{
-				if (_serie[i]?.Equals(elemento) ?? elemento is null) { //Si son iguales o los dos son nulos
+				if (_sequence[i]?.Equals(elemento) ?? elemento is null) { //Si son iguales o los dos son nulos
 					res++;
-					_serie.RemoveAt(i);
+					_sequence.RemoveAt(i);
 				}
 			}
 			return res;
@@ -312,23 +298,23 @@ namespace ExpandedLists {
 		///<inheritdoc/>
 		public T First {
 			get {
-				Contract.Requires<InvalidOperationException>(_serie.Count > 0, Messages.EmptySequence);
-				return _serie[0];
+				Contract.Requires<InvalidOperationException>(_sequence.Count > 0, Messages.EmptySequence);
+				return _sequence[0];
 			}
 		}
 
 		///<inheritdoc/>
 		public T Last {
 			get {
-				Contract.Requires<InvalidOperationException>(_serie.Count > 0, Messages.EmptySequence);
-				return _serie[^1];
+				Contract.Requires<InvalidOperationException>(_sequence.Count > 0, Messages.EmptySequence);
+				return _sequence[^1];
 			}
 		}
 
 		///<inheritdoc/>
 		public int Position(T elem)
 		{
-			return _serie.IndexOf(elem);
+			return _sequence.IndexOf(elem);
 		}
 
 		///<inheritdoc/>
@@ -336,7 +322,7 @@ namespace ExpandedLists {
 		{
 			int num = 0, indice = 0;
 			int[] ocurrencias = [], cambio;
-			foreach (T tipo in _serie) {
+			foreach (T tipo in _sequence) {
 				if (Equals(elem, tipo)) {
 					cambio = new int[++num];
 					Array.Copy(ocurrencias,cambio,ocurrencias.Length);
@@ -351,16 +337,16 @@ namespace ExpandedLists {
 		///<inheritdoc/>
 		public bool Contains(T elem)
 		{
-			return _serie.Contains(elem);
+			return _sequence.Contains(elem);
 		}
 
 		public override string ToString()
 		{
-			return (_nombre == string.Empty ? string.Empty : _nombre + ": ") +  string.Join(',',_serie);
+			return (_name == string.Empty ? string.Empty : _name + ": ") +  string.Join(',',_sequence);
 		}
 		public IEnumerator<T> GetEnumerator()
 		{
-			return _serie.GetEnumerator();
+			return _sequence.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
@@ -368,14 +354,15 @@ namespace ExpandedLists {
 			return GetEnumerator();
 		}
 
-		/**
-		 * Compara el objeto llamante con obj
-		 * <p>Si ambos son de una clase que implemente {@code Lista}, tienen la misma cantidad de elementos
-		 * y estos son iguales, las listas son iguales</p>
-		 * <p>Se ignora su nombre al comparar listas</p>
-		 * @param obj objeto con el que se compara
-		 * @return {@code true} si las lista son iguales
-		 */
+		/// <summary>
+		/// Determines if this sequence is equal to <c>obj</c>.
+		/// </summary>
+		/// <remarks>
+		/// If <c>obj</c> is an <see cref="IExpandedList{T}"/> and have the same elements in the same order, they are equal.
+		/// <para>
+		/// Names are ignored when comparing lists.
+		/// </para>
+		/// </remarks>
 		public override bool Equals(Object? obj) {
 			bool iguales = ReferenceEquals(this,obj);
 			if (!iguales && obj is IExpandedList<T> lista) {
@@ -388,26 +375,26 @@ namespace ExpandedLists {
 		}
 		public override int GetHashCode()
 		{
-			return _serie.GetHashCode() ^ _nombre.GetHashCode();
+			return _sequence.GetHashCode() ^ _name.GetHashCode();
 		}
 
 		string INamedList<T>.ReverseToString()
 		{
-			_serie.Reverse();
+			_sequence.Reverse();
 			string? inverso = ToString();
-			_serie.Reverse();
+			_sequence.Reverse();
 			return inverso??"";
 		}
 
 		public IUnsortedList<T> Multiply(int factor) {
 			ListSequence<T> nueva;
-			if (factor == 0 || _serie.Count == 0) { //Multiplicar por 0 da cero
+			if (factor == 0 || _sequence.Count == 0) { //Multiplicar por 0 da cero
 				nueva = new ListSequence<T>();
 			} else {
 				nueva = new(this);
 				//Si se produce OverflowException no es mi problema, la lista no podría contenerlo
-				for (int i = 0; i < _serie.Count*(Math.Abs(factor)-1); i++) { 
-					nueva.InsertLast(_serie[i%_serie.Count]);
+				for (int i = 0; i < _sequence.Count*(Math.Abs(factor)-1); i++) { 
+					nueva.InsertLast(_sequence[i%_sequence.Count]);
 				}
 				if (factor < 0) {
 					nueva.Reverse();
@@ -417,12 +404,12 @@ namespace ExpandedLists {
 		}
 
 		public void Reverse() {
-			_serie.Reverse();
+			_sequence.Reverse();
 		}
 
 		public int Add(T elemento) {
-			_serie.Add(elemento);
-			return _serie.Count-1;
+			_sequence.Add(elemento);
+			return _sequence.Count-1;
 		}
 
 		public IExpandedList<T> AddNew(T elemento) {
