@@ -1,76 +1,76 @@
-﻿using Listas;
+﻿using ExpandedLists;
 using NUnit.Framework;
 using System;
 
-namespace Listas.nUnitTests {
+namespace ExpandedLists.nUnitTests {
 	[TestFixture]
 	public class AListSerieTests {
 
-		private readonly ListSerie<int> _listaConElementos = new();
-		private readonly ListSerie<int?> _listaConElementosNula = new();
+		private readonly ListSequence<int> _listaConElementos = new();
+		private readonly ListSequence<int?> _listaConElementosNula = new();
 
 		[SetUp]
 		public void SetUp() {
-			_listaConElementos.Vacia = true;
-			_listaConElementosNula.Vacia = true;
+			_listaConElementos.IsEmpty = true;
+			_listaConElementosNula.IsEmpty = true;
 			for (int i = 0; i < 10; i++) {
-				_listaConElementos.InsertarUltimo(i);
-				_listaConElementosNula.InsertarUltimo(i);
+				_listaConElementos.InsertLast(i);
+				_listaConElementosNula.InsertLast(i);
 			}
 		}
 
 		[Test]
 		public void PonerInicio_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int elem = default(int);
 
 			// Act
-			aListSerie.InsertarPrimero(
+			aListSerie.InsertFirst(
 				elem);
 
 			// Assert
-			Assert.That(aListSerie.Longitud, Is.EqualTo(1));
+			Assert.That(aListSerie.Count, Is.EqualTo(1));
 		}
 
 		[Test]
 		public void PonerInicio_StateUnderTest_ListaConValoresNulos() {
 			// Arrange
-			var aListSerie = new ListSerie<int?>();
+			var aListSerie = new ListSequence<int?>();
 			int? elem = null;
 
 			// Act
-			aListSerie.InsertarPrimero(
+			aListSerie.InsertFirst(
 				elem);
 
 			// Assert
-			Assert.That(aListSerie.Longitud, Is.EqualTo(1));
+			Assert.That(aListSerie.Count, Is.EqualTo(1));
 		}
 
 		[Test]
 		public void Poner_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int elem = default(int);
 			int pos = 0;
 
 			// Act
-			aListSerie.Insertar(
+			aListSerie.InsertAt(
 				elem,
 				pos);
 
 			// Assert
-			Assert.That(aListSerie.Longitud, Is.EqualTo(1));
+			Assert.That(aListSerie.Count, Is.EqualTo(1));
 
 			elem = 2;
 
-			aListSerie.Insertar(elem, pos);
+			aListSerie.InsertAt(elem, pos);
 
 			Assert.That(aListSerie[pos], Is.EqualTo(elem));
 
 			elem = 3; pos = 1;
 
-			aListSerie.Insertar(elem,pos);
+			aListSerie.InsertAt(elem,pos);
 
 			Assert.That(aListSerie[pos], Is.EqualTo(elem));
 		}
@@ -78,20 +78,20 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void PonerFin_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int elem = default(int);
 
 			// Act
-			aListSerie.InsertarUltimo(
+			aListSerie.InsertLast(
 				elem);
 
 			// Assert
-			Assert.That(aListSerie.Longitud, Is.EqualTo(1));
+			Assert.That(aListSerie.Count, Is.EqualTo(1));
 
-			aListSerie.InsertarUltimo(
+			aListSerie.InsertLast(
 				elem+1);
 
-			Assert.That(aListSerie.UltimoElemento, Is.EqualTo(elem+1));
+			Assert.That(aListSerie.Last, Is.EqualTo(elem+1));
 		}
 
 		[TestCase(0)]
@@ -100,17 +100,17 @@ namespace Listas.nUnitTests {
 		[TestCase(-1)]
 		public void PonerVarios_StateUnderTest_ExpectedBehavior(int value) {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int elem = 45;
 			int num = value;
 			int pos = 1;
 
 			// Act
-			aListSerie.InsertarPrimero(123);
+			aListSerie.InsertFirst(123);
 
-			aListSerie.InsertarUltimo(678);
+			aListSerie.InsertLast(678);
 
-			aListSerie.InsertarVarios(
+			aListSerie.InsertMultiple(
 				elem,
 				num,
 				pos);
@@ -118,41 +118,41 @@ namespace Listas.nUnitTests {
 			// Assert
 			Assert.That(aListSerie[0],Is.EqualTo(123)); //Asegurar que se mantienen el resto de elementos
 
-			for (int i = 1; i < aListSerie.Longitud; i++) {
-				if (i == aListSerie.Longitud-1) {
+			for (int i = 1; i < aListSerie.Count; i++) {
+				if (i == aListSerie.Count-1) {
 					Assert.That(aListSerie[i], Is.EqualTo(678));
 				} else {
 					Assert.That(aListSerie[i], Is.EqualTo(elem)); //Asegurar que se han colocado los elementos correctos
 				}
 			}
 
-			Assert.That(aListSerie.Longitud, Is.EqualTo(2+Math.Max(0,num))); //Asegurar que la longitud es correcta
+			Assert.That(aListSerie.Count, Is.EqualTo(2+Math.Max(0,num))); //Asegurar que la longitud es correcta
 		}
 
 		[Test]
 		public void BorrarInicio_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>(_listaConElementos);
+			var aListSerie = new ListSequence<int>(_listaConElementos);
 
 			// Act
-			var elementoInicial = aListSerie.PrimerElemento;
-			var result = aListSerie.BorrarPrimero();
+			var elementoInicial = aListSerie.First;
+			var result = aListSerie.RemoveFirst();
 
 			// Assert
 			Assert.That(elementoInicial, Is.EqualTo(result));
-			Assert.That(aListSerie.Longitud, Is.EqualTo(_listaConElementos.Longitud-1));
+			Assert.That(aListSerie.Count, Is.EqualTo(_listaConElementos.Count-1));
 		}
 
 		[Test]
 		public void Borrar_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<float>();
+			var aListSerie = new ListSequence<float>();
 			float elem = 15.0f;
 
 			// Act
-			aListSerie.InsertarVarios(15.0f, 10, 0);
+			aListSerie.InsertMultiple(15.0f, 10, 0);
 
-			var result = aListSerie.Eliminar(
+			var result = aListSerie.Remove(
 				elem);
 
 			// Assert
@@ -160,7 +160,7 @@ namespace Listas.nUnitTests {
 
 			elem = 0;
 
-			result = aListSerie.Eliminar(elem);
+			result = aListSerie.Remove(elem);
 
 			Assert.That(result, Is.EqualTo(-1));
 		}
@@ -168,11 +168,11 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Borrar_StateUnderTest_ExpectedBehavior1() {
 			// Arrange
-			var aListSerie = new ListSerie<int>(_listaConElementos);
+			var aListSerie = new ListSequence<int>(_listaConElementos);
 			int pos = 0;
 
 			// Act
-			var result = aListSerie.Eliminar(
+			var result = aListSerie.RemoveAt(
 				pos);
 
 			// Assert
@@ -182,10 +182,10 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarFin_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 
 			// Act
-			var result = aListSerie.BorrarUltimo();
+			var result = aListSerie.RemoveLast();
 
 			// Assert
 			Assert.Fail();
@@ -194,12 +194,12 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarVarios_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int num = 0;
 			int pos = 0;
 
 			// Act
-			var result = aListSerie.EliminarVarios(
+			var result = aListSerie.RemoveMultiple(
 				num,
 				pos);
 
@@ -210,11 +210,11 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarUltimos_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int elem = default(int);
 
 			// Act
-			var result = aListSerie.BorrarUltimos(
+			var result = aListSerie.RemoveLast(
 				elem);
 
 			// Assert
@@ -224,10 +224,10 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void BorrarTodos_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 
 			// Act
-			aListSerie.BorrarTodos();
+			aListSerie.Clear();
 
 			// Assert
 			Assert.Fail();
@@ -236,10 +236,10 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void PrimerElemento_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 
 			// Act
-			var result = aListSerie.PrimerElemento;
+			var result = aListSerie.First;
 
 			// Assert
 			Assert.Fail();
@@ -248,7 +248,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Elemento_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int pos = 0;
 
 			// Act
@@ -261,10 +261,10 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void UltimoElemento_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 
 			// Act
-			var result = aListSerie.UltimoElemento;
+			var result = aListSerie.Last;
 
 			// Assert
 			Assert.Fail();
@@ -273,11 +273,11 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Posicion_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int elem = default(int);
 
 			// Act
-			var result = aListSerie.Posicion(
+			var result = aListSerie.Position(
 				elem);
 
 			// Assert
@@ -287,11 +287,11 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Ocurrencias_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int elem = default(int);
 
 			// Act
-			var result = aListSerie.Ocurrencias(
+			var result = aListSerie.Appareances(
 				elem);
 
 			// Assert
@@ -301,11 +301,11 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Pertenece_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			int elem = default(int);
 
 			// Act
-			var result = aListSerie.Contiene(
+			var result = aListSerie.Contains(
 				elem);
 
 			// Assert
@@ -315,7 +315,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void ToString_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 
 			// Act
 			var result = aListSerie.ToString();
@@ -327,7 +327,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void GetEnumerator_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 
 			// Act
 			var result = aListSerie.GetEnumerator();
@@ -339,7 +339,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void Equals_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 			Object? obj = null;
 
 			// Act
@@ -353,7 +353,7 @@ namespace Listas.nUnitTests {
 		[Test]
 		public void GetHashCode_StateUnderTest_ExpectedBehavior() {
 			// Arrange
-			var aListSerie = new ListSerie<int>();
+			var aListSerie = new ListSequence<int>();
 
 			// Act
 			var result = aListSerie.GetHashCode();
@@ -364,11 +364,11 @@ namespace Listas.nUnitTests {
 
 		[Test]
 		public void Longitud_StateUnderTest_ExpectedBehavior() {
-			var aListSerie = new ListSerie<int?>();
+			var aListSerie = new ListSequence<int?>();
 
-			aListSerie.Longitud++;
+			aListSerie.Count++;
 
-			Assert.That(aListSerie.Longitud, Is.EqualTo(1));
+			Assert.That(aListSerie.Count, Is.EqualTo(1));
 		}
 
 		[TestCase(-1)]
@@ -377,20 +377,20 @@ namespace Listas.nUnitTests {
 		[TestCase(2)]
 		public void Multiplicar_StateUnderTest_ExpectedBehavior(int value) {
 			// Arrange
-			var aListSerie = new ListSerie<int>(_listaConElementos);
+			var aListSerie = new ListSequence<int>(_listaConElementos);
 			int indice = 0;
 
 			// Act
-			var result = aListSerie.Multiplicar(value);
+			var result = aListSerie.Multiply(value);
 
 			// Assert
-			Assert.That(result.Longitud, Is.EqualTo(_listaConElementos.Longitud * Math.Abs(value)));
+			Assert.That(result.Count, Is.EqualTo(_listaConElementos.Count * Math.Abs(value)));
 			if (value < 0) {
-				_listaConElementos.Invertir(); //Para recorrer en la direccion correcta
+				_listaConElementos.Reverse(); //Para recorrer en la direccion correcta
 			}
 			foreach (var item in result) {
 				Assert.That(item, Is.EqualTo(_listaConElementos
-					[indice++%_listaConElementos.Longitud])); //Asegura que se recorra circularmente
+					[indice++%_listaConElementos.Count])); //Asegura que se recorra circularmente
 			}
 		}
 
@@ -400,13 +400,13 @@ namespace Listas.nUnitTests {
 		[TestCase(0)]
 		public void Demostracion_GeneracionDeElementos(int value) {
 			static double funcion(int num) => Math.Pow(2, num);
-			var serie = new ListSerie<double>(funcion);
+			var serie = new ListSequence<double>(funcion);
 
 			if (value < 0) {
-				Assert.Throws<ArgumentOutOfRangeException>(() => serie.Longitud = value);
+				Assert.Throws<ArgumentOutOfRangeException>(() => serie.Count = value);
 			} else {
-				serie.Longitud = value;
-				Assert.That(serie.Longitud, Is.EqualTo(value));
+				serie.Count = value;
+				Assert.That(serie.Count, Is.EqualTo(value));
 
 				for (int i = 0; i < value; i++) {
 					Assert.That(serie[i], Is.EqualTo(funcion(i)));

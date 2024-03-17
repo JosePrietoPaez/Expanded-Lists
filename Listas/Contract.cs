@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Listas {
+namespace ExpandedLists {
 	/// <summary>
-	/// Resulta que CodeContracts está muerto, así que, para no volver a poner todos los ifs he creado esta clase
+	/// Because CodeContracts is dead, I made this class to replace it
 	/// </summary>
-	public static class Contrato {
+	public static class Contract {
 		
 		/// <summary>
-		/// Lanza una excepción si <c>predicate</c> no es <c>true</c>
+		/// Throws an exception of the given type if <c>predicate</c> is not <c>true</c>
 		/// </summary>
 		/// <typeparam name="TException"></typeparam>
 		/// <param name="predicate"></param>

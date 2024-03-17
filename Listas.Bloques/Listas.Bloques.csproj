@@ -4,25 +4,27 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <FileVersion>0.2.0.0</FileVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/JosePrietoPaez/ListaBloques-Remake</RepositoryUrl>
     <AssemblyName>expanded-lists-bloques</AssemblyName>
-    <RootNamespace>Listas.Bloques</RootNamespace>
+    <RootNamespace>ExpandedLists.Blocks</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>jmpp.expanded-lists-blocks</PackageId>
-    <Title>Expanded Lists/Blocks</Title>
-    <Version>0.1.0</Version>
+    <Title>Expanded Lists</Title>
+    <Version>0.2.0</Version>
     <Authors>JosePrietoPaez</Authors>
-    <Copyright>See main package</Copyright>
+    <Copyright>See the GitHub repository for more details</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageTags>lists;data-structures</PackageTags>
-    <PackageReleaseNotes>See main package</PackageReleaseNotes>
-    <Description>This package offers additional lists to Expanded Lists</Description>
+    <PackageReleaseNotes>API and its documentation has been translated to English with a few minor fixes.</PackageReleaseNotes>
+    <Description>This package aims to offer a variety of lists with many more methods  and operators than the default implementation.
+Currently includes two implementations of its interfaces.</Description>
     <PackageProjectUrl>See GitHub repository</PackageProjectUrl>
     <NeutralLanguage>es-ES</NeutralLanguage>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="jmpp.expanded-lists" Version="0.1.0" />
+    <ProjectReference Include="..\Listas\Listas.csproj" />
   </ItemGroup>
 
 </Project>
