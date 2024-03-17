@@ -8,21 +8,20 @@
     <FileVersion>0.2.0.0</FileVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/JosePrietoPaez/ListaBloques-Remake</RepositoryUrl>
-    <AssemblyName>expanded-lists-bloques</AssemblyName>
-    <RootNamespace>ExpandedLists.Blocks</RootNamespace>
+    <AssemblyName>expanded-lists</AssemblyName>
+    <RootNamespace>Listas.Bloques</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageId>jmpp.expanded-lists-blocks</PackageId>
+    <PackageId>jmpp.expanded-lists</PackageId>
     <Title>Expanded Lists</Title>
     <Version>0.2.0</Version>
     <Authors>JosePrietoPaez</Authors>
-    <Copyright>See the GitHub repository for more details</Copyright>
+    <Copyright>See GitHub repository</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageTags>lists;data-structures</PackageTags>
-    <PackageReleaseNotes>API and its documentation has been translated to English with a few minor fixes.</PackageReleaseNotes>
-    <Description>This package aims to offer a variety of lists with many more methods  and operators than the default implementation.
-Currently includes two implementations of its interfaces.</Description>
+    <PackageReleaseNotes>See GitHub, Spanish and English</PackageReleaseNotes>
+    <Description>This package offers additional lists to Expanded Lists</Description>
     <PackageProjectUrl>See GitHub repository</PackageProjectUrl>
-    <NeutralLanguage>es-ES</NeutralLanguage>
+    <NeutralLanguage>en</NeutralLanguage>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <SignAssembly>False</SignAssembly>
   </PropertyGroup>
@@ -39,7 +38,7 @@ Currently includes two implementations of its interfaces.</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Listas\Listas.csproj" />
+    <ProjectReference PrivateAssets="all" Include="..\Listas\Listas.csproj" />
   </ItemGroup>
 
 </Project>
