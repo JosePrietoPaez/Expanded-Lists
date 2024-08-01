@@ -7,15 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas.nUnitTests", "Listas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas", "Listas\Listas.csproj", "{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listas.Bloques", "Listas.Bloques\Listas.Bloques.csproj", "{15E10E52-43D0-45EA-8B8E-09F82029E9E6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D45AE9F0-E077-4947-8DC7-6CB2C04D57E4}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PruebaListas", "PruebaListas\PruebaListas.csproj", "{1C3058D6-16D2-4756-8E27-87E42BF55B01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PruebaListas", "PruebaListas\PruebaListas.csproj", "{1C3058D6-16D2-4756-8E27-87E42BF55B01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +29,6 @@ Global
 		{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24A2ACFD-24AD-4024-8390-D8516C1BB6B4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15E10E52-43D0-45EA-8B8E-09F82029E9E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15E10E52-43D0-45EA-8B8E-09F82029E9E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15E10E52-43D0-45EA-8B8E-09F82029E9E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15E10E52-43D0-45EA-8B8E-09F82029E9E6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1C3058D6-16D2-4756-8E27-87E42BF55B01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1C3058D6-16D2-4756-8E27-87E42BF55B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C3058D6-16D2-4756-8E27-87E42BF55B01}.Release|Any CPU.ActiveCfg = Release|Any CPU

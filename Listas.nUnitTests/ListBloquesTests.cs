@@ -1,4 +1,5 @@
 ﻿using ExpandedLists.Blocks;
+using NUnit.Framework.Legacy;
 
 namespace ExpandedLists.nUnitTests {
 	[TestFixture]

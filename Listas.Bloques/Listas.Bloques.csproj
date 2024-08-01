@@ -32,17 +32,6 @@ This version contains only two actual lists, more will be added in the future.
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference PrivateAssets="all" Include="..\Listas\Listas.csproj" />
   </ItemGroup>
 
